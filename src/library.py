@@ -83,8 +83,10 @@ class EconomizerHighLimitC(RuleCheckBase):
     def verify(self):
         self.result = ~(
             (self.df["oa_flow"] > self.df["oa_min_flow"])
-            & (self.df["oa_db"] > self.df["oa_threshold"])
-            & (self.df["oa_enth"] > self.df["oa_enth_threshold"])
+            & (
+                (self.df["oa_db"] > self.df["oa_threshold"])
+                | (self.df["oa_enth"] > self.df["oa_enth_threshold"])
+            )
         )
 
 
@@ -101,8 +103,10 @@ class EconomizerHighLimitD(RuleCheckBase):
     def verify(self):
         self.result = ~(
             (self.df["oa_flow"] > self.df["oa_min_flow"])
-            & (self.df["ret_a_enth"] > self.df["oa_enth"])
-            & (self.df["oa_db"] > self.df["oa_threshold"])
+            & (
+                (self.df["ret_a_enth"] > self.df["oa_enth"])
+                | (self.df["oa_db"] > self.df["oa_threshold"])
+            )
         )
 
 
@@ -110,7 +114,7 @@ class ZoneTempControl(RuleCheckBase):
     points = ["T_z_set_cool", "T_z_set_heat"]
 
     def verify(self):
-        self.result = (self.df["T_z_set_cool"] - self.df["T_z_set_heat"]) > 5
+        self.result = (self.df["T_z_set_cool"] - self.df["T_z_set_heat"]) > 2.77
 
 
 class HWReset(RuleCheckBase):

@@ -183,8 +183,8 @@
             "datapoints_source": {
                 "idf_output_variables": {
                     "T_oa_db": "Environment:Site Outdoor Air Drybulb Temperature [C](TimeStep)",
-                    "T_hw": "HeatSys1 Supply Outlet Node:System Node Mass Flow Rate [kg/s](TimeStep)",
-                    "m_hw": "HeatSys1 Supply Outlet Node:System Node Temperature [C](TimeStep)"
+                    "T_hw": "HeatSys1 Supply Outlet Node:System Node Temperature [C](TimeStep)",
+                    "m_hw": "HeatSys1 Supply Outlet Node:System Node Mass Flow Rate [kg/s](TimeStep)"
                 },
                 "parameters": {
                     "T_oa_max": 10,
@@ -204,8 +204,8 @@
             "datapoints_source": {
                 "idf_output_variables": {
                     "T_oa_db": "Environment:Site Outdoor Air Drybulb Temperature [C](TimeStep)",
-                    "T_chw": "CoolSys1 Supply Outlet Node:System Node Mass Flow Rate [kg/s](TimeStep)",
-                    "m_chw": "CoolSys1 Supply Outlet Node:System Node Temperature [C](TimeStep)"
+                    "T_chw": "CoolSys1 Supply Outlet Node:System Node Temperature [C](TimeStep)",
+                    "m_chw": "CoolSys1 Supply Outlet Node:System Node Mass Flow Rate [kg/s](TimeStep)"
                 },
                 "parameters": {
                     "T_oa_max": 21.11,
