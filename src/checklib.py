@@ -122,11 +122,6 @@ class CheckLibBase(ABC):
         print()
 
     def calculate_plot_day(self):
-        # ax1 = plt.subplot(311)
-        # sns.scatterplot(x=self.result.index, y=self.result, linewidth=0, s=1)
-        # plt.xlim([self.df.index[0], self.df.index[-1]])
-        # plt.ylim([-0.2, 1.2])
-        # plt.title(f"Pass / Fail flag plot - {self.__class__.__name__}")
 
         trueday = None
         truedaydf = None
@@ -157,16 +152,11 @@ class CheckLibBase(ABC):
                 continue
 
             new_ratio = len(day[day == True]) / len(day) - 0.5
-            # print(new_ratio)
-
-            # print(f"newratio: {new_ratio}")
 
             if abs(new_ratio) < abs(ratio):
                 ratio = new_ratio
                 mixday = day
                 mixdaydf = daydf
-                # print(ratio)
-        # print(f"Final plot ratio: {ratio}")
 
         if mixdaydf is None:
             plotdaydf = daydf

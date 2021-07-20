@@ -46,8 +46,23 @@ class SupplyAirTempReset(RuleCheckBase):
             self.df["T_z_coo"] - t_sa_set_min
         ) * 0.25
 
-        print("debug use")
+    def plot(self, plot_option, plt_pts=None):
+        print("Specific plot method implemented, additional distribution plot is being added!")
+        # plt.hist(self.df['T_sa_set'], bins=10)
+        sns.distplot(self.df['T_sa_set'])
+        plt.title("All samples distribution of T_sa_set")
+        plt.show()
 
+        super().plot(plot_option, plt_pts)
+
+    def calculate_plot_day(self):
+        """over write method to select day for day plot"""
+        for one_day in self.daterange(date(2000, 1, 1), date(2001, 1, 1)):
+            daystr = f"{str(one_day.year)}-{str(one_day.month)}-{str(one_day.day)}"
+            daydf = self.df[daystr]
+            day = self.result[daystr]
+            if daydf['T_sa_set'].max() - daydf['T_sa_set'].min() > 0:
+                return day, daydf
 
 class EconomizerHighLimitA(RuleCheckBase):
     points = ["oa_db", "oa_threshold", "oa_min_flow", "oa_flow"]
