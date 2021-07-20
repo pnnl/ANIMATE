@@ -14,12 +14,12 @@ class IntegratedEconomizerControl(CheckLibBase):
     points = ["oa_min_flow", "oa_flow", "ccoil_out"]
 
     def verify(self):
-        self.flag = (self.df["oa_flow"] > self.df["oa_min_flow"]) & (
+        self.result = (self.df["oa_flow"] > self.df["oa_min_flow"]) & (
             self.df["ccoil_out"] > 0
         )
 
     def check_bool(self) -> bool:
-        if len(self.flag[self.flag == True] > 0):
+        if len(self.result[self.result == True] > 0):
             return True
         else:
             return False
@@ -27,10 +27,9 @@ class IntegratedEconomizerControl(CheckLibBase):
     def check_detail(self):
         print("Verification results dict: ")
         output = {
-            "Sample #": len(self.flag),
-            "Pass #": len(self.flag[self.flag == True]),
-            "Fail #": len(self.flag[self.flag == False]),
-            "Note": "No plots for verification of Integrated Economizer Control, this verification is considered passed as long as any sample passes",
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False])
         }
         print(output)
 
@@ -104,7 +103,7 @@ class EconomizerHighLimitD(RuleCheckBase):
         self.result = ~(
             (self.df["oa_flow"] > self.df["oa_min_flow"])
             & (
-                (self.df["ret_a_enth"] > self.df["oa_enth"])
+                (self.df["ret_a_enth"] < self.df["oa_enth"])
                 | (self.df["oa_db"] > self.df["oa_threshold"])
             )
         )
