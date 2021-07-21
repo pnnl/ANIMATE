@@ -88,22 +88,6 @@
             "no": 6,
             "run_simulation": false,
             "simulation_IO": {
-                "output": "ASHRAE901_OfficeLarge_STD2004_Seattle.csv"
-            },
-            "datapoints_source": {
-                "idf_output_variables": {
-                    "T_sa_set": "VAV_BOT WITH REHEAT SUPPLY EQUIPMENT OUTLET NODE:System Node Setpoint Temperature [C](Each Call)"
-                },
-                "parameters": {
-                    "T_z_coo": 24.0
-                }
-            },
-            "verification_class": "SupplyAirTempReset"
-        },
-        {
-            "no": 7,
-            "run_simulation": false,
-            "simulation_IO": {
                 "output": "ASHRAE901_RetailStandalone_STD2019_NewYork_a.csv"
             },
             "datapoints_source": {
@@ -119,7 +103,7 @@
             "verification_class": "EconomizerHighLimitA"
         },
         {
-            "no": 8,
+            "no": 7,
             "run_simulation": false,
             "simulation_IO": {
                 "output": "ASHRAE901_RetailStandalone_STD2019_NewYork_b.csv"
@@ -137,7 +121,7 @@
             "verification_class": "EconomizerHighLimitB"
         },
         {
-            "no": 9,
+            "no": 8,
             "run_simulation": false,
             "simulation_IO": {
                 "output": "ASHRAE901_RetailStandalone_STD2019_NewYork_c.csv"
@@ -157,7 +141,7 @@
             "verification_class": "EconomizerHighLimitC"
         },
         {
-            "no": 10,
+            "no": 9,
             "run_simulation": false,
             "simulation_IO": {
                 "output": "ASHRAE901_RetailStandalone_STD2019_NewYork_d.csv"
@@ -177,7 +161,7 @@
             "verification_class": "EconomizerHighLimitD"
         },
         {
-            "no": 11,
+            "no": 10,
             "run_simulation": false,
             "simulation_IO": {
                 "output": "ASHRAE901_RetailStandalone_STD2019_NewYork_zonetempctrl.csv"
@@ -191,7 +175,7 @@
             "verification_class": "ZoneTempControl"
         },
         {
-            "no": 12,
+            "no": 11,
             "run_simulation": false,
             "simulation_IO": {
                 "output": "ASHRAE901_Hospital_STD2019_Atlanta.csv"
@@ -212,7 +196,7 @@
             "verification_class": "HWReset"
         },
         {
-            "no": 13,
+            "no": 12,
             "run_simulation": false,
             "simulation_IO": {
                 "output": "ASHRAE901_Hospital_STD2019_Atlanta.csv"
@@ -233,7 +217,7 @@
             "verification_class": "CHWReset"
         },
         {
-            "no": 14,
+            "no": 13,
             "run_simulation": true,
             "simulation_IO": {
                 "idf": "../resources/ASHRAE901_RetailStandalone_STD2019_Seattle.idf",
@@ -265,6 +249,22 @@
                 }
             },
             "verification_class": "IntegratedEconomizerControl"
-        }
+        },
+        {
+            "no": 14,
+            "run_simulation": false,
+            "simulation_IO": {
+                "output": "ASHRAE901_OfficeLarge_STD2004_Seattle.csv"
+            },
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_sa_set": "VAV_BOT WITH REHEAT SUPPLY EQUIPMENT OUTLET NODE:System Node Setpoint Temperature [C](Each Call)"
+                },
+                "parameters": {
+                    "T_z_coo": 24.0
+                }
+            },
+            "verification_class": "SupplyAirTempReset"
+        },
     ]
 }
