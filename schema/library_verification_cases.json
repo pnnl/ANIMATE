@@ -249,6 +249,22 @@
                 }
             },
             "verification_class": "IntegratedEconomizerControl"
-        }
+        },
+        {
+            "no": 14,
+            "run_simulation": false,
+            "simulation_IO": {
+                "output": "ASHRAE901_OfficeLarge_STD2004_Seattle.csv"
+            },
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_sa_set": "VAV_BOT WITH REHEAT SUPPLY EQUIPMENT OUTLET NODE:System Node Setpoint Temperature [C](Each Call)"
+                },
+                "parameters": {
+                    "T_z_coo": 24.0
+                }
+            },
+            "verification_class": "SupplyAirTempReset"
+        },
     ]
 }
