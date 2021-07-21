@@ -265,6 +265,6 @@
                 }
             },
             "verification_class": "SupplyAirTempReset"
-        },
+        }
     ]
 }

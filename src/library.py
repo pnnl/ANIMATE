@@ -44,7 +44,7 @@ class SupplyAirTempReset(RuleCheckBase):
 
         self.result = (t_sa_set_max - t_sa_set_min) >= (
             self.df["T_z_coo"] - t_sa_set_min
-        ) * 0.25
+        ) * 0.25 * 0.99 # 0.99 being the numeric threshold
 
     def plot(self, plot_option, plt_pts=None):
         print("Specific plot method implemented, additional distribution plot is being added!")
@@ -63,6 +63,7 @@ class SupplyAirTempReset(RuleCheckBase):
             day = self.result[daystr]
             if daydf['T_sa_set'].max() - daydf['T_sa_set'].min() > 0:
                 return day, daydf
+            return day, daydf
 
 class EconomizerHighLimitA(RuleCheckBase):
     points = ["oa_db", "oa_threshold", "oa_min_flow", "oa_flow"]
@@ -147,11 +148,11 @@ class HWReset(RuleCheckBase):
             (self.df["m_hw"] <= 0)
             | (
                 (self.df["T_oa_db"] <= self.df["T_oa_min"])
-                & (self.df["T_hw"] == self.df["T_hw_max_st"])
+                & (self.df["T_hw"] >= self.df["T_hw_max_st"])
             )
             | (
                 (self.df["T_oa_db"] >= self.df["T_oa_max"])
-                & (self.df["T_hw"] == self.df["T_hw_min_st"])
+                & (self.df["T_hw"] <= self.df["T_hw_min_st"])
             )
             | (
                 (
@@ -182,11 +183,11 @@ class CHWReset(RuleCheckBase):
             (self.df["m_chw"] <= 0)
             | (
                 (self.df["T_oa_db"] <= self.df["T_oa_min"])
-                & (self.df["T_chw"] == self.df["T_chw_max_st"])
+                & (self.df["T_chw"] >= self.df["T_chw_max_st"])
             )
             | (
                 (self.df["T_oa_db"] >= self.df["T_oa_max"])
-                & (self.df["T_chw"] == self.df["T_chw_min_st"])
+                & (self.df["T_chw"] <= self.df["T_chw_min_st"])
             )
             | (
                 (
@@ -195,7 +196,7 @@ class CHWReset(RuleCheckBase):
                 )
                 & (
                     (self.df["T_chw"] >= self.df["T_chw_min_st"])
-                    & (self.df["T_chw"] <= self.df["T_chw_min_st"])
+                    & (self.df["T_chw"] <= self.df["T_chw_max_st"])
                 )
             )
         )
