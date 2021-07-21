@@ -1,0 +1,8 @@
+.idea
+.vscode
+.ipynb_checkpoints
+__pycache__
+*.idf
+*.epw
+resources/*/
+readvars.audit
