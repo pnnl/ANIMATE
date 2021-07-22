@@ -21,6 +21,7 @@ class CheckLibBase(ABC):
     """Abstract class defining interfaces for item-specific verification classes"""
 
     points = None
+    result = pd.DataFrame()
 
     def __init__(self, df: pd.DataFrame, params=None):
         full_df = df.copy(deep=True)
@@ -58,29 +59,69 @@ class CheckLibBase(ABC):
     def get_checks(self):
         return self.check_bool(), self.check_detail()
 
+    def plot(self, plot_option, plt_pts=None):
+        """default plot function for showing result"""
+        if plt_pts is None:
+            plt_pts = self.df.columns.tolist()
 
-class RuleCheckBase(CheckLibBase):
-    def check_bool(self) -> bool:
-        if len(self.result[self.result == False] > 0):
-            return False
+        if plot_option is None:
+            return
+
+        plot_option = plot_option.strip().lower()
+        if plot_option == 'all-compact':
+            self.all_plot_aio(plt_pts)
+        elif plot_option == 'all-expand':
+            self.all_plot_obo(plt_pts)
+        elif plot_option == 'day-compact':
+            self.day_plot_aio(plt_pts)
+        elif plot_option == 'day-expand':
+            self.day_plot_obo(plt_pts)
         else:
-            return True
+            print("Invalid plot option!")
+        return
 
-    def check_detail(self) -> Dict:
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
-        }
+    def all_plot_aio(self, plt_pts):
+        """All in one plot of all samples"""
 
-        print("Verification results dict: ")
-        print(output)
-
-        ax1 = plt.subplot(311)
+        # flag
+        ax1 = plt.subplot(211)
         sns.scatterplot(x=self.result.index, y=self.result, linewidth=0, s=1)
         plt.xlim([self.df.index[0], self.df.index[-1]])
         plt.ylim([-0.2, 1.2])
-        plt.title(f"Pass / Fail flag plot - {self.__class__.__name__}")
+        plt.title(f"All samples Pass / Fail flag plot - {self.__class__.__name__}")
+
+        # datapoints
+        ax2 = plt.subplot(212)
+        self.df[plt_pts].plot(ax=ax2)
+        plt.title(f"All samples data points plot - {self.__class__.__name__}")
+        plt.tight_layout()
+        plt.show()
+        print()
+
+    def all_plot_obo(self, plt_pts):
+        """One by one plot of all samples"""
+        num_plots = len(plt_pts) + 1
+
+        # flag
+        ax1 = plt.subplot(int(f"{num_plots}11"))
+        sns.scatterplot(x=self.result.index, y=self.result, linewidth=0, s=1)
+        plt.xlim([self.df.index[0], self.df.index[-1]])
+        plt.ylim([-0.2, 1.2])
+        plt.title(f"All samples Pass / Fail flag plot - {self.__class__.__name__}")
+
+        # datapoints
+        i = 2
+        for pt in plt_pts:
+            subplot_int = int(f"{num_plots}1{i}")
+            axx = plt.subplot(subplot_int)
+            self.df[pt].plot(ax=axx)
+            plt.title(f"All samples - {pt} - {self.__class__.__name__}")
+            i += 1
+        plt.tight_layout()
+        plt.show()
+        print()
+
+    def calculate_plot_day(self):
 
         trueday = None
         truedaydf = None
@@ -111,16 +152,11 @@ class RuleCheckBase(CheckLibBase):
                 continue
 
             new_ratio = len(day[day == True]) / len(day) - 0.5
-            # print(new_ratio)
-
-            # print(f"newratio: {new_ratio}")
 
             if abs(new_ratio) < abs(ratio):
                 ratio = new_ratio
                 mixday = day
                 mixdaydf = daydf
-                # print(ratio)
-        # print(f"Final plot ratio: {ratio}")
 
         if mixdaydf is None:
             plotdaydf = daydf
@@ -129,47 +165,72 @@ class RuleCheckBase(CheckLibBase):
             plotdaydf = mixdaydf
             plotday = mixday
 
-        # below are for humidity demo
-        ax2 = plt.subplot(312)
-        plotdaydf.plot(ax=ax2)
-        plt.title(f"Example day plot - {self.__class__.__name__}")
+        return plotday, plotdaydf
 
-        ax3 = plt.subplot(313)
+    def day_plot_aio(self, plt_pts):
+        """ALl in one plot for one day"""
+        plotday, plotdaydf = self.calculate_plot_day()
+
+        #flag
+        ax1 = plt.subplot(211)
         sns.scatterplot(x=plotday.index, y=plotday)
         plt.xlim([plotday.index[0], plotday.index[-1]])
         plt.ylim([-0.2, 1.2])
         plt.title(f"Example day Pass / Fail flag - {self.__class__.__name__}")
+
+        # datapoints
+        ax2 = plt.subplot(212)
+        plotdaydf[plt_pts].plot(ax=ax2)
+        plt.title(f"Example day data points plot - {self.__class__.__name__}")
+        plt.tight_layout()
         plt.show()
+        print()
 
-        # below are for non int economizer demo
-        # plotdaydf[['Cool_sys_out']].plot()
-        # plt.xlabel("Date/Time")
-        # plt.ylabel("Variable value")
-        # plt.tight_layout()
-        # plt.savefig("1.png")
-        # plt.show()
-        # plotdaydf[['OA_min_sys', 'OA_timestep']].plot()
-        # plt.xlabel("Date/Time")
-        # plt.ylabel("Variable value")
-        # plt.tight_layout()
-        # plt.savefig("2.png")
-        # plt.show()
-        # # sns.scatterplot(x=plotday.index, y=plotday)
-        # # plt.xlim([plotday.index[0], plotday.index[-1]])
-        # # plotday = pd.DataFrame(plotday.astype(float))
-        # plotday.astype(float).plot()
-        # plt.title("Not ($OA_timestep > $OA_min_sys and $Cool_sys_out > 0)")
-        # plt.xlabel("Date/Time")
-        # plt.ylabel("Variable value")
-        # plt.tight_layout()
-        # plt.savefig("3.png")
-        # plt.show()
+    def day_plot_obo(self, plt_pts):
+        """One by one plot of all samples"""
+        plotday, plotdaydf = self.calculate_plot_day()
+        num_plots = len(plt_pts) + 1
 
-        return output
+        # flag
+        ax1 = plt.subplot(int(f"{num_plots}11"))
+        sns.scatterplot(x=plotday.index, y=plotday)
+        plt.xlim([plotday.index[0], plotday.index[-1]])
+        plt.ylim([-0.2, 1.2])
+        plt.title(f"Example day Pass / Fail flag plot - {self.__class__.__name__}")
+
+        # datapoints
+        i = 2
+        for pt in plt_pts:
+            subplot_int = int(f"{num_plots}1{i}")
+            axx = plt.subplot(subplot_int)
+            plotdaydf[pt].plot(ax=axx)
+            plt.title(f"Example day - {pt} - {self.__class__.__name__}")
+            i += 1
+        plt.tight_layout()
+        plt.show()
+        print()
 
     def daterange(self, start_date, end_date):
         for n in range(int((end_date - start_date).days)):
             yield start_date + timedelta(n)
+
+class RuleCheckBase(CheckLibBase):
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == False] > 0):
+            return False
+        else:
+            return True
+
+    def check_detail(self) -> Dict:
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+        }
+
+        print("Verification results dict: ")
+        print(output)
+        return output
 
 
 class EconomizerIntegrationCompliance(RuleCheckBase):

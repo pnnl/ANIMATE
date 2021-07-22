@@ -183,8 +183,8 @@
             "datapoints_source": {
                 "idf_output_variables": {
                     "T_oa_db": "Environment:Site Outdoor Air Drybulb Temperature [C](TimeStep)",
-                    "T_hw": "HeatSys1 Supply Outlet Node:System Node Mass Flow Rate [kg/s](TimeStep)",
-                    "m_hw": "HeatSys1 Supply Outlet Node:System Node Temperature [C](TimeStep)"
+                    "T_hw": "HeatSys1 Supply Outlet Node:System Node Temperature [C](TimeStep)",
+                    "m_hw": "HeatSys1 Supply Outlet Node:System Node Mass Flow Rate [kg/s](TimeStep)"
                 },
                 "parameters": {
                     "T_oa_max": 10,
@@ -204,8 +204,8 @@
             "datapoints_source": {
                 "idf_output_variables": {
                     "T_oa_db": "Environment:Site Outdoor Air Drybulb Temperature [C](TimeStep)",
-                    "T_chw": "CoolSys1 Supply Outlet Node:System Node Mass Flow Rate [kg/s](TimeStep)",
-                    "m_chw": "CoolSys1 Supply Outlet Node:System Node Temperature [C](TimeStep)"
+                    "T_chw": "CoolSys1 Supply Outlet Node:System Node Temperature [C](TimeStep)",
+                    "m_chw": "CoolSys1 Supply Outlet Node:System Node Mass Flow Rate [kg/s](TimeStep)"
                 },
                 "parameters": {
                     "T_oa_max": 21.11,
@@ -249,6 +249,22 @@
                 }
             },
             "verification_class": "IntegratedEconomizerControl"
+        },
+        {
+            "no": 14,
+            "run_simulation": false,
+            "simulation_IO": {
+                "output": "ASHRAE901_OfficeLarge_STD2004_Seattle.csv"
+            },
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_sa_set": "VAV_BOT WITH REHEAT SUPPLY EQUIPMENT OUTLET NODE:System Node Setpoint Temperature [C](Each Call)"
+                },
+                "parameters": {
+                    "T_z_coo": 24.0
+                }
+            },
+            "verification_class": "SupplyAirTempReset"
         }
     ]
 }

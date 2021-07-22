@@ -14,12 +14,12 @@ class IntegratedEconomizerControl(CheckLibBase):
     points = ["oa_min_flow", "oa_flow", "ccoil_out"]
 
     def verify(self):
-        self.flag = (self.df["oa_flow"] > self.df["oa_min_flow"]) & (
+        self.result = (self.df["oa_flow"] > self.df["oa_min_flow"]) & (
             self.df["ccoil_out"] > 0
         )
 
     def check_bool(self) -> bool:
-        if len(self.flag[self.flag == True] > 0):
+        if len(self.result[self.result == True] > 0):
             return True
         else:
             return False
@@ -27,10 +27,9 @@ class IntegratedEconomizerControl(CheckLibBase):
     def check_detail(self):
         print("Verification results dict: ")
         output = {
-            "Sample #": len(self.flag),
-            "Pass #": len(self.flag[self.flag == True]),
-            "Fail #": len(self.flag[self.flag == False]),
-            "Note": "No plots for verification of Integrated Economizer Control, this verification is considered passed as long as any sample passes",
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False])
         }
         print(output)
 
@@ -45,10 +44,26 @@ class SupplyAirTempReset(RuleCheckBase):
 
         self.result = (t_sa_set_max - t_sa_set_min) >= (
             self.df["T_z_coo"] - t_sa_set_min
-        ) * 0.25
+        ) * 0.25 * 0.99 # 0.99 being the numeric threshold
 
-        print("debug use")
+    def plot(self, plot_option, plt_pts=None):
+        print("Specific plot method implemented, additional distribution plot is being added!")
+        # plt.hist(self.df['T_sa_set'], bins=10)
+        sns.distplot(self.df['T_sa_set'])
+        plt.title("All samples distribution of T_sa_set")
+        plt.show()
 
+        super().plot(plot_option, plt_pts)
+
+    def calculate_plot_day(self):
+        """over write method to select day for day plot"""
+        for one_day in self.daterange(date(2000, 1, 1), date(2001, 1, 1)):
+            daystr = f"{str(one_day.year)}-{str(one_day.month)}-{str(one_day.day)}"
+            daydf = self.df[daystr]
+            day = self.result[daystr]
+            if daydf['T_sa_set'].max() - daydf['T_sa_set'].min() > 0:
+                return day, daydf
+            return day, daydf
 
 class EconomizerHighLimitA(RuleCheckBase):
     points = ["oa_db", "oa_threshold", "oa_min_flow", "oa_flow"]
@@ -83,8 +98,10 @@ class EconomizerHighLimitC(RuleCheckBase):
     def verify(self):
         self.result = ~(
             (self.df["oa_flow"] > self.df["oa_min_flow"])
-            & (self.df["oa_db"] > self.df["oa_threshold"])
-            & (self.df["oa_enth"] > self.df["oa_enth_threshold"])
+            & (
+                (self.df["oa_db"] > self.df["oa_threshold"])
+                | (self.df["oa_enth"] > self.df["oa_enth_threshold"])
+            )
         )
 
 
@@ -101,8 +118,10 @@ class EconomizerHighLimitD(RuleCheckBase):
     def verify(self):
         self.result = ~(
             (self.df["oa_flow"] > self.df["oa_min_flow"])
-            & (self.df["ret_a_enth"] > self.df["oa_enth"])
-            & (self.df["oa_db"] > self.df["oa_threshold"])
+            & (
+                (self.df["ret_a_enth"] < self.df["oa_enth"])
+                | (self.df["oa_db"] > self.df["oa_threshold"])
+            )
         )
 
 
@@ -110,7 +129,7 @@ class ZoneTempControl(RuleCheckBase):
     points = ["T_z_set_cool", "T_z_set_heat"]
 
     def verify(self):
-        self.result = (self.df["T_z_set_cool"] - self.df["T_z_set_heat"]) > 5
+        self.result = (self.df["T_z_set_cool"] - self.df["T_z_set_heat"]) > 2.77
 
 
 class HWReset(RuleCheckBase):
@@ -129,11 +148,11 @@ class HWReset(RuleCheckBase):
             (self.df["m_hw"] <= 0)
             | (
                 (self.df["T_oa_db"] <= self.df["T_oa_min"])
-                & (self.df["T_hw"] == self.df["T_hw_max_st"])
+                & (self.df["T_hw"] >= self.df["T_hw_max_st"])
             )
             | (
                 (self.df["T_oa_db"] >= self.df["T_oa_max"])
-                & (self.df["T_hw"] == self.df["T_hw_min_st"])
+                & (self.df["T_hw"] <= self.df["T_hw_min_st"])
             )
             | (
                 (
@@ -164,11 +183,11 @@ class CHWReset(RuleCheckBase):
             (self.df["m_chw"] <= 0)
             | (
                 (self.df["T_oa_db"] <= self.df["T_oa_min"])
-                & (self.df["T_chw"] == self.df["T_chw_max_st"])
+                & (self.df["T_chw"] >= self.df["T_chw_max_st"])
             )
             | (
                 (self.df["T_oa_db"] >= self.df["T_oa_max"])
-                & (self.df["T_chw"] == self.df["T_chw_min_st"])
+                & (self.df["T_chw"] <= self.df["T_chw_min_st"])
             )
             | (
                 (
@@ -177,7 +196,7 @@ class CHWReset(RuleCheckBase):
                 )
                 & (
                     (self.df["T_chw"] >= self.df["T_chw_min_st"])
-                    & (self.df["T_chw"] <= self.df["T_chw_min_st"])
+                    & (self.df["T_chw"] <= self.df["T_chw_max_st"])
                 )
             )
         )

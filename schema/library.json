@@ -70,7 +70,7 @@
             "oa_enth_threshold": "OA enthalpy threshold"
         },
         "description_assertions": [
-            "(oa_flow > oa_min_flow) AND (oa_db > oa_threshold) AND (oa_enth > oa_enth_threshold)"
+            "(oa_flow > oa_min_flow) AND ((oa_db > oa_threshold) OR (oa_enth > oa_enth_threshold))"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "fail"
@@ -91,7 +91,7 @@
             "ret_a_enth": "Return air enthalpy"
         },
         "description_assertions": [
-            "oa_flow > oa_min_flow) AND (ret_a_enth < oa_enth) AND (oa_db > oa_threshold)"
+            "oa_flow > oa_min_flow) AND ((ret_a_enth < oa_enth) OR (oa_db > oa_threshold))"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "fail"
@@ -134,7 +134,7 @@
     },
     "ZoneTempControl": {
         "library_item_id": 8,
-        "description_brief": "Zone temperature setpoint deadband >= 5C",
+        "description_brief": "Zone temperature setpoint deadband >= 5F (2.77C)",
         "description_detail": "Where used to control both heating and cooling, zone thermostatic controls shall be capable of and configured to provide a temperature range or dead band of at least 5°F within which the supply of heating and cooling energy to the zone is shut off or reduced to a minimum.",
         "description_index": [
             "Section 6.4.3.1.2 in 90.1-2016"
@@ -144,7 +144,7 @@
             "T_z_set_heat": "Zone heating temperature setpoint"
         },
         "description_assertions": [
-            "T_z_set_cool - T_z_set_heat > 5C"
+            "T_z_set_cool - T_z_set_heat > 5F (2.77C)"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"

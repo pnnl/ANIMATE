@@ -4,11 +4,12 @@ from library import *
 from datetimeep import DateTimeEP
 
 
-def run_libcase(item_dict):
+def run_libcase(item_dict, plot_option="all-compact"):
     """Library case runner
 
     Args:
         item_dict (Dict): verification item dict loaded from json files through `assemble_verification_items`
+        plot_option: result plotting option.
     """
 
     item = build_an_item(item_dict)
@@ -69,7 +70,9 @@ def run_libcase(item_dict):
         if ("parameters" in item.item["datapoints_source"])
         else None
     )
-    outcome = cls(df, parameters).get_checks
+    verification_obj = cls(df, parameters)
+    outcome = verification_obj.get_checks
+    verification_obj.plot(plot_option)
 
 
 def main():
