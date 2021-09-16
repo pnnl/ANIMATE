@@ -200,3 +200,89 @@ class CHWReset(RuleCheckBase):
                 )
             )
         )
+
+class ZoneHeatSetpointMinimum(CheckLibBase):
+    points = ["T_heat_set"]
+
+    def verify(self):
+        self.result = (self.df["T_heat_set"] <= 12.78)
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False])
+        }
+        print(output)
+
+class ZoneCoolingSetpointMaximum(CheckLibBase):
+    points = ["T_cool_set"]
+
+    def verify(self):
+        self.result = (self.df["T_cool_set"] >= 32.22)
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False])
+        }
+        print(output)
+
+class ZoneHeatingResetDepth(CheckLibBase):
+    points = ["T_heat_set"]
+
+    def verify(self):
+        self.t_heat_set_min = min(sef.df["T_heat_set"])
+        self.t_heat_set_max = max(sef.df["T_heat_set"])
+
+
+        self.result = (self.t_heat_set_max - self.t_heat_set_min) >= 5.55
+
+    def check_bool(self) -> bool:
+        return self.result
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "max(T_heat_set)": self.t_heat_set_max,
+            "min(T_heat_set": self.t_heat_set_min
+        }
+        print(output)
+
+class ZonecoolingResetDepth(CheckLibBase):
+    points = ["T_cool_set"]
+
+    def verify(self):
+        self.t_cool_set_min = min(sef.df["T_cool_set"])
+        self.t_cool_set_max = max(sef.df["T_cool_set"])
+
+
+        self.result = (self.t_cool_set_max - self.t_cool_set_min) >= 2.77
+
+    def check_bool(self) -> bool:
+        return self.result
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "max(T_cool_set)": self.t_cool_set_max,
+            "min(T_cool_set": self.t_cool_set_min
+        }
+        print(output)
