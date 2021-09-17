@@ -1,3 +1,6 @@
+"""
+This file contains the runner of verification cases to be called by the user with the spply of an item and plotting option
+"""
 # %% Import packages
 from workflowsteps import *
 from library import *

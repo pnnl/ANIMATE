@@ -1,3 +1,6 @@
+"""
+This file contains all verification item claases
+"""
 # %% Import packages
 from abc import ABC, abstractmethod
 from checklib import CheckLibBase

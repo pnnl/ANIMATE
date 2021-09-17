@@ -1,3 +1,7 @@
+"""
+This file containing the high level interface for implementing verificaiton item classes in library.py
+"""
+
 # %% Supress future warning if needed
 import warnings
 warnings.simplefilter(action="ignore", category=FutureWarning)
