@@ -189,7 +189,7 @@
             "datapoints_source": {
                 "idf_output_variables": {
                     "oa_flow": {
-                        "subject": "PSZ-AC:2_OAInlet Node",
+                        "subject": "PSZ-AC:1_OAInlet Node",
                         "variable": "System Node Standard Density Volume Flow Rate",
                         "frequency": "detailed"
                     },
