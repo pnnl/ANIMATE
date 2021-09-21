@@ -1,3 +1,6 @@
+"""
+This file contains the runner of verification cases to be called by the user with the spply of an item and plotting option
+"""
 # %% Import packages
 from workflowsteps import *
 from library import *
@@ -19,7 +22,7 @@ def run_libcase(item_dict, plot_option="all-compact"):
     idf_outputs.extend(read_injection_points(item))
     unique_output = combine_injection_points(idf_outputs)
 
-    if "idf_objects" in item.points.keys():
+    if "idf_output_variables" in item.points.keys():
         need_injection = True
     else:
         need_injection = False

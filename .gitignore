@@ -4,5 +4,6 @@
 __pycache__
 *.idf
 *.epw
+*.zip
 resources/*/
 readvars.audit
