@@ -31,7 +31,13 @@ def run_libcase(item_dict, plot_option="all-compact"):
     if need_injection or run_sim:
         original_idf_path = item.item["simulation_IO"]["idf"].strip()
         idd_path = item.item["simulation_IO"]["idd"].strip()
-        run_path = f"{original_idf_path.split('.idf')[0]}"
+        #run_path = f"{original_idf_path.split('.idf')[0]}"
+        if ".idf" in original_idf_path.lower():
+            run_path = f"{original_idf_path[:-4]}"
+        elif ".epjson" in original_idf_path.lower():
+            run_path = f"{original_idf_path[:-7]}"
+        else:
+            run_path = original_idf_path
 
     if need_injection:
         instrumented_idf_path = f"{original_idf_path.split('.idf')[0]}_injected.idf"
@@ -48,7 +54,10 @@ def run_libcase(item_dict, plot_option="all-compact"):
 
     if run_sim:
         weather_path = item.item["simulation_IO"]["weather"].strip()
-        run_simulation(idfpath=run_idf_path, weatherpath=weather_path)
+        if "ep_path" in list(item.item["simulation_IO"].keys()):
+            run_simulation(idfpath=run_idf_path, weatherpath=weather_path, ep_path=item.item["simulation_IO"]["ep_path"])
+        else:
+            run_simulation(idfpath=run_idf_path, weatherpath=weather_path)
         print("simulation done")
 
     if run_sim:

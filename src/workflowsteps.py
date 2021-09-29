@@ -90,15 +90,16 @@ def inject_idf(
     injector.save(idf_file_out=idfpath_out)
 
 
-def run_simulation(idfpath: str, weatherpath: str) -> None:
+def run_simulation(idfpath: str, weatherpath: str, ep_path: str) -> None:
     """run energyplus simulation, handle all items
 
     Args:
         idfpath: path to the idf for energyplus simulation
         weatherpath: path to the weather file used for simulation
+        ep_path: path to energyplus folder
 
     """
-    eprun = EPRunner(idf_path=idfpath, weather_path=weatherpath)
+    eprun = EPRunner(idf_path=idfpath, weather_path=weatherpath, ep_path=ep_path)
     print(f"Running simulation: {idfpath} -- {datetime.now()}")
     eprun.run_simulation()
     print(f"Simulation complete -- {datetime.now()}")
