@@ -4,7 +4,7 @@
             "no": "0",
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/tspr_cases/sat_reset/sat_reset.idf",
+                "idf": "../test_cases/tspr_cases/sat_reset/sat_reset.idf",
                 "idd": "../resources/Energy+V9_2_0.idd",
                 "weather": "../weather/USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw",
                 "output": "eplusout.csv",
@@ -29,7 +29,7 @@
             "no": "1",
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/tspr_cases/sat_reset/sat_reset2.idf",
+                "idf": "../test_cases/tspr_cases/sat_reset/sat_reset2.idf",
                 "idd": "../resources/Energy+V9_2_0.idd",
                 "weather": "../weather/USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw",
                 "output": "eplusout.csv",
@@ -54,7 +54,7 @@
             "no": "2",
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/tspr_cases/chw_reset/chw_reset.idf",
+                "idf": "../test_cases/tspr_cases/chw_reset/chw_reset.idf",
                 "idd": "../resources/Energy+V9_2_0.idd",
                 "weather": "../weather/USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw",
                 "output": "eplusout.csv",

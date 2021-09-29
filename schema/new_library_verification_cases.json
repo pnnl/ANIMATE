@@ -4,10 +4,11 @@
             "no": 1,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case1.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case1.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "pass",
             "datapoints_source": {
@@ -28,10 +29,11 @@
             "no": 2,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case2.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case2.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "fail",
             "datapoints_source": {
@@ -52,10 +54,11 @@
             "no": 3,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case3.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case3.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "pass",
             "datapoints_source": {
@@ -76,10 +79,11 @@
             "no": 4,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case4.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case4.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "fail",
             "datapoints_source": {
@@ -100,10 +104,11 @@
             "no": 5,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case5.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case5.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "pass",
             "datapoints_source": {
@@ -140,10 +145,11 @@
             "no": 6,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case6.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case6.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "fail",
             "datapoints_source": {
@@ -180,10 +186,11 @@
             "no": 7,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_RetailStandalone_STD2004_Seattle_Case7.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_RetailStandalone_STD2004_Seattle_Case7.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "pass",
             "datapoints_source": {
@@ -209,10 +216,11 @@
             "no": 8,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_RetailStandalone_STD2004_Buffalo_Case8.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_RetailStandalone_STD2004_Buffalo_Case8.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_NY_Buffalo.Niagara.Intl.AP.725280_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "fail",
             "datapoints_source": {
@@ -238,10 +246,11 @@
             "no": 9,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case9.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case9.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "pass",
             "datapoints_source": {
@@ -275,10 +284,11 @@
             "no": 10,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case10.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case10.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "fail",
             "datapoints_source": {
@@ -312,10 +322,11 @@
             "no": 11,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case11.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case11.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "pass",
             "datapoints_source": {
@@ -349,10 +360,11 @@
             "no": 12,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../resources/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case12.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case12.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv"
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "fail",
             "datapoints_source": {
