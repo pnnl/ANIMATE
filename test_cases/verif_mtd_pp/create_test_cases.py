@@ -11,7 +11,8 @@ from libcases import *
 from datetimeep import DateTimeEP
 from eppy.modeleditor import IDF
 
-IDF.setiddname("C:/EnergyPlusV9-0-1/Energy+.idd")
+# IDF.setiddname("C:/EnergyPlusV9-0-1/Energy+.idd")
+IDF.setiddname("../../resources/Energy+V9_0_1.idd")
 
 
 def chwreset(idf, idf_f, id, cases):
@@ -21,7 +22,7 @@ def chwreset(idf, idf_f, id, cases):
     if len(chwloops):
         print(
             "Adding CHWReset verification items for {}".format(
-                idf_f.split("\\")[-1].replace(".idf", "")
+                idf_f.split("/")[-1].replace(".idf", "")
             )
         )
 
@@ -49,7 +50,7 @@ def chwreset(idf, idf_f, id, cases):
         # Define simulation IO
         chw_case["run_simulation"] = True
         chw_case["simulation_IO"] = {
-            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("\\")[-1]),
+            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("/")[-1]),
             "idd": "../resources/Energy+V9_0_1.idd",
             "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
             "output": "eplusout.csv",
@@ -94,7 +95,7 @@ def hwreset(idf, idf_f, id, cases):
     if len(hwloops):
         print(
             "Adding HWReset verification items for {}".format(
-                idf_f.split("\\")[-1].replace(".idf", "")
+                idf_f.split("/")[-1].replace(".idf", "")
             )
         )
 
@@ -115,7 +116,7 @@ def hwreset(idf, idf_f, id, cases):
         # Define simulation IO
         hw_case["run_simulation"] = True
         hw_case["simulation_IO"] = {
-            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("\\")[-1]),
+            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("/")[-1]),
             "idd": "../resources/Energy+V9_0_1.idd",
             "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
             "output": "eplusout.csv",
@@ -191,7 +192,7 @@ def sat_reset(idf, idf_f, id, cases):
     if bldg_type != "":
         print(
             "Adding SupplyAirTempReset verification items for {}".format(
-                idf_f.split("\\")[-1].replace(".idf", "")
+                idf_f.split("/")[-1].replace(".idf", "")
             )
         )
         for airloop_tz_coo in applicable_cases[bldg_type]:
@@ -210,7 +211,7 @@ def sat_reset(idf, idf_f, id, cases):
             sat_case["run_simulation"] = True
             sat_case["simulation_IO"] = {
                 "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(
-                    idf_f.split("\\")[-1]
+                    idf_f.split("/")[-1]
                 ),
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
@@ -237,7 +238,7 @@ def sat_reset(idf, idf_f, id, cases):
 def zone_temp_ctrl(idf, idf_f, id, cases):
     print(
         "Adding ZoneTempControl verification items for {}".format(
-            idf_f.split("\\")[-1].replace(".idf", "")
+            idf_f.split("/")[-1].replace(".idf", "")
         )
     )
     for zone in idf.idfobjects["ZONE"]:
@@ -248,7 +249,7 @@ def zone_temp_ctrl(idf, idf_f, id, cases):
         # Define simulation IO
         zone_temp_ctrl["run_simulation"] = True
         zone_temp_ctrl["simulation_IO"] = {
-            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("\\")[-1]),
+            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("/")[-1]),
             "idd": "../resources/Energy+V9_0_1.idd",
             "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
             "output": "eplusout.csv",
@@ -278,7 +279,7 @@ def zone_temp_ctrl(idf, idf_f, id, cases):
 def zone_temp_ctrl_depth_htg(idf, idf_f, id, cases):
     print(
         "Adding ZoneHeatingResetDepth verification items for {}".format(
-            idf_f.split("\\")[-1].replace(".idf", "")
+            idf_f.split("/")[-1].replace(".idf", "")
         )
     )
     for zone in idf.idfobjects["ZONE"]:
@@ -289,7 +290,7 @@ def zone_temp_ctrl_depth_htg(idf, idf_f, id, cases):
         # Define simulation IO
         zone_temp_ctrl_depth_htg["run_simulation"] = True
         zone_temp_ctrl_depth_htg["simulation_IO"] = {
-            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("\\")[-1]),
+            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("/")[-1]),
             "idd": "../resources/Energy+V9_0_1.idd",
             "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
             "output": "eplusout.csv",
@@ -314,7 +315,7 @@ def zone_temp_ctrl_depth_htg(idf, idf_f, id, cases):
 def zone_temp_ctrl_depth_clg(idf, idf_f, id, cases):
     print(
         "Adding ZoneCoolingResetDepth verification items for {}".format(
-            idf_f.split("\\")[-1].replace(".idf", "")
+            idf_f.split("/")[-1].replace(".idf", "")
         )
     )
     for zone in idf.idfobjects["ZONE"]:
@@ -325,7 +326,7 @@ def zone_temp_ctrl_depth_clg(idf, idf_f, id, cases):
         # Define simulation IO
         zone_temp_ctrl_depth_clg["run_simulation"] = True
         zone_temp_ctrl_depth_clg["simulation_IO"] = {
-            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("\\")[-1]),
+            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("/")[-1]),
             "idd": "../resources/Energy+V9_0_1.idd",
             "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
             "output": "eplusout.csv",
@@ -350,7 +351,7 @@ def zone_temp_ctrl_depth_clg(idf, idf_f, id, cases):
 def zone_temp_ctrl_min(idf, idf_f, id, cases):
     print(
         "Adding ZoneHeatSetpointMinimum verification items for {}".format(
-            idf_f.split("\\")[-1].replace(".idf", "")
+            idf_f.split("/")[-1].replace(".idf", "")
         )
     )
     for zone in idf.idfobjects["ZONE"]:
@@ -361,7 +362,7 @@ def zone_temp_ctrl_min(idf, idf_f, id, cases):
         # Define simulation IO
         zone_temp_ctrl_min["run_simulation"] = True
         zone_temp_ctrl_min["simulation_IO"] = {
-            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("\\")[-1]),
+            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("/")[-1]),
             "idd": "../resources/Energy+V9_0_1.idd",
             "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
             "output": "eplusout.csv",
@@ -386,7 +387,7 @@ def zone_temp_ctrl_min(idf, idf_f, id, cases):
 def zone_temp_ctrl_max(idf, idf_f, id, cases):
     print(
         "Adding ZoneHeatSetpointMaximum verification items for {}".format(
-            idf_f.split("\\")[-1].replace(".idf", "")
+            idf_f.split("/")[-1].replace(".idf", "")
         )
     )
     for zone in idf.idfobjects["ZONE"]:
@@ -397,7 +398,7 @@ def zone_temp_ctrl_max(idf, idf_f, id, cases):
         # Define simulation IO
         zone_temp_ctrl_max["run_simulation"] = True
         zone_temp_ctrl_max["simulation_IO"] = {
-            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("\\")[-1]),
+            "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(idf_f.split("/")[-1]),
             "idd": "../resources/Energy+V9_0_1.idd",
             "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
             "output": "eplusout.csv",
@@ -511,7 +512,7 @@ def integrated_econ(idf, idf_f, id, cases):
                                     if rep:
                                         print(
                                             "Adding IntegratedEconomizerControl verification items for {}".format(
-                                                idf_f.split("\\")[-1].replace(
+                                                idf_f.split("/")[-1].replace(
                                                     ".idf", ""
                                                 )
                                             )
@@ -527,7 +528,7 @@ def integrated_econ(idf, idf_f, id, cases):
                                     integrated_econ["run_simulation"] = True
                                     integrated_econ["simulation_IO"] = {
                                         "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(
-                                            idf_f.split("\\")[-1]
+                                            idf_f.split("/")[-1]
                                         ),
                                         "idd": "../resources/Energy+V9_0_1.idd",
                                         "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
@@ -643,7 +644,7 @@ def diff_enthalpy_econ(idf, idf_f, id, cases):
                     if rep:
                         print(
                             "Adding EconomizerHighLimitD verification items for {}".format(
-                                idf_f.split("\\")[-1].replace(".idf", "")
+                                idf_f.split("/")[-1].replace(".idf", "")
                             )
                         )
                         rep = False
@@ -658,7 +659,7 @@ def diff_enthalpy_econ(idf, idf_f, id, cases):
                     diff_enthalpy_econ["run_simulation"] = True
                     diff_enthalpy_econ["simulation_IO"] = {
                         "idf": "../test_cases/verif_mtd_pp/idfs/{}".format(
-                            idf_f.split("\\")[-1]
+                            idf_f.split("/")[-1]
                         ),
                         "idd": "../resources/Energy+V9_0_1.idd",
                         "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
@@ -717,11 +718,11 @@ def create_cases():
             cases, id = sat_reset(idf, idf_f, id, cases)
 
             # Zone temperature setpoint deadband
-            cases, id = zone_temp_ctrl(idf, idf_f, id, cases)
-            cases, id = zone_temp_ctrl_depth_htg(idf, idf_f, id, cases)
-            cases, id = zone_temp_ctrl_depth_clg(idf, idf_f, id, cases)
-            cases, id = zone_temp_ctrl_min(idf, idf_f, id, cases)
-            cases, id = zone_temp_ctrl_max(idf, idf_f, id, cases)
+            # cases, id = zone_temp_ctrl(idf, idf_f, id, cases)
+            # cases, id = zone_temp_ctrl_depth_htg(idf, idf_f, id, cases)
+            # cases, id = zone_temp_ctrl_depth_clg(idf, idf_f, id, cases)
+            # cases, id = zone_temp_ctrl_min(idf, idf_f, id, cases)
+            # cases, id = zone_temp_ctrl_max(idf, idf_f, id, cases)
 
             # Integrated economizer
             cases, id = integrated_econ(idf, idf_f, id, cases)

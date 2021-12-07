@@ -275,8 +275,8 @@ class ZoneHeatingResetDepth(CheckLibBase):
     points = ["T_heat_set"]
 
     def verify(self):
-        self.t_heat_set_min = min(sef.df["T_heat_set"])
-        self.t_heat_set_max = max(sef.df["T_heat_set"])
+        self.t_heat_set_min = min(self.df["T_heat_set"])
+        self.t_heat_set_max = max(self.df["T_heat_set"])
 
         self.result = (self.t_heat_set_max - self.t_heat_set_min) >= 5.55
 
@@ -297,8 +297,8 @@ class ZonecoolingResetDepth(CheckLibBase):
     points = ["T_cool_set"]
 
     def verify(self):
-        self.t_cool_set_min = min(sef.df["T_cool_set"])
-        self.t_cool_set_max = max(sef.df["T_cool_set"])
+        self.t_cool_set_min = min(self.df["T_cool_set"])
+        self.t_cool_set_max = max(self.df["T_cool_set"])
 
         self.result = (self.t_cool_set_max - self.t_cool_set_min) >= 2.77
 

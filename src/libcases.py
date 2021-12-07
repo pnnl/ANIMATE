@@ -28,7 +28,7 @@ def run_libcase(item_dict, plot_option="all-compact"):
         need_injection = False
     run_sim = item.item["run_simulation"]
 
-    if need_injection or run_sim:
+    if need_injection and run_sim:
         original_idf_path = item.item["simulation_IO"]["idf"].strip()
         idd_path = item.item["simulation_IO"]["idd"].strip()
         #run_path = f"{original_idf_path.split('.idf')[0]}"
