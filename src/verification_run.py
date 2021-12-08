@@ -1,7 +1,6 @@
 #%% Load Framework and library
 import os, sys
 
-os.chdir("../../src")
 # %%
 from workflowsteps import *
 from library import *
@@ -19,5 +18,5 @@ items = assemble_verification_items(
 
 # %%
 plt.rcParams["figure.figsize"] = [16, 4 * 2]
-run_libcase(items[0])
+run_libcase(items[30])
 # %%

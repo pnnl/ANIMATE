@@ -40,8 +40,8 @@ def run_libcase(item_dict, plot_option="all-compact"):
             run_path = original_idf_path
 
     if need_injection:
-        instrumented_idf_path = f"{original_idf_path.split('.idf')[0]}_injected.idf"
-        run_path = f"{run_path}_injected"
+        instrumented_idf_path = f"{original_idf_path.split('.idf')[0]}_injected_{item_dict['no']}.idf"
+        run_path = f"{run_path}_injected_{item_dict['no']}"
         inject_idf(
             iddpath=idd_path,
             idfpath_in=original_idf_path,
@@ -82,7 +82,7 @@ def run_libcase(item_dict, plot_option="all-compact"):
         if ("parameters" in item.item["datapoints_source"])
         else None
     )
-    verification_obj = cls(df, parameters)
+    verification_obj = cls(df, parameters, f"{run_path}")
     outcome = verification_obj.get_checks
     verification_obj.plot(plot_option)
 

@@ -27,7 +27,7 @@ class CheckLibBase(ABC):
     points = None
     result = pd.DataFrame()
 
-    def __init__(self, df: pd.DataFrame, params=None):
+    def __init__(self, df: pd.DataFrame, params=None, results_folder=None):
         full_df = df.copy(deep=True)
         if params is not None:
             for k, v in params.items():
@@ -38,6 +38,7 @@ class CheckLibBase(ABC):
             print(f"Dataset is not sufficient for running {self.__class__.__name__}")
             print(set(col_list))
         self.df = full_df[self.points_list]
+        self.results_folder = results_folder
         self.verify()
 
     @property
