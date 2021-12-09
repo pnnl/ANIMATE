@@ -5,7 +5,7 @@ This file contains the runner of verification cases to be called by the user wit
 from workflowsteps import *
 from library import *
 from datetimeep import DateTimeEP
-
+import sys, os
 
 def run_libcase(item_dict, plot_option="all-compact"):
     """Library case runner
@@ -31,7 +31,7 @@ def run_libcase(item_dict, plot_option="all-compact"):
     if need_injection and run_sim:
         original_idf_path = item.item["simulation_IO"]["idf"].strip()
         idd_path = item.item["simulation_IO"]["idd"].strip()
-        #run_path = f"{original_idf_path.split('.idf')[0]}"
+        # run_path = f"{original_idf_path.split('.idf')[0]}"
         if ".idf" in original_idf_path.lower():
             run_path = f"{original_idf_path[:-4]}"
         elif ".epjson" in original_idf_path.lower():
@@ -40,8 +40,8 @@ def run_libcase(item_dict, plot_option="all-compact"):
             run_path = original_idf_path
 
     if need_injection:
-        instrumented_idf_path = f"{original_idf_path.split('.idf')[0]}_injected_{item_dict['no']}.idf"
-        run_path = f"{run_path}_injected_{item_dict['no']}"
+        instrumented_idf_path = f"{original_idf_path.split('.idf')[0]}_injected_VerificationNo{item_dict['no']}.idf"
+        run_path = f"{run_path}_injected_VerificationNo{item_dict['no']}"
         inject_idf(
             iddpath=idd_path,
             idfpath_in=original_idf_path,
@@ -55,7 +55,11 @@ def run_libcase(item_dict, plot_option="all-compact"):
     if run_sim:
         weather_path = item.item["simulation_IO"]["weather"].strip()
         if "ep_path" in list(item.item["simulation_IO"].keys()):
-            run_simulation(idfpath=run_idf_path, weatherpath=weather_path, ep_path=item.item["simulation_IO"]["ep_path"])
+            run_simulation(
+                idfpath=run_idf_path,
+                weatherpath=weather_path,
+                ep_path=item.item["simulation_IO"]["ep_path"],
+            )
         else:
             run_simulation(idfpath=run_idf_path, weatherpath=weather_path)
         print("simulation done")
@@ -86,16 +90,28 @@ def run_libcase(item_dict, plot_option="all-compact"):
     outcome = verification_obj.get_checks
     verification_obj.plot(plot_option)
 
-
 def main():
-    cases_path = "../schema/library_verification_cases.json"
+    num_argv = len(sys.argv)
+    # NOTE: all relative paths in the json files should be based on "./" being "ANIMATE/src"
+    cases_path = "../test_cases/verif_mtd_pp/verification_cases.json"
     lib_items_path = "../schema/library.json"
     items = assemble_verification_items(
         cases_path=cases_path, lib_items_path=lib_items_path
     )
-    for item in items:
-        run_libcase(item_dict=item)
-
+    if num_argv == 1:
+        print(
+            f"No command line argument provided, running all {len(items)} verification cases from {cases_path} sequentially with one thread"
+        )
+        for item in items:
+            run_libcase(item_dict=item)
+    elif num_argv == 2:
+        case_no = int(sys.argv[1])
+        print(f"Running verification case {case_no}")
+        run_libcase(item_dict=items[case_no])
+    else:
+        print(f"Error: Invalid number of arguments provided: {sys.argv}")
 
 if __name__ == "__main__":
+    print(f"Running main() in {os.getcwd()}...")
     main()
+    print("Running of main() completed!")

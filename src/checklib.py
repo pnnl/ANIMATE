@@ -100,7 +100,8 @@ class CheckLibBase(ABC):
         self.df[plt_pts].plot(ax=ax2)
         plt.title(f"All samples data points plot - {self.__class__.__name__}")
         plt.tight_layout()
-        plt.show()
+        plt.savefig(f"{self.results_folder}/All_plot_aio.png")
+        # plt.show()
         print()
 
     def all_plot_obo(self, plt_pts):
@@ -123,7 +124,8 @@ class CheckLibBase(ABC):
             plt.title(f"All samples - {pt} - {self.__class__.__name__}")
             i += 1
         plt.tight_layout()
-        plt.show()
+        plt.savefig(f"{self.results_folder}/All_plot_obo.png")
+        # plt.show()
         print()
 
     def calculate_plot_day(self):
@@ -188,7 +190,8 @@ class CheckLibBase(ABC):
         plotdaydf[plt_pts].plot(ax=ax2)
         plt.title(f"Example day data points plot - {self.__class__.__name__}")
         plt.tight_layout()
-        plt.show()
+        plt.savefig(f"{self.results_folder}/Day_plot_aio.png")
+        # plt.show()
         print()
 
     def day_plot_obo(self, plt_pts):
@@ -212,7 +215,8 @@ class CheckLibBase(ABC):
             plt.title(f"Example day - {pt} - {self.__class__.__name__}")
             i += 1
         plt.tight_layout()
-        plt.show()
+        plt.savefig(f"{self.results_folder}/Day_plot_obo.png")
+        # plt.show()
         print()
 
     def daterange(self, start_date, end_date):

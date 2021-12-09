@@ -53,7 +53,7 @@ class SupplyAirTempReset(RuleCheckBase):
         sns.distplot(self.df["T_sa_set"])
         plt.title("All samples distribution of T_sa_set")
         plt.savefig(f"{self.results_folder}/All_samples_distribution_of_T_sa_set.png")
-        plt.show()
+        # plt.show()
 
         super().plot(plot_option, plt_pts)
 
