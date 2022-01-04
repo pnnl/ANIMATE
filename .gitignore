@@ -8,4 +8,4 @@ __pycache__
 resources/*/
 readvars.audit
 temp
-test_cases/verif_mtd_pp/idfs
+test_cases/verif_mtd_pp/idfs/
