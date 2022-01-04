@@ -69,7 +69,28 @@ def run_sim_for_cases(
 
 
 def main():
-    run_sim_for_cases()
+    num_argv = len(sys.argv)
+    if num_argv == 1:
+        print(
+            "No command line argument provided. Error!\n Please provide cases_path and lib_items_path, both relative to the current run path (src/)"
+        )
+        cases_path = None
+        lib_items_path = None
+        return
+    if num_argv == 2:
+        cases_path = sys.argv[1]
+        lib_items_path = "../schema/library.json"
+        print(
+            f"One command line argument provided.\nRunning verification cases in {cases_path}\nUsing default verification library json at {lib_items_path}"
+        )
+    if num_argv == 3:
+        cases_path = sys.argv[1]
+        lib_items_path = sys.argv[2]
+        print(
+            f"Two command line arguments provided.\nRunning verification cases in {cases_path}\nUsing default verification library json at {lib_items_path}"
+        )
+    run_sim_for_cases(cases_path=cases_path, lib_items_path=lib_items_path)
+    print("run_sim_for_cases DONE!")
 
 
 if __name__ == "__main__":

@@ -3,7 +3,8 @@ from library import *
 from datetimeep import DateTimeEP
 import sys, os
 
-def run_verification_case(item):
+
+def run_verification_case(item, plot_option="all-compact"):
     need_injection = True
     run_sim = True
     if need_injection and run_sim:
@@ -18,7 +19,6 @@ def run_verification_case(item):
 
     if need_injection:
         run_path = f"{run_path}_injected_BatchVerification"
-
 
     if run_sim:
         df = DateTimeEP(
@@ -45,3 +45,31 @@ def run_verification_case(item):
     verification_obj = cls(df, parameters, f"{run_path}")
     outcome = verification_obj.get_checks
     verification_obj.plot(plot_option)
+
+
+def main():
+    num_argv = len(sys.argv)
+    cases_path = "../test_cases/verif_mtd_pp/verification_cases.json"
+    lib_items_path = "../schema/library.json"
+    items = assemble_verification_items(
+        cases_path=cases_path, lib_items_path=lib_items_path
+    )
+    if num_argv == 1:
+        print(
+            f"No command line argument provided, running all {len(items)} verification cases from {cases_path} sequentially with one thread"
+        )
+    elif num_argv == 2:
+        case_no = int(sys.argv[1])
+        items = [items[case_no]]
+        print(f"Running verification case {case_no}")
+    elif num_argv == 3:
+        cases_no_start = int(sys.argv[1])
+        cases_no_stop = int(sys.argv[2])
+        items = items[cases_no_start:cases_no_stop]
+        print(
+            f"Running verification cases ranging from {cases_no_start} to {cases_no_stop}"
+        )
+    else:
+        print(f"Error: Invalid number of arguments provided: {sys.argv}")
+        return
+

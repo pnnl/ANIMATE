@@ -1,0 +1,80 @@
+{
+    "cases": [
+        {
+            "no": "2",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_Hospital_STD2019_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "CHWReset",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_oa_db": {
+                        "subject": "Environment",
+                        "variable": "Site Outdoor Air Drybulb Temperature",
+                        "frequency": "TimeStep"
+                    },
+                    "T_chw": {
+                        "subject": "CoolSys1 Supply Outlet Node",
+                        "variable": "System Node Setpoint Temperature",
+                        "frequency": "TimeStep"
+                    },
+                    "m_chw": {
+                        "subject": "Heat Recovery Chiller",
+                        "variable": "Chiller Evaporator Mass Flow Rate",
+                        "frequency": "TimeStep"
+                    }
+                },
+                "parameters": {
+                    "T_oa_max": 21.11,
+                    "T_oa_min": 12.78,
+                    "T_chw_max_st": 8.89,
+                    "T_chw_min_st": 6.7
+                }
+            }
+        },
+        {
+            "no": "3",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_Hospital_STD2019_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "HWReset",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_oa_db": {
+                        "subject": "Environment",
+                        "variable": "Site Outdoor Air Drybulb Temperature",
+                        "frequency": "TimeStep"
+                    },
+                    "T_hw": {
+                        "subject": "HeatSys1 Supply Outlet Node",
+                        "variable": "System Node Setpoint Temperature",
+                        "frequency": "TimeStep"
+                    },
+                    "m_hw": {
+                        "subject": "HeatSys1 Boiler",
+                        "variable": "Boiler Mass Flow Rate",
+                        "frequency": "TimeStep"
+                    }
+                },
+                "parameters": {
+                    "T_oa_max": 10,
+                    "T_oa_min": -6.666667,
+                    "T_hw_max_st": 82.2,
+                    "T_hw_min_st": 79.4
+                }
+            }
+        }
+    ]
+}
