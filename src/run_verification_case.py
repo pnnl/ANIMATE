@@ -2,9 +2,11 @@ from workflowsteps import *
 from library import *
 from datetimeep import DateTimeEP
 import sys, os
+from tqdm import tqdm
 
 
-def run_verification_case(item, plot_option="all-compact"):
+def run_verification_case(item_dict, plot_option="all-compact"):
+    item = build_an_item(item_dict)
     need_injection = True
     run_sim = True
     if need_injection and run_sim:
@@ -49,27 +51,39 @@ def run_verification_case(item, plot_option="all-compact"):
 
 def main():
     num_argv = len(sys.argv)
-    cases_path = "../test_cases/verif_mtd_pp/verification_cases.json"
+    if num_argv == 1:
+        print("No command line argument provided, ABORT!")
+        return
+    cases_path = sys.argv[1]
     lib_items_path = "../schema/library.json"
     items = assemble_verification_items(
         cases_path=cases_path, lib_items_path=lib_items_path
     )
-    if num_argv == 1:
-        print(
-            f"No command line argument provided, running all {len(items)} verification cases from {cases_path} sequentially with one thread"
-        )
-    elif num_argv == 2:
-        case_no = int(sys.argv[1])
-        items = [items[case_no]]
-        print(f"Running verification case {case_no}")
+
+    if num_argv == 2:
+        print(f"Running all verification cases in {cases_path}")
     elif num_argv == 3:
-        cases_no_start = int(sys.argv[1])
-        cases_no_stop = int(sys.argv[2])
+        case_no = int(sys.argv[2])
+        items = [items[case_no]]
+        print(
+            f"Running verification case sequence no {case_no} (not case id) for {cases_path}"
+        )
+    elif num_argv == 4:
+        cases_no_start = int(sys.argv[2])
+        cases_no_stop = int(sys.argv[3])
         items = items[cases_no_start:cases_no_stop]
         print(
-            f"Running verification cases ranging from {cases_no_start} to {cases_no_stop}"
+            f"Running verification cases sequence no ranging from {cases_no_start} to {cases_no_stop} (not case id) for {cases_path}"
         )
     else:
         print(f"Error: Invalid number of arguments provided: {sys.argv}")
         return
+    for item in tqdm(items):
+        run_verification_case(item)
+    print("DONE!")
 
+    ## TODO: add markdown path argument and implement fig dump and markdown writing in verification class
+
+
+if __name__ == "__main__":
+    main()
