@@ -45,8 +45,9 @@ def run_verification_case(item_dict, plot_option="all-compact"):
         else None
     )
     verification_obj = cls(df, parameters, f"{run_path}")
-    outcome = verification_obj.get_checks
-    verification_obj.plot(plot_option)
+    # outcome = verification_obj.get_checks
+    # verification_obj.plot(plot_option)
+    verification_obj.add_md('../results/results.md', '../results/imgs', './imgs', item_dict)
 
 
 def main():

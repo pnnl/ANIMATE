@@ -676,12 +676,12 @@ def diff_enthalpy_econ(idf, idf_f, id, cases):
                                 "frequency": "detailed",
                             },
                             "oa_db": {
-                                "subject": "*",
+                                "subject": "Environment",
                                 "variable": "Site Outdoor Air Drybulb Temperature",
                                 "frequency": "detailed",
                             },
                             "oa_enth": {
-                                "subject": "*",
+                                "subject": "Environment",
                                 "variable": "Site Outdoor Air Enthalpy",
                                 "frequency": "detailed",
                             },

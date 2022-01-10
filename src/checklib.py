@@ -4,6 +4,7 @@ This file containing the high level interface for implementing verificaiton item
 
 # %% Supress future warning if needed
 import warnings
+
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 # %% import packages
@@ -13,6 +14,7 @@ from typing import List, Dict
 from abc import ABC, abstractmethod
 import matplotlib.pyplot as plt
 import seaborn as sns
+import glob, json, os
 
 # plt.style.use("ggplot")
 import pandas as pd
@@ -64,6 +66,51 @@ class CheckLibBase(ABC):
     def get_checks(self):
         return self.check_bool(), self.check_detail()
 
+    def add_md(self, md_file_path, img_folder, relative_path_to_img_in_md, item_dict):
+        outcome_detail, outcome_dict = self.get_checks
+
+        img_folder = f"{img_folder}/VerificationCase{item_dict['no']}"
+        relative_path_to_img_in_md = (
+            f"{relative_path_to_img_in_md}/VerificationCase{item_dict['no']}"
+        )
+        if not os.path.exists(img_folder):
+            os.makedirs(img_folder)
+
+        self.results_folder = img_folder
+        self.plot(plot_option="all-compact")
+        image_list = glob.glob(f"{img_folder}/*.png")
+        image_md_path_list = [
+            x.replace(img_folder, relative_path_to_img_in_md) for x in image_list
+        ]
+        img_md = ""
+        for i in range(len(image_list)):
+            img_def_path = image_list[i]
+            img_rel_path = image_md_path_list[i]
+            img_md += f"""
+![{img_def_path}]({img_rel_path})
+"""
+
+        md_content = f"""
+## Results for Verification Case ID {item_dict['no']}
+
+### Pass/Fail check result
+{str(outcome_dict)}
+
+### Result visualization
+{img_md}
+
+### Verification case definition
+```
+{json.dumps(item_dict, indent=2)}
+```
+
+---
+
+"""
+        with open(md_file_path, "a") as fw:
+            fw.write(md_content)
+        return md_content
+
     def plot(self, plot_option, plt_pts=None):
         """default plot function for showing result"""
         if plt_pts is None:
@@ -73,13 +120,13 @@ class CheckLibBase(ABC):
             return
 
         plot_option = plot_option.strip().lower()
-        if plot_option == 'all-compact':
+        if plot_option == "all-compact":
             self.all_plot_aio(plt_pts)
-        elif plot_option == 'all-expand':
+        elif plot_option == "all-expand":
             self.all_plot_obo(plt_pts)
-        elif plot_option == 'day-compact':
+        elif plot_option == "day-compact":
             self.day_plot_aio(plt_pts)
-        elif plot_option == 'day-expand':
+        elif plot_option == "day-expand":
             self.day_plot_obo(plt_pts)
         else:
             print("Invalid plot option!")
@@ -178,7 +225,7 @@ class CheckLibBase(ABC):
         """ALl in one plot for one day"""
         plotday, plotdaydf = self.calculate_plot_day()
 
-        #flag
+        # flag
         ax1 = plt.subplot(211)
         sns.scatterplot(x=plotday.index, y=plotday)
         plt.xlim([plotday.index[0], plotday.index[-1]])
@@ -222,6 +269,7 @@ class CheckLibBase(ABC):
     def daterange(self, start_date, end_date):
         for n in range(int((end_date - start_date).days)):
             yield start_date + timedelta(n)
+
 
 class RuleCheckBase(CheckLibBase):
     def check_bool(self) -> bool:
@@ -287,11 +335,15 @@ class SimultaneousHeatingCoolingCompliance(RuleCheckBase):
     def verify(self):
         self.result = ~((self.df["Cool_sys_out"] > 0) & (self.df["Heat_sys_out"] > 0))
 
+
 class HumidityWithinBoundaries(RuleCheckBase):
     points = ["Zone_hum", "Hum_up_bound", "Hum_low_bound"]
 
     def verify(self):
-        self.result = ((self.df["Zone_hum"] >= self.df["Hum_up_bound"]) & (self.df["Zone_hum"] <= self.df["Hum_low_bound"]))
+        self.result = (self.df["Zone_hum"] >= self.df["Hum_up_bound"]) & (
+            self.df["Zone_hum"] <= self.df["Hum_low_bound"]
+        )
+
 
 class ContinuousDimmingCompliance(CheckLibBase):
     points = ["Electric_light_power"]
@@ -430,13 +482,13 @@ def main():
     # check rule based examples
     df_rule = DateTimeEP(
         pd.read_csv(
-            "../resources/ASHRAE901_Hospital_STD2016_Tampa/ASHRAE901_Hospital_STD2016_Tampa.csv" # hudmidity
+            "../resources/ASHRAE901_Hospital_STD2016_Tampa/ASHRAE901_Hospital_STD2016_Tampa.csv"  # hudmidity
             # "../resources/ASHRAE901_SchoolPrimary_STD2004_ElPaso_Injected/eplusout.csv" # non-int economizer
         )
     ).transform()
 
     # rule_items_id = [1] # non-int economizer
-    rule_items_id = [-1] # humidity
+    rule_items_id = [-1]  # humidity
     for item_id in rule_items_id:
         item = items[item_id]
         point_map = item["datapoints_source"]["output_variables"]
