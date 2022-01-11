@@ -107,8 +107,9 @@ class CheckLibBase(ABC):
 ---
 
 """
-        with open(md_file_path, "a") as fw:
-            fw.write(md_content)
+        if md_file_path is not None:
+            with open(md_file_path, "a") as fw:
+                fw.write(md_content)
         return md_content
 
     def plot(self, plot_option, plt_pts=None):
@@ -120,6 +121,7 @@ class CheckLibBase(ABC):
             return
 
         plot_option = plot_option.strip().lower()
+        plt.subplots()
         if plot_option == "all-compact":
             self.all_plot_aio(plt_pts)
         elif plot_option == "all-expand":

@@ -63,17 +63,17 @@ def chwreset(idf, idf_f, id, cases):
                 "T_oa_db": {
                     "subject": "Environment",
                     "variable": "Site Outdoor Air Drybulb Temperature",
-                    "frequency": "TimeStep",
+                    "frequency": "Detailed",
                 },
                 "T_chw": {
                     "subject": f"{chw_node}",
                     "variable": "System Node Setpoint Temperature",
-                    "frequency": "TimeStep",
+                    "frequency": "Detailed",
                 },
                 "m_chw": {
                     "subject": f"{chiller_name}",
                     "variable": "Chiller Evaporator Mass Flow Rate",
-                    "frequency": "TimeStep",
+                    "frequency": "Detailed",
                 },
             },
             "parameters": {
@@ -129,17 +129,17 @@ def hwreset(idf, idf_f, id, cases):
                 "T_oa_db": {
                     "subject": "Environment",
                     "variable": "Site Outdoor Air Drybulb Temperature",
-                    "frequency": "TimeStep",
+                    "frequency": "Detailed",
                 },
                 "T_hw": {
                     "subject": f"{hw_node}",
                     "variable": "System Node Setpoint Temperature",
-                    "frequency": "TimeStep",
+                    "frequency": "Detailed",
                 },
                 "m_hw": {
                     "subject": f"{boiler_name}",
                     "variable": "Boiler Mass Flow Rate",
-                    "frequency": "TimeStep",
+                    "frequency": "Detailed",
                 },
             },
             "parameters": {
@@ -386,7 +386,7 @@ def zone_temp_ctrl_min(idf, idf_f, id, cases):
 
 def zone_temp_ctrl_max(idf, idf_f, id, cases):
     print(
-        "Adding ZoneHeatSetpointMaximum verification items for {}".format(
+        "Adding ZoneCoolingSetpointMaximum verification items for {}".format(
             idf_f.split("/")[-1].replace(".idf", "")
         )
     )
@@ -405,7 +405,7 @@ def zone_temp_ctrl_max(idf, idf_f, id, cases):
             "ep_path": "C:\EnergyPlusV9-0-1\energyplus.exe",
         }
         zone_temp_ctrl_max["expected_result"] = "pass"
-        zone_temp_ctrl_max["verification_class"] = "ZoneHeatSetpointMaximum"
+        zone_temp_ctrl_max["verification_class"] = "ZoneCoolingSetpointMaximum"
         zone_temp_ctrl_max["datapoints_source"] = {
             "idf_output_variables": {
                 "T_cool_set": {
@@ -718,11 +718,11 @@ def create_cases():
             cases, id = sat_reset(idf, idf_f, id, cases)
 
             # Zone temperature setpoint deadband
-            # cases, id = zone_temp_ctrl(idf, idf_f, id, cases)
-            # cases, id = zone_temp_ctrl_depth_htg(idf, idf_f, id, cases)
-            # cases, id = zone_temp_ctrl_depth_clg(idf, idf_f, id, cases)
-            # cases, id = zone_temp_ctrl_min(idf, idf_f, id, cases)
-            # cases, id = zone_temp_ctrl_max(idf, idf_f, id, cases)
+            cases, id = zone_temp_ctrl(idf, idf_f, id, cases)
+            cases, id = zone_temp_ctrl_depth_htg(idf, idf_f, id, cases)
+            cases, id = zone_temp_ctrl_depth_clg(idf, idf_f, id, cases)
+            cases, id = zone_temp_ctrl_min(idf, idf_f, id, cases)
+            cases, id = zone_temp_ctrl_max(idf, idf_f, id, cases)
 
             # Integrated economizer
             cases, id = integrated_econ(idf, idf_f, id, cases)

@@ -1,11 +1,11 @@
 from workflowsteps import *
 from library import *
 from datetimeep import DateTimeEP
-import sys, os
+import sys, os, json
 from tqdm import tqdm
 
 
-def run_verification_case(item_dict, plot_option="all-compact"):
+def run_verification_case(item_dict):
     item = build_an_item(item_dict)
     need_injection = True
     run_sim = True
@@ -47,7 +47,8 @@ def run_verification_case(item_dict, plot_option="all-compact"):
     verification_obj = cls(df, parameters, f"{run_path}")
     # outcome = verification_obj.get_checks
     # verification_obj.plot(plot_option)
-    verification_obj.add_md('../results/results.md', '../results/imgs', './imgs', item_dict)
+    md_content = verification_obj.add_md(None, "../results/imgs", "./imgs", item_dict)
+    return {item_dict['no']: md_content}
 
 
 def main():
@@ -79,11 +80,19 @@ def main():
     else:
         print(f"Error: Invalid number of arguments provided: {sys.argv}")
         return
-    for item in tqdm(items):
-        run_verification_case(item)
-    print("DONE!")
 
-    ## TODO: add markdown path argument and implement fig dump and markdown writing in verification class
+    md_dict = {}
+    for item in tqdm(items):
+        print(json.dumps(item, indent=2))
+        this_dict = run_verification_case(item)
+        md_dict.update(this_dict)
+
+    cases_name = cases_path.split('/')[-1].replace('.json','').strip()
+    cases_file = f"../results/{cases_name}_md.json"
+
+    print(f"DONE! Saving markdown results to {cases_file}")
+    with open(cases_file, "w") as fw:
+        json.dump(md_dict, fw)
 
 
 if __name__ == "__main__":
