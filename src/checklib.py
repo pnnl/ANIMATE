@@ -110,7 +110,7 @@ class CheckLibBase(ABC):
         if md_file_path is not None:
             with open(md_file_path, "a") as fw:
                 fw.write(md_content)
-        return md_content
+        return md_content, str(outcome_dict)
 
     def plot(self, plot_option, plt_pts=None):
         """default plot function for showing result"""

@@ -1,0 +1,3109 @@
+{
+    "cases": [
+        {
+            "no": "900",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "G SW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "G SW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "901",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "G NW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "G NW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "902",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "Office",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "Office",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "903",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "G NE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "G NE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "904",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "G N1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "G N1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "905",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "G N2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "G N2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "906",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "G S1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "G S1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "907",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "G S2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "G S2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "908",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "M SW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "M SW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "909",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "M NW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "M NW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "910",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "M SE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "M SE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "911",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "M NE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "M NE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "912",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "M N1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "M N1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "913",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "M N2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "M N2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "914",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "M S1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "M S1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "915",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "M S2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "M S2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "916",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "T SW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "T SW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "917",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "T NW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "T NW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "918",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "T SE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "T SE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "919",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "T NE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "T NE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "920",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "T N1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "T N1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "921",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "T N2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "T N2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "922",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "T S1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "T S1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "923",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "T S2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "T S2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "924",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "T Corridor",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "T Corridor",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "925",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "G Corridor",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "G Corridor",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "926",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "M Corridor",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "M Corridor",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "927",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G SW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "928",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G NW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "929",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "Office",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "930",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G NE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "931",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G N1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "932",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G N2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "933",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G S1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "934",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G S2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "935",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M SW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "936",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M NW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "937",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M SE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "938",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M NE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "939",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M N1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "940",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M N2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "941",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M S1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "942",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M S2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "943",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T SW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "944",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T NW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "945",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T SE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "946",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T NE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "947",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T N1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "948",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T N2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "949",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T S1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "950",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T S2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "951",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T Corridor",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "952",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G Corridor",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "953",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M Corridor",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "954",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G SW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "955",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G NW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "956",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "Office",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "957",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G NE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "958",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G N1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "959",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G N2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "960",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G S1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "961",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G S2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "962",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M SW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "963",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M NW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "964",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M SE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "965",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M NE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "966",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M N1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "967",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M N2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "968",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M S1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "969",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M S2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "970",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T SW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "971",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T NW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "972",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T SE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "973",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T NE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "974",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T N1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "975",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T N2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "976",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T S1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "977",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T S2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "978",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T Corridor",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "979",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G Corridor",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "980",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M Corridor",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "981",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G SW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "982",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G NW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "983",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "Office",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "984",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G NE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "985",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G N1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "986",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G N2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "987",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G S1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "988",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G S2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "989",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M SW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "990",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M NW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "991",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M SE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "992",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M NE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "993",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M N1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "994",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M N2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "995",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M S1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "996",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M S2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "997",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T SW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "998",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T NW Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "999",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T SE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1000",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T NE Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1001",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T N1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1002",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T N2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1003",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T S1 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1004",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T S2 Apartment",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1005",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "T Corridor",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1006",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "G Corridor",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1007",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "M Corridor",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1008",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G SW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1009",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G NW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1010",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "Office",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1011",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G NE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1012",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G N1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1013",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G N2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1014",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G S1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1015",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G S2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1016",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M SW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1017",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M NW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1018",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M SE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1019",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M NE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1020",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M N1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1021",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M N2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1022",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M S1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1023",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M S2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1024",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T SW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1025",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T NW Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1026",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T SE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1027",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T NE Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1028",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T N1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1029",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T N2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1030",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T S1 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1031",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T S2 Apartment",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1032",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "T Corridor",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1033",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "G Corridor",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "1034",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_ApartmentMidRise_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "M Corridor",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        }
+    ]
+}

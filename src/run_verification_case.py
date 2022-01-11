@@ -48,7 +48,7 @@ def run_verification_case(item_dict):
     # outcome = verification_obj.get_checks
     # verification_obj.plot(plot_option)
     md_content = verification_obj.add_md(None, "../results/imgs", "./imgs", item_dict)
-    return {item_dict['no']: md_content}
+    return {int(item_dict['no']): md_content}
 
 
 def main():

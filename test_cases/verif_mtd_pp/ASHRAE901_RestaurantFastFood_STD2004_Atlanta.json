@@ -1,0 +1,349 @@
+{
+    "cases": [
+        {
+            "no": "4304",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "Dining",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "Dining",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4305",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "Kitchen",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "Kitchen",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4306",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_set_cool": {
+                        "subject": "attic",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    },
+                    "T_z_set_heat": {
+                        "subject": "attic",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4307",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "Dining",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4308",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "Kitchen",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4309",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "attic",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4310",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "Dining",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4311",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "Kitchen",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4312",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingResetDepth",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "attic",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4313",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "Dining",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4314",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "Kitchen",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4315",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneHeatSetpointMinimum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_heat_set": {
+                        "subject": "attic",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4316",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "Dining",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4317",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "Kitchen",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        },
+        {
+            "no": "4318",
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/verif_mtd_pp/idfs/ASHRAE901_RestaurantFastFood_STD2004_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneCoolingSetpointMaximum",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_cool_set": {
+                        "subject": "attic",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "detailed"
+                    }
+                }
+            }
+        }
+    ]
+}
