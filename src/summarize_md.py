@@ -20,11 +20,11 @@ md_full_string0 = """
 | ---------------------------------------------- | --------------- |
 """
 
-md_full_string1 = """
-
-----
-
-"""
+# md_full_string1 = """
+#
+# ----
+#
+# """
 
 caseids_sorted = sorted(md_dict_dump)
 # md_sorted = [md_dict_dump[s] for s in sorted(md_dict_dump)]
@@ -32,15 +32,20 @@ caseids_sorted = sorted(md_dict_dump)
 
 for caseid in caseids_sorted:
     outcome = md_dict_dump[caseid][1]
-    mdtable_row = f"""
-| [{caseid}](#results-for-verification-case-id-{caseid}) | {outcome} |
-"""
+#     mdtable_row = f"""
+# | [{caseid}](#results-for-verification-case-id-{caseid}) | {outcome} |
+# """
+    mdtable_row = f"| [{caseid}](./case-{caseid}.md) | {outcome} |\n"
     md_full_string0 += mdtable_row
 
     md_section = md_dict_dump[caseid][0]
-    md_full_string1 += md_section
+    # md_full_string1 += md_section
 
-md_full_string = md_full_string0 + md_full_string1
+    md_section += "[Back](results.md)"
+    with open(f"../results/case-{caseid}.md", "w") as casew:
+        casew.write(md_section)
+
+md_full_string = md_full_string0# + md_full_string1
 
 with open("../results/results.md", "w") as fw:
     fw.write(md_full_string)

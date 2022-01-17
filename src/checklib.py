@@ -78,6 +78,9 @@ class CheckLibBase(ABC):
 
         self.results_folder = img_folder
         self.plot(plot_option="all-compact")
+        self.plot(plot_option="all-expand")
+        self.plot(plot_option="day-compact")
+        self.plot(plot_option="day-expand")
         image_list = glob.glob(f"{img_folder}/*.png")
         image_md_path_list = [
             x.replace(img_folder, relative_path_to_img_in_md) for x in image_list
@@ -136,6 +139,7 @@ class CheckLibBase(ABC):
 
     def all_plot_aio(self, plt_pts):
         """All in one plot of all samples"""
+        plt.figure(figsize=(6.4, 4.8))
 
         # flag
         ax1 = plt.subplot(211)
@@ -156,6 +160,7 @@ class CheckLibBase(ABC):
     def all_plot_obo(self, plt_pts):
         """One by one plot of all samples"""
         num_plots = len(plt_pts) + 1
+        plt.figure(figsize=(6.4, 2.4 * num_plots))
 
         # flag
         ax1 = plt.subplot(int(f"{num_plots}11"))
@@ -225,6 +230,8 @@ class CheckLibBase(ABC):
 
     def day_plot_aio(self, plt_pts):
         """ALl in one plot for one day"""
+        plt.figure(figsize=(6.4, 4.8))
+
         plotday, plotdaydf = self.calculate_plot_day()
 
         # flag
@@ -245,8 +252,10 @@ class CheckLibBase(ABC):
 
     def day_plot_obo(self, plt_pts):
         """One by one plot of all samples"""
-        plotday, plotdaydf = self.calculate_plot_day()
         num_plots = len(plt_pts) + 1
+        plt.figure(figsize=(6.4, 2.4 * num_plots))
+
+        plotday, plotdaydf = self.calculate_plot_day()
 
         # flag
         ax1 = plt.subplot(int(f"{num_plots}11"))
