@@ -9,3 +9,4 @@ resources/*/
 readvars.audit
 temp
 test_cases/verif_mtd_pp/idfs/
+*.sbatch

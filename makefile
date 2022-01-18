@@ -5,9 +5,10 @@ RUNEPLUS	:= /qfs/projects/BECP/bin/runeplus
 
 INPUT_DIR	:= $(THIS_DIR)
 OUTPUT_DIR	:= $(THIS_DIR)/idfs
+MASK := /ASHRAE
 WEATHER_DIR	:= /qfs/projects/BECP/weather/EnergyPlus/tmy3.new/all
 
-IN_FILES    	:= $(notdir $(wildcard $(INPUT_DIR)/*.json))	
+IN_FILES    	:= $(notdir $(wildcard $(INPUT_DIR)/ASHRAE*.json))
 OUT_FILES   	:= $(subst .json,_md.json,$(IN_FILES))
 
 $(RESULTS_DIR)/%_md.json: $(INPUT_DIR)/%.json
@@ -22,7 +23,8 @@ out: $(addprefix $(RESULTS_DIR)/,$(OUT_FILES))
 all:
 	cd ./test_cases/verif_mtd_pp/; python ./create_test_cases.py
 	cd ./src/; python ./verification_cases_split.py;
-	mv ./test_cases/verif_mtd_pp/verification_cases.json ./results/verification_cases.json
-	rm ./test_cases/verif_mtd_pp/no_idfs_items.json
+#	mv ./test_cases/verif_mtd_pp/verification_cases.json ./results/verification_cases.json
+#	rm ./test_cases/verif_mtd_pp/no_idfs_items.json
+#	$(MAKE) -k -j 1 out
 	$(MAKE) -k -j 10 out
 	cd ./src/; python ./summarize_md.py
