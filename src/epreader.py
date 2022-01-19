@@ -106,7 +106,7 @@ class CSVReader(EPReader):
                         reset = True
                     else:
                         if current_ratio > maxratio:
-                            rerset = True
+                            reset = True
                         if current_ratio == maxratio:
                             print(
                                 "ERROR: observe same fuzzywuzzy match ratio for two columns, investigation needed."
@@ -115,6 +115,8 @@ class CSVReader(EPReader):
                     if reset:
                         maxratio = current_ratio
                         picked_csvcol = current_picks[i]
+            else:
+                picked_csvcol = current_picks[0]
 
             pickedcols.append(picked_csvcol)
             pickedcols_original_format.append(requestcol)
