@@ -6,8 +6,7 @@ import sys, os
 
 
 def run_sim_for_cases(
-    cases_path="../test_cases/verif_mtd_pp/ASHRAE901_OfficeMedium_STD2004_Atlanta.json",
-    lib_items_path="../schema/library.json",
+    cases_path, lib_items_path="../schema/library.json", batch_postfix=""
 ):
     items_dict = assemble_verification_items(
         cases_path=cases_path, lib_items_path=lib_items_path
@@ -39,9 +38,7 @@ def run_sim_for_cases(
             run_path = original_idf_path
 
     if need_injection:
-        instrumented_idf_path = (
-            f"{original_idf_path.split('.idf')[0]}_injected_BatchVerification.idf"
-        )
+        instrumented_idf_path = f"{original_idf_path.split('.idf')[0]}_{batch_postfix}_injected_BatchVerification.idf"
         run_path = f"{run_path}_injected_BatchVerification"
         inject_idf(
             iddpath=idd_path,
@@ -55,15 +52,15 @@ def run_sim_for_cases(
 
     if run_sim:
         weather_path = item.item["simulation_IO"]["weather"].strip()
-#        if "ep_path" in list(item.item["simulation_IO"].keys()):
-#            run_simulation(
-#                idfpath=run_idf_path,
-#                weatherpath=weather_path,
-#                ep_path=item.item["simulation_IO"]["ep_path"],
-#            )
-#        else:
-#            run_simulation(idfpath=run_idf_path, weatherpath=weather_path)
-#        print("simulation done")
+    #        if "ep_path" in list(item.item["simulation_IO"].keys()):
+    #            run_simulation(
+    #                idfpath=run_idf_path,
+    #                weatherpath=weather_path,
+    #                ep_path=item.item["simulation_IO"]["ep_path"],
+    #            )
+    #        else:
+    #            run_simulation(idfpath=run_idf_path, weatherpath=weather_path)
+    #        print("simulation done")
     print(f"Run path: {run_path}")
     return run_path
 
@@ -89,7 +86,10 @@ def main():
         print(
             f"Two command line arguments provided.\nRunning verification cases in {cases_path}\nUsing default verification library json at {lib_items_path}"
         )
-    run_sim_for_cases(cases_path=cases_path, lib_items_path=lib_items_path)
+    postfix = cases_path.strip().replace(".json", "").split("_")[-1]
+    run_sim_for_cases(
+        cases_path=cases_path, lib_items_path=lib_items_path, batch_postfix=postfix
+    )
     print("run_sim_for_cases DONE!")
 
 

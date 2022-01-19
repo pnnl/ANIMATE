@@ -11,7 +11,10 @@ from datetimeep import DateTimeEP
 import matplotlib.pyplot as plt
 
 # %% Load and assemble verification items
+batch_size = 50
+run_no_sim_cases = False
 cases_path = "../test_cases/verif_mtd_pp/verification_cases.json"
+print(f"Split verification cases by model with batch size of {batch_size}...")
 
 with open(cases_path) as cases_file:
     cases_dict = json.load(cases_file)
@@ -32,10 +35,18 @@ for item in items:
 
 print("Saving files:")
 for k, v in unique_idfs_to_items.items():
-    print(k)
-    writer_path = f"../test_cases/verif_mtd_pp/{k.split('.idf')[0].split('/')[-1]}.json"
-    with open(writer_path, "w") as fw:
-        json.dump({"cases": v}, fw, indent=4)
-with open("../test_cases/verif_mtd_pp/no_idfs_items.json", "w") as fw:
-    json.dump({"cases": no_idfs_items}, fw, indent=4)
+    batches = [v[i : i + batch_size] for i in range(0, len(v), batch_size)]
+    j = 0
+    for one_batch in batches:
+        print(k)
+        writer_path = f"../test_cases/verif_mtd_pp/{k.split('.idf')[0].split('/')[-1]}_{batch_size}cases_Batch{j}.json"
+        with open(writer_path, "w") as fw:
+            json.dump({"cases": v}, fw, indent=4)
+        j += 1
+
+if run_no_sim_cases:
+    with open("../test_cases/verif_mtd_pp/no_idfs_items.json", "w") as fw:
+        json.dump({"cases": no_idfs_items}, fw, indent=4)
+else:
+    print("Ignore cases that do not need simulation")
 print("Complete!")
