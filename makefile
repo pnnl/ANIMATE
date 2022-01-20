@@ -1,4 +1,4 @@
-PROJECT_DIR := /qfs/projects/animate/parallel_sim_tests/test_1
+PROJECT_DIR := /qfs/projects/animate/parallel_sim_tests/test_2
 RESULTS_DIR := $(PROJECT_DIR)/results
 THIS_DIR	:= $(PROJECT_DIR)/test_cases/verif_mtd_pp
 RUNEPLUS	:= /qfs/projects/BECP/bin/runeplus

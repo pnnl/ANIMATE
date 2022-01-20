@@ -135,6 +135,7 @@ class CheckLibBase(ABC):
             self.day_plot_obo(plt_pts)
         else:
             print("Invalid plot option!")
+        plt.close('all')
         return
 
     def all_plot_aio(self, plt_pts):

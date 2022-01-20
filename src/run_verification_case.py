@@ -5,7 +5,7 @@ import sys, os, json
 from tqdm import tqdm
 
 
-def run_verification_case(item_dict):
+def run_verification_case(item_dict, run_path_postfix=''):
     item = build_an_item(item_dict)
     need_injection = True
     run_sim = True
@@ -20,7 +20,7 @@ def run_verification_case(item_dict):
             run_path = original_idf_path
 
     if need_injection:
-        run_path = f"{run_path}_injected_BatchVerification"
+        run_path = f"{run_path}{run_path_postfix}_injected_BatchVerification"
 
     if run_sim:
         df = DateTimeEP(
@@ -81,10 +81,12 @@ def main():
         print(f"Error: Invalid number of arguments provided: {sys.argv}")
         return
 
+    rp_postfix = '_' + cases_path.strip().replace('.json','').split('_')[-1]
+
     md_dict = {}
     for item in tqdm(items):
         print(json.dumps(item, indent=2))
-        this_dict = run_verification_case(item)
+        this_dict = run_verification_case(item, run_path_postfix=rp_postfix)
         md_dict.update(this_dict)
 
     cases_name = cases_path.split('/')[-1].replace('.json','').strip()

@@ -39,9 +39,9 @@ for k, v in unique_idfs_to_items.items():
     j = 0
     for one_batch in batches:
         print(k)
-        writer_path = f"../test_cases/verif_mtd_pp/{k.split('.idf')[0].split('/')[-1]}_{batch_size}cases_Batch{j}.json"
+        writer_path = f"../test_cases/verif_mtd_pp/{k.split('.idf')[0].split('/')[-1]}_Batch{j}.json"
         with open(writer_path, "w") as fw:
-            json.dump({"cases": v}, fw, indent=4)
+            json.dump({"cases": one_batch}, fw, indent=4)
         j += 1
 
 if run_no_sim_cases:
