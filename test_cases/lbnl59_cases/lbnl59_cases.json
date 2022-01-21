@@ -1,0 +1,23 @@
+{
+    "cases": [
+        {
+            "no": "0",
+            "run_simulation": false,
+            "simulation_IO": {
+                "idf": "",
+                "idd": "",
+                "weather": "",
+                "output": "zone_temp_sp_clean.csv",
+                "ep_path": ""
+            },
+            "expected_result": "pass",
+            "verification_class": "ZoneTempControl",
+            "datapoints_source": {
+                "dev_settings": {
+                    "T_z_set_cool": "zone_016_cooling_sp",
+                    "T_z_set_heat": "zone_016_heating_sp"
+                }
+            }
+        }
+    ]
+}
