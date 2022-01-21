@@ -31,9 +31,12 @@ class IntegratedEconomizerControl(CheckLibBase):
         print("Verification results dict: ")
         output = {
             "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
         }
         print(output)
+        return output
 
 
 class SupplyAirTempReset(RuleCheckBase):
@@ -245,14 +248,17 @@ class ZoneHeatSetpointMinimum(CheckLibBase):
         else:
             return False
 
-    def check_detail(self):
-        print("Verification results dict: ")
+    def check_detail(self) -> Dict:
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
             "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
         }
+
+        print("Verification results dict: ")
         print(output)
+        return output
 
 
 class ZoneCoolingSetpointMaximum(CheckLibBase):
@@ -267,14 +273,17 @@ class ZoneCoolingSetpointMaximum(CheckLibBase):
         else:
             return False
 
-    def check_detail(self):
-        print("Verification results dict: ")
+    def check_detail(self) -> Dict:
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
             "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
         }
+
+        print("Verification results dict: ")
         print(output)
+        return output
 
 
 class ZoneHeatingResetDepth(CheckLibBase):
@@ -292,14 +301,19 @@ class ZoneHeatingResetDepth(CheckLibBase):
         else:
             return False
 
-    def check_detail(self):
-        print("Verification results dict: ")
+    def check_detail(self) -> Dict:
         output = {
             "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
             "max(T_heat_set)": self.df["t_heat_set_max"][0],
-            "min(T_heat_set": self.df["t_heat_set_min"][0],
+            "min(T_heat_set)": self.df["t_heat_set_min"][0],
         }
+
+        print("Verification results dict: ")
         print(output)
+        return output
 
 
 class ZoneCoolingResetDepth(CheckLibBase):
@@ -317,11 +331,16 @@ class ZoneCoolingResetDepth(CheckLibBase):
         else:
             return False
 
-    def check_detail(self):
-        print("Verification results dict: ")
+    def check_detail(self) -> Dict:
         output = {
             "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
             "max(T_cool_set)": self.df["t_cool_set_max"][0],
-            "min(T_cool_set": self.df["t_cool_set_min"][0],
+            "min(T_cool_set)": self.df["t_cool_set_min"][0],
         }
+
+        print("Verification results dict: ")
         print(output)
+        return output

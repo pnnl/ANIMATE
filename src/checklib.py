@@ -67,7 +67,7 @@ class CheckLibBase(ABC):
         return self.check_bool(), self.check_detail()
 
     def add_md(self, md_file_path, img_folder, relative_path_to_img_in_md, item_dict):
-        outcome_detail, outcome_dict = self.get_checks
+        outcome_bool, outcome_dict = self.get_checks
 
         img_folder = f"{img_folder}/VerificationCase{item_dict['no']}"
         relative_path_to_img_in_md = (
@@ -113,7 +113,15 @@ class CheckLibBase(ABC):
         if md_file_path is not None:
             with open(md_file_path, "a") as fw:
                 fw.write(md_content)
-        return md_content, str(outcome_dict)
+        return {
+            "md_content": md_content,
+            "outcome_notes": outcome_dict,
+            "model_file": item_dict["simulation_IO"]["idf"]
+            .split("/")[-1]
+            .split("\\")[-1]
+            .replace(".idf", ""),
+            "verification_class": item_dict["verification_class"],
+        }
 
     def plot(self, plot_option, plt_pts=None):
         """default plot function for showing result"""
@@ -135,7 +143,7 @@ class CheckLibBase(ABC):
             self.day_plot_obo(plt_pts)
         else:
             print("Invalid plot option!")
-        plt.close('all')
+        plt.close("all")
         return
 
     def all_plot_aio(self, plt_pts):
@@ -295,6 +303,7 @@ class RuleCheckBase(CheckLibBase):
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
             "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
         }
 
         print("Verification results dict: ")
