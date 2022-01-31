@@ -18,6 +18,27 @@
                     "T_z_set_heat": "zone_016_heating_sp"
                 }
             }
+        },
+        {
+            "no": "1",
+            "run_simulation": false,
+            "simulation_IO": {
+                "idf": "",
+                "idd": "",
+                "weather": "",
+                "output": "rtu_sa_t_sp.csv",
+                "ep_path": ""
+            },
+            "expected_result": "pass",
+            "verification_class": "SupplyAirTempReset",
+            "datapoints_source": {
+                "dev_settings": {
+                    "T_sa_set": "rtu_001_sat_sp_tn"
+                },
+                "parameters": {
+                    "T_z_coo": 73
+                }
+            }
         }
     ]
 }
