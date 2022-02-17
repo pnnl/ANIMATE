@@ -1,0 +1,36 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6.1
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:  # download and cache dependencies
+          keys:
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+#      - run:
+#          name: create artifacts folder   # not used at the moment
+#          command: |
+#            mkdir /tmp/artifacts;
+      - run:
+          name: run tests
+          command: |
+            export PYTHONUNBUFFERED=1
+            . venv/bin/activate
+            nosetests
+          no_output_timeout: 1h
+#      - store_artifacts:               # uncomment we decide to use artifacts
+#          path: /tmp/artifacts
