@@ -1,0 +1,27 @@
+version: 2.1
+jobs:
+  tests:
+    docker:
+      - image circleci/python:3.7.2
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+#      - run:
+#          name: create artifacts folder   # not used at the moment
+#          command: |
+#            mkdir /tmp/artifacts;
+      - run:
+          name: run tests
+          command: |
+            export PYTHONUNBUFFERED=1
+            . venv/bin/activate
+            nosetests
+          no_output_timeout: 1h
+#      - store_artifacts:               # uncomment we decide to use artifacts
+#          path: /tmp/artifacts
