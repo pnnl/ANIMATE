@@ -1,8 +1,8 @@
 version: 2.1
 jobs:
-  tests:
+  build:
     docker:
-      - image circleci/python:3.7.2
+      - image: circleci/python:3.7.2
     working_directory: ~/repo
     steps:
       - checkout
