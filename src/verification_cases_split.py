@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 # %% Load and assemble verification items
 batch_size = 1
 run_no_sim_cases = False
-cases_path = "../cases/verification_cases.json"
+cases_path = "../../scripts/verification_cases.json"
 print(f"Split verification cases by model with batch size of {batch_size}...")
 
 with open(cases_path) as cases_file:
@@ -39,13 +39,13 @@ for k, v in unique_idfs_to_items.items():
     j = 0
     for one_batch in batches:
         print(k)
-        writer_path = f"../cases/{k.split('.idf')[0].split('/')[-1]}_Batch{j}.json"
+        writer_path = f"../../buildings/{k.split('.idf')[0].split('/')[-1]}_Batch{j}.json"
         with open(writer_path, "w") as fw:
             json.dump({"cases": one_batch}, fw, indent=4)
         j += 1
 
 if run_no_sim_cases:
-    with open("../cases/no_idfs_items.json", "w") as fw:
+    with open("../../buildings/no_idfs_items.json", "w") as fw:
         json.dump({"cases": no_idfs_items}, fw, indent=4)
 else:
     print("Ignore cases that do not need simulation")
