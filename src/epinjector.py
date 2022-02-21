@@ -17,7 +17,7 @@ class Injector:
 class IDFInjector(Injector):
     """Inject idf output variable objects to IDF files"""
 
-    def __init__(self, idf_file_in, idd_file):
+    def __init__(self, idf_file_in, idd_file, wth_file=""):
         """
 
         Args:
@@ -25,6 +25,7 @@ class IDFInjector(Injector):
             idd_file: path to idd file for processing idf file with eppy
         """
         self.idf_file_in = idf_file_in
+        self.wth_file = wth_file
         IDF.setiddname(iddname=idd_file)
         self.appending_str = None
 
@@ -52,6 +53,8 @@ class IDFInjector(Injector):
             str(obj) for obj in output_idf_objs.idfobjects["Output:Variable".upper()]
         ]
         self.appending_str = "\n".join(all_list)
+        if self.wth_file != "":
+            self.appending_str += f"! WeatherFile:  {self.wth_file.replace('../weather/', '')}"
 
     def save(self, idf_file_out=None):
         if idf_file_out is None:

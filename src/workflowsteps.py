@@ -74,7 +74,7 @@ def combine_injection_points(
 
 
 def inject_idf(
-    iddpath: str, idfpath_in: str, objstoinject: List[IdfOutputPoint], idfpath_out=None
+    iddpath: str, idfpath_in: str, objstoinject: List[IdfOutputPoint], idfpath_out=None, wth_file=""
 ) -> None:
     """inject output points to idf, handle all items
 
@@ -85,7 +85,7 @@ def inject_idf(
         idfpath_out: path to save the injected idf file, by default set to None, which will overwrite the original idf
 
     """
-    injector = IDFInjector(idf_file_in=idfpath_in, idd_file=iddpath)
+    injector = IDFInjector(idf_file_in=idfpath_in, idd_file=iddpath, wth_file=wth_file)
     injector.inject_idf_outputs(eppy_output_objs=objstoinject)
     injector.save(idf_file_out=idfpath_out)
 

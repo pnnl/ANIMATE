@@ -29,6 +29,7 @@ def run_sim_for_cases(
     if need_injection and run_sim:
         original_idf_path = item.item["simulation_IO"]["idf"].strip()
         idd_path = item.item["simulation_IO"]["idd"].strip()
+        wth_file = item.item["simulation_IO"]["weather"].strip()
         # run_path = f"{original_idf_path.split('.idf')[0]}"
         if ".idf" in original_idf_path.lower():
             run_path = f"{original_idf_path[:-4]}"
@@ -45,6 +46,7 @@ def run_sim_for_cases(
             idfpath_in=original_idf_path,
             objstoinject=unique_output,
             idfpath_out=instrumented_idf_path,
+            wth_file=wth_file,
         )
         run_idf_path = instrumented_idf_path
     elif run_sim:
