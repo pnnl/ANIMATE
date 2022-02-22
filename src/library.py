@@ -29,8 +29,14 @@ class IntegratedEconomizerControl(CheckLibBase):
 
     def check_detail(self):
         print("Verification results dict: ")
-        output = {"Sample #": len(self.result), "Verification Passed?": self.check_bool()}
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
         print(output)
+        return output
 
 
 class SupplyAirTempReset(RuleCheckBase):
@@ -49,10 +55,9 @@ class SupplyAirTempReset(RuleCheckBase):
         print(
             "Specific plot method implemented, additional distribution plot is being added!"
         )
-        # plt.hist(self.df['T_sa_set'], bins=10)
         sns.distplot(self.df["T_sa_set"])
         plt.title("All samples distribution of T_sa_set")
-        plt.show()
+        plt.savefig(f"{self.results_folder}/All_samples_distribution_of_T_sa_set.png")
 
         super().plot(plot_option, plt_pts)
 
@@ -175,9 +180,9 @@ class HWReset(RuleCheckBase):
         print(
             "Specific plot method implemented, additional scatter plot is being added!"
         )
+        plt.subplots()
         sns.scatterplot(x="T_oa_db", y="T_hw", data=self.df)
         plt.title("Scatter plot between T_oa_db and T_hw")
-        plt.show()
 
         super().plot(plot_option, plt_pts)
 
@@ -227,6 +232,7 @@ class CHWReset(RuleCheckBase):
 
         super().plot(plot_option, plt_pts)
 
+
 class ZoneHeatSetpointMinimum(CheckLibBase):
     points = ["T_heat_set"]
 
@@ -239,14 +245,17 @@ class ZoneHeatSetpointMinimum(CheckLibBase):
         else:
             return False
 
-    def check_detail(self):
-        print("Verification results dict: ")
+    def check_detail(self) -> Dict:
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
             "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
         }
+
+        print("Verification results dict: ")
         print(output)
+        return output
 
 
 class ZoneCoolingSetpointMaximum(CheckLibBase):
@@ -261,55 +270,74 @@ class ZoneCoolingSetpointMaximum(CheckLibBase):
         else:
             return False
 
-    def check_detail(self):
-        print("Verification results dict: ")
+    def check_detail(self) -> Dict:
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
             "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
         }
+
+        print("Verification results dict: ")
         print(output)
+        return output
 
 
 class ZoneHeatingResetDepth(CheckLibBase):
     points = ["T_heat_set"]
 
     def verify(self):
-        self.t_heat_set_min = min(sef.df["T_heat_set"])
-        self.t_heat_set_max = max(sef.df["T_heat_set"])
+        self.df["t_heat_set_min"] = min(self.df["T_heat_set"])
+        self.df["t_heat_set_max"] = max(self.df["T_heat_set"])
 
-        self.result = (self.t_heat_set_max - self.t_heat_set_min) >= 5.55
+        self.result = (self.df["t_heat_set_max"] - self.df["t_heat_set_min"]) >= 5.55
 
     def check_bool(self) -> bool:
-        return self.result
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
 
-    def check_detail(self):
-        print("Verification results dict: ")
+    def check_detail(self) -> Dict:
         output = {
             "Sample #": len(self.result),
-            "max(T_heat_set)": self.t_heat_set_max,
-            "min(T_heat_set": self.t_heat_set_min,
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+            "max(T_heat_set)": self.df["t_heat_set_max"][0],
+            "min(T_heat_set)": self.df["t_heat_set_min"][0],
         }
+
+        print("Verification results dict: ")
         print(output)
+        return output
 
 
-class ZonecoolingResetDepth(CheckLibBase):
+class ZoneCoolingResetDepth(CheckLibBase):
     points = ["T_cool_set"]
 
     def verify(self):
-        self.t_cool_set_min = min(sef.df["T_cool_set"])
-        self.t_cool_set_max = max(sef.df["T_cool_set"])
+        self.df["t_cool_set_min"] = min(self.df["T_cool_set"])
+        self.df["t_cool_set_max"] = max(self.df["T_cool_set"])
 
-        self.result = (self.t_cool_set_max - self.t_cool_set_min) >= 2.77
+        self.result = (self.df["t_cool_set_max"] - self.df["t_cool_set_min"]) >= 2.77
 
     def check_bool(self) -> bool:
-        return self.result
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
 
-    def check_detail(self):
-        print("Verification results dict: ")
+    def check_detail(self) -> Dict:
         output = {
             "Sample #": len(self.result),
-            "max(T_cool_set)": self.t_cool_set_max,
-            "min(T_cool_set": self.t_cool_set_min,
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+            "max(T_cool_set)": self.df["t_cool_set_max"][0],
+            "min(T_cool_set)": self.df["t_cool_set_min"][0],
         }
+
+        print("Verification results dict: ")
         print(output)
+        return output

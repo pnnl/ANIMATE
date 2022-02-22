@@ -114,3 +114,6 @@ class IdfOutputPoint(Datapoint):
     def __hash__(self):
         """only designed to be used for picking unique output variables"""
         return self.outputobj.__hash__()
+
+    def __eq__(self, other):
+        return self.outputobj.strip().lower() == other.outputobj.strip().lower()
