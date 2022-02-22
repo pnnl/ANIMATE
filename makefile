@@ -23,8 +23,5 @@ out: $(addprefix $(RESULTS_DIR)/,$(OUT_FILES))
 all:
 	cd ./test_cases/verif_mtd_pp/; python ./create_test_cases.py
 	cd ./src/; python ./verification_cases_split.py;
-#	mv ./test_cases/verif_mtd_pp/verification_cases.json ./results/verification_cases.json
-#	rm ./test_cases/verif_mtd_pp/no_idfs_items.json
-#	$(MAKE) -k -j 1 out
 	$(MAKE) -k -j 10 out
 	cd ./src/; python ./summarize_md.py

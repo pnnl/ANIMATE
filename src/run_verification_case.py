@@ -45,8 +45,6 @@ def run_verification_case(item_dict, run_path_postfix=""):
         else None
     )
     verification_obj = cls(df, parameters, f"{run_path}")
-    # outcome = verification_obj.get_checks
-    # verification_obj.plot(plot_option)
     md_content = verification_obj.add_md(None, "../results/imgs", "./imgs", item_dict)
     return {int(item_dict["no"]): md_content}
 
