@@ -344,3 +344,73 @@ class ZoneCoolingResetDepth(CheckLibBase):
         print("Verification results dict: ")
         print(output)
         return output
+
+class NightCycleOperation(CheckLibBase):
+    points = ["T_zone", "HVAC_operation_sch", "T_heat_set", "T_cool_set", "Fan_elec_rate"]
+
+    def verify(self):
+        self.df["night_cycle_observed"]= "NA"
+        self.df = self.df.reset_index()
+        for index, row in self.df.iterrows():
+            if self.df['HVAC_operation_sch'][index] == 0:
+                if self.df['Fan_elec_rate'][index] == 0:
+                    if self.df['T_heat_set'][index] <= self.df['T_zone'][index] <= self.df['T_cool_set'][index]:
+                        self.df.loc[index, "night_cycle_observed"] = "off"
+                    else:
+                        self.df.loc[index, "night_cycle_observed"] = "off"
+                elif self.df['Fan_elec_rate'][index] > 0:
+                    if self.df['T_heat_set'][index] <= self.df['T_zone'][index] <= self.df['T_cool_set'][index]:
+                        self.df.loc[index, "night_cycle_observed"] = "on"
+                    else:
+                        self.df.loc[index, "night_cycle_observed"] = "on"
+            else:
+                self.df.loc[index, "night_cycle_observed"] = "NA"
+
+
+    def plot(self, plot_option, plt_pts=None):
+        print(
+            "Specific plot method implemented, additional line plot is being added!"
+        )
+        fig, (ax1, ax2, ax3) = plt.subplots(1, 3,)
+        fig.suptitle('Night Cycle Operation Control Verification - Last week of the year')
+
+        sns.lineplot(data=self.df["T_zone"][8592:8760], ax=ax1)
+        sns.lineplot(data=self.df["T_heat_set"][8592:8760], ax=ax1)
+        sns.lineplot(data=self.df["T_cool_set"][8592:8760], ax=ax1)
+        ax1.set_title("Temperature [°C]")
+        ax1.set_xlabel("Time Step")
+        ax1.set_ylabel("Temperature")
+
+        sns.lineplot(data=self.df["Fan_elec_rate"][8592:8760], ax=ax2)
+        ax2.set_title("Fan Electricity Rate [-]")
+        ax2.set_xlabel("Time Step")
+        ax2.set_ylabel("Power")
+
+        sns.lineplot(data=self.df["HVAC_operation_sch"][8592:8760], ax=ax3)
+        ax3.set_title("HVAC operation schedule")
+        ax3.set_xlabel("Time Step")
+        ax3.set_ylabel("Ratio [-]")
+
+        plt.show()
+
+        super().plot(plot_option, plt_pts)
+
+    def check_bool(self) -> bool:
+        return True # TODO should be updated later.
+            # if len(self.result[self.result == True] > 0):
+            #     return True
+            # else:
+            #     return False
+
+    def check_detail(self) -> Dict:
+        output = {
+            "Sample #": len(self.df["night_cycle_observed"]),
+            "night cycle 'on' observed #": len(self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 'on']),
+            "night cycle 'off' observed #": len(self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 'off']),
+            "night cycle NA observed #": len(self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 'NA']),
+            # "Verification Passed?": self.check_bool(),
+        }
+
+        print("Verification results dict: ")
+        print(output)
+        return output

@@ -378,7 +378,7 @@
                         "subject": "CoolSys1 Supply Outlet Node",
                         "variable": "System Node Temperature",
                         "frequency": "TimeStep"
-                    },
+					},
                     "m_chw": {
                         "subject": "CoolSys1 Supply Outlet Node",
                         "variable": "System Node Mass Flow Rate",
@@ -393,6 +393,51 @@
                 }
             },
             "verification_class": "CHWReset"
+        },
+		{
+            "no": 13,
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeSmall_STD2019_Seattle.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_AK_Anchorage-JB.Elmendorf-Richardson.702720_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_zone": {
+                        "subject": "PERIMETER_ZN_1",
+                        "variable": "Zone Air Temperature",
+                        "frequency": "TimeStep"
+                    },
+					"HVAC_operation_sch": {
+                        "subject": "HVACOperationSchd",
+                        "variable": "Schedule Value",
+                        "frequency": "TimeStep"
+                    },
+                    "T_heat_set": {
+                        "subject": "HTGSETP_SCH_NO_OPTIMUM",
+                        "variable": "Schedule Value",
+                        "frequency": "TimeStep"
+                    },
+					"T_cool_set": {
+                        "subject": "CLGSETP_SCH_NO_OPTIMUM",
+                        "variable": "Schedule Value",
+                        "frequency": "TimeStep"
+                    },
+                    "Fan_elec_rate": {
+                        "subject": "PSZ-AC:2 FAN",
+                        "variable": "Fan Electric Power",
+                        "frequency": "TimeStep"
+                    }
+                },
+                "parameters": {
+
+                }
+            },
+            "verification_class": "NightCycleOperation"
         }
     ]
 }
