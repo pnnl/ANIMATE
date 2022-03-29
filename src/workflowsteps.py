@@ -74,7 +74,7 @@ def combine_injection_points(
 
 
 def inject_idf(
-    iddpath: str, idfpath_in: str, objstoinject: List[IdfOutputPoint], idfpath_out=None
+    iddpath: str, idfpath_in: str, objstoinject: List[IdfOutputPoint], idfpath_out=None, wth_file=""
 ) -> None:
     """inject output points to idf, handle all items
 
@@ -83,22 +83,24 @@ def inject_idf(
         idfpath_in: path to the original idf file
         objstoinject: list of unique 'IdfOutputPoint' objects to be injected in the idf file
         idfpath_out: path to save the injected idf file, by default set to None, which will overwrite the original idf
+        wth_file: weather file used for the simulation
 
     """
-    injector = IDFInjector(idf_file_in=idfpath_in, idd_file=iddpath)
+    injector = IDFInjector(idf_file_in=idfpath_in, idd_file=iddpath, idf_file_out=idfpath_out, wth_file=wth_file)
     injector.inject_idf_outputs(eppy_output_objs=objstoinject)
     injector.save(idf_file_out=idfpath_out)
 
 
-def run_simulation(idfpath: str, weatherpath: str) -> None:
+def run_simulation(idfpath: str, weatherpath: str, ep_path: str) -> None:
     """run energyplus simulation, handle all items
 
     Args:
         idfpath: path to the idf for energyplus simulation
         weatherpath: path to the weather file used for simulation
+        ep_path: path to energyplus folder
 
     """
-    eprun = EPRunner(idf_path=idfpath, weather_path=weatherpath)
+    eprun = EPRunner(idf_path=idfpath, weather_path=weatherpath, ep_path=ep_path)
     print(f"Running simulation: {idfpath} -- {datetime.now()}")
     eprun.run_simulation()
     print(f"Simulation complete -- {datetime.now()}")
