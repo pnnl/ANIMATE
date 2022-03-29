@@ -3,6 +3,7 @@
 
 from eppy.modeleditor import IDF
 import pandas as pd
+from fuzzywuzzy import fuzz
 
 
 class EPReader:
@@ -89,18 +90,41 @@ class CSVReader(EPReader):
             cols = [cols]
         pickedcols = []
         pickedcols_original_format = []
-        for csvcol in fullcols:
-            for requestcol in cols:
+        for requestcol in cols:
+            current_picks = []
+            for csvcol in fullcols:
                 if requestcol.upper() in csvcol.upper():
-                    pickedcols.append(csvcol)
-                    pickedcols_original_format.append(requestcol)
+                    current_picks.append(csvcol)
+            if len(current_picks) > 1:
+                maxratio = None
+                for i in range(len(current_picks)):
+                    current_ratio = fuzz.ratio(
+                        current_picks[i].upper(), requestcol.upper()
+                    )
+                    reset = False
+                    if maxratio is None:
+                        reset = True
+                    else:
+                        if current_ratio > maxratio:
+                            reset = True
+                        if current_ratio == maxratio:
+                            print(
+                                "ERROR: observe same fuzzywuzzy match ratio for two columns, investigation needed."
+                            )
+                            return None
+                    if reset:
+                        maxratio = current_ratio
+                        picked_csvcol = current_picks[i]
+            else:
+                picked_csvcol = current_picks[0]
 
-        # print(len(cols))
-        # print(len(pickedcols))
+            pickedcols.append(picked_csvcol)
+            pickedcols_original_format.append(requestcol)
+
         if len(cols) != len(pickedcols):
             print("ERROR: time series query does not match")
             return None
-        # print(fullcols)
+
         if "Date/Time" in pickedcols:
             finalcols = pickedcols
             finalcols_original = pickedcols_original_format

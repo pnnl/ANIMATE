@@ -34,11 +34,16 @@ class EPRunner:
         self.output_prefix = output_prefix
         # by default, use the case name as the output folder
         if output_path is None:
-            self.output_path = idf_path.split(".idf")[0]
+            if ".idf" in idf_path.lower():
+                self.output_path = idf_path[:-4]
+            elif ".epjson" in idf_path.lower():
+                self.output_path = idf_path[:-7]
+            else:
+                self.output_path = idf_path
         self.process_run = None
 
     def run_simulation(self):
-        """ run simulation with setup obtained in the constructor
+        """run simulation with setup obtained in the constructor
 
         Returns:
             precess run object, which contains all stdout/stderr, will be saved by the save_log method
