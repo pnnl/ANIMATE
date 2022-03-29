@@ -263,7 +263,7 @@
         "description_datapoints": {
 			"T_zone": "Zone Air Temperature",
 			"HVAC_operation_sch": "HVAC operation schedule",
-            "T_hear_set": "Zone Thermostat Heating Setpoint Temperature",
+            "T_heat_set": "Zone Thermostat Heating Setpoint Temperature",
 			"T_cool_set": "Zone Thermostat Cooling Setpoint Temperature",
 			"Fan_elec_rate": "Fan Electricity Rate"			
         },
