@@ -43,7 +43,7 @@ class EPRunner:
         self.process_run = None
 
     def run_simulation(self):
-        """ run simulation with setup obtained in the constructor
+        """run simulation with setup obtained in the constructor
 
         Returns:
             precess run object, which contains all stdout/stderr, will be saved by the save_log method

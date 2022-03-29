@@ -1,5 +1,7 @@
 # ANIMATE: a dAtadriveN buildIng perforMance verificATion framEwork
 
+Unit tests status: [![CircleCI](https://circleci.com/gh/pnnl/ANIMATE/tree/master.svg?style=svg)](https://circleci.com/gh/pnnl/ANIMATE/tree/master)
+
 # Background and Motivation
 
 Building energy modeling (BEM) has been widely used to quantify the energy impact of new building technologies, energy policy development, and other virtual demonstrations of building energy usage. Quality assurance (QA) and quality control (QC) are essential parts of such BEM analysis. This is especially true for whole-building energy modeling (BEM) which mostly deals with complex models, driven by a very large number of input data. The QA/QC approaches typically rely heavily on either simulation inputs and/or reported (summarized) outputs. While this seems like an adequate evidence at first glance, it makes the assumptions that 1) the simulation software or reference cases are free of errors, which is not always the case, and 2) there is always a unique (or set of unique) and consistent approach(es) that can be used to gauge whether simulation results are correct or not, just by reviewing inputs. In most instances, QA/QC approaches require a modeler or reviewer to spend a considerable amount of time reviewing inputs, outputs, and/or metrics to ensure that the outcome of a simulation is acceptable. Unfortunately, both 1) and 2) are rarely true because 1) simulation engines are constantly evolving (bug fixes and new features), so the reference cases might be not free of errors, and 2) time-series output verification (with a combination of summarized inputs and outputs) is the only way to ensure that models behave as expected. Reviewing only model inputs will not guarantee the model performance. To address these challenges/gaps, we propose a dAta-driveN buildIng perforMance verificATion framEwork (ANIMATE) that enables automatic control performance verification.
@@ -50,7 +52,7 @@ See the Publications section for more information and example of uses of the fra
 
 ## Publications
 
-- _A Knowledge-based Framework for Building Energy Model Performance Verification_. 2021. Chen Y, Lerond J, Lei X, Rosenberg M, Vrabie D.
+- Chen Y., J. Lerond, X. Lei, and M.I. Rosenberg. 2021. "A Knowledge-based Framework for Building Energy Model Performance Verification." In Building Simulation 2021 Conference
 
 ## Referencing
 

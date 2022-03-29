@@ -7,6 +7,7 @@ from library import *
 from datetimeep import DateTimeEP
 import sys, os
 
+
 def run_libcase(item_dict, plot_option="all-compact"):
     """Library case runner
 
@@ -90,6 +91,7 @@ def run_libcase(item_dict, plot_option="all-compact"):
     outcome = verification_obj.get_checks
     verification_obj.plot(plot_option)
 
+
 def main():
     num_argv = len(sys.argv)
     # NOTE: all relative paths in the json files should be based on "./" being "ANIMATE/src"
@@ -110,6 +112,7 @@ def main():
         run_libcase(item_dict=items[case_no])
     else:
         print(f"Error: Invalid number of arguments provided: {sys.argv}")
+
 
 if __name__ == "__main__":
     print(f"Running main() in {os.getcwd()}...")

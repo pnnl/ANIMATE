@@ -55,11 +55,9 @@ class SupplyAirTempReset(RuleCheckBase):
         print(
             "Specific plot method implemented, additional distribution plot is being added!"
         )
-        # plt.hist(self.df['T_sa_set'], bins=10)
         sns.distplot(self.df["T_sa_set"])
         plt.title("All samples distribution of T_sa_set")
         plt.savefig(f"{self.results_folder}/All_samples_distribution_of_T_sa_set.png")
-        # plt.show()
 
         super().plot(plot_option, plt_pts)
 
@@ -185,7 +183,6 @@ class HWReset(RuleCheckBase):
         plt.subplots()
         sns.scatterplot(x="T_oa_db", y="T_hw", data=self.df)
         plt.title("Scatter plot between T_oa_db and T_hw")
-        # plt.show()
 
         super().plot(plot_option, plt_pts)
 

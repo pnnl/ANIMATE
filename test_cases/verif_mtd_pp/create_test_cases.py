@@ -512,9 +512,7 @@ def integrated_econ(idf, idf_f, id, cases):
                                     if rep:
                                         print(
                                             "Adding IntegratedEconomizerControl verification items for {}".format(
-                                                idf_f.split("/")[-1].replace(
-                                                    ".idf", ""
-                                                )
+                                                idf_f.split("/")[-1].replace(".idf", "")
                                             )
                                         )
                                         rep = False

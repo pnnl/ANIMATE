@@ -21,5 +21,9 @@ out: $(addprefix $(RESULTS_DIR)/,$(OUT_FILES))
 
 all:
 	cd ./src/; python ./verification_cases_split.py;
+<<<<<<< HEAD
 	$(MAKE) -k -j 3 out
+=======
+	$(MAKE) -k -j 10 out
+>>>>>>> master
 	cd ./src/; python ./summarize_md.py
