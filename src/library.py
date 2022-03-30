@@ -11,6 +11,7 @@ from typing import List, Dict
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import numpy as np
 
 
 class IntegratedEconomizerControl(CheckLibBase):
@@ -342,34 +343,53 @@ class ZoneCoolingResetDepth(CheckLibBase):
         print(output)
         return output
 
+
 class NightCycleOperation(CheckLibBase):
-    points = ["T_zone", "HVAC_operation_sch", "T_heat_set", "T_cool_set", "Fan_elec_rate"]
+    points = [
+        "T_zone",
+        "HVAC_operation_sch",
+        "T_heat_set",
+        "T_cool_set",
+        "Fan_elec_rate",
+    ]
 
     def verify(self):
-        self.df["night_cycle_observed"]= "NA"
-        self.df = self.df.reset_index()
+        self.df["night_cycle_observed"] = "NA"
+        # self.df = self.df.reset_index()
         for index, row in self.df.iterrows():
-            if self.df['HVAC_operation_sch'][index] == 0:
-                if self.df['Fan_elec_rate'][index] == 0:
-                    if self.df['T_heat_set'][index] <= self.df['T_zone'][index] <= self.df['T_cool_set'][index]:
-                        self.df.loc[index, "night_cycle_observed"] = "off"
+            if self.df["HVAC_operation_sch"][index] == 0:
+                if self.df["Fan_elec_rate"][index] == 0:
+                    if (
+                        self.df["T_heat_set"][index]
+                        <= self.df["T_zone"][index]
+                        <= self.df["T_cool_set"][index]
+                    ):
+                        self.df.loc[index, "night_cycle_observed"] = 0
                     else:
-                        self.df.loc[index, "night_cycle_observed"] = "off"
-                elif self.df['Fan_elec_rate'][index] > 0:
-                    if self.df['T_heat_set'][index] <= self.df['T_zone'][index] <= self.df['T_cool_set'][index]:
-                        self.df.loc[index, "night_cycle_observed"] = "on"
+                        self.df.loc[index, "night_cycle_observed"] = 0
+                elif self.df["Fan_elec_rate"][index] > 0:
+                    if (
+                        self.df["T_heat_set"][index]
+                        <= self.df["T_zone"][index]
+                        <= self.df["T_cool_set"][index]
+                    ):
+                        self.df.loc[index, "night_cycle_observed"] = 1
                     else:
-                        self.df.loc[index, "night_cycle_observed"] = "on"
+                        self.df.loc[index, "night_cycle_observed"] = 1
             else:
-                self.df.loc[index, "night_cycle_observed"] = "NA"
+                self.df.loc[index, "night_cycle_observed"] = np.nan
 
+        self.result = (self.df["night_cycle_observed"] == 1)
 
     def plot(self, plot_option, plt_pts=None):
-        print(
-            "Specific plot method implemented, additional line plot is being added!"
+        print("Specific plot method implemented, additional line plot is being added!")
+        fig, (ax1, ax2, ax3) = plt.subplots(
+            1,
+            3,
         )
-        fig, (ax1, ax2, ax3) = plt.subplots(1, 3,)
-        fig.suptitle('Night Cycle Operation Control Verification - Last week of the year')
+        fig.suptitle(
+            "Night Cycle Operation Control Verification - Last week of the year"
+        )
 
         sns.lineplot(data=self.df["T_zone"][8592:8760], ax=ax1)
         sns.lineplot(data=self.df["T_heat_set"][8592:8760], ax=ax1)
@@ -393,18 +413,26 @@ class NightCycleOperation(CheckLibBase):
         super().plot(plot_option, plt_pts)
 
     def check_bool(self) -> bool:
-        return True # TODO should be updated later.
-            # if len(self.result[self.result == True] > 0):
-            #     return True
-            # else:
-            #     return False
+        return True  # TODO should be updated later.
+        # if len(self.result[self.result == True] > 0):
+        #     return True
+        # else:
+        #     return False
 
     def check_detail(self) -> Dict:
         output = {
             "Sample #": len(self.df["night_cycle_observed"]),
-            "night cycle 'on' observed #": len(self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 'on']),
-            "night cycle 'off' observed #": len(self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 'off']),
-            "night cycle NA observed #": len(self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 'NA']),
+            "night cycle 'on' observed #": len(
+                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == "on"]
+            ),
+            "night cycle 'off' observed #": len(
+                self.df["night_cycle_observed"][
+                    self.df["night_cycle_observed"] == "off"
+                ]
+            ),
+            "night cycle NA observed #": len(
+                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == "NA"]
+            ),
             # "Verification Passed?": self.check_bool(),
         }
 

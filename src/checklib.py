@@ -79,8 +79,8 @@ class CheckLibBase(ABC):
         self.results_folder = img_folder
         self.plot(plot_option="all-compact")
         self.plot(plot_option="all-expand")
-#        self.plot(plot_option="day-compact")
-#        self.plot(plot_option="day-expand")
+        self.plot(plot_option="day-compact")
+        self.plot(plot_option="day-expand")
         image_list = glob.glob(f"{img_folder}/*.png")
         image_md_path_list = [
             x.replace(img_folder, relative_path_to_img_in_md) for x in image_list
