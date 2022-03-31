@@ -40,6 +40,8 @@ class CheckLibBase(ABC):
             print(f"Dataset is not sufficient for running {self.__class__.__name__}")
             print(set(col_list))
         self.df = full_df[self.points_list]
+        self.df.index = pd.to_datetime(self.df.index)
+        self.df = self.df.sort_index()
         self.results_folder = results_folder
         self.verify()
         self.result.name = ""
