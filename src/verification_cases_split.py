@@ -11,7 +11,7 @@ from datetimeep import DateTimeEP
 import matplotlib.pyplot as plt
 
 # %% Load and assemble verification items
-batch_size = 1
+batch_size = 100
 run_no_sim_cases = False
 cases_path = "../../scripts/verification_cases.json"
 print(f"Split verification cases by model with batch size of {batch_size}...")
