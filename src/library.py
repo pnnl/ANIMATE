@@ -389,15 +389,15 @@ class NightCycleOperation(CheckLibBase):
         output = {
             "Sample #": len(self.df["night_cycle_observed"]),
             "night cycle 'on' observed #": len(
-                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == "on"]
+                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 1]
             ),
             "night cycle 'off' observed #": len(
-                self.df["night_cycle_observed"][
-                    self.df["night_cycle_observed"] == "off"
-                ]
+                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 0]
             ),
             "night cycle NA observed #": len(
-                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == "NA"]
+                self.df["night_cycle_observed"][
+                    np.isnan(self.df["night_cycle_observed"])
+                ]
             ),
             # "Verification Passed?": self.check_bool(),
         }
