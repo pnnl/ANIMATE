@@ -446,15 +446,15 @@ class NightCycleOperation(CheckLibBase):
     ]
 
     def night_cycle_operation(self, data):
-        tol = 0.02
+        tol = 0.5
         if data["HVAC_operation_sch"] == 0:
             if data["Fan_elec_rate"] == 0:
                 if (
-                    data["T_heat_set"] * (1 - tol)
+                    data["T_heat_set"] - tol
                     >= data["T_zone"]
                 ) or (
                     data["T_zone"]
-                    >= data["T_cool_set"] * (1 + tol)
+                    >= data["T_cool_set"] + tol
                 ):
                     data[
                         "night_cycle_observed"
