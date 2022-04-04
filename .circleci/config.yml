@@ -27,6 +27,7 @@ jobs:
 #          name: create artifacts folder   # not used at the moment
 #          command: |
 #            mkdir /tmp/artifacts;
+      - run: sudo pip install black
       - run:
           name: black formatting
           command: black -l 88 src --check
