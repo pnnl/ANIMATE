@@ -26,13 +26,13 @@ jobs:
 #          command: |
 #            mkdir /tmp/artifacts;
       - run: 
-          name: install Black
+          name: Install Black
           command: sudo pip install black
       - run:
           name: Check Black formatting
           command: black -l 88 src --check
       - run:
-          name: run tests
+          name: Run tests
           command: |
             export PYTHONUNBUFFERED=1
             . venv/bin/activate
