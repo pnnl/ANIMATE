@@ -74,7 +74,11 @@ def combine_injection_points(
 
 
 def inject_idf(
-    iddpath: str, idfpath_in: str, objstoinject: List[IdfOutputPoint], idfpath_out=None, wth_file=""
+    iddpath: str,
+    idfpath_in: str,
+    objstoinject: List[IdfOutputPoint],
+    idfpath_out=None,
+    wth_file="",
 ) -> None:
     """inject output points to idf, handle all items
 
@@ -86,7 +90,12 @@ def inject_idf(
         wth_file: weather file used for the simulation
 
     """
-    injector = IDFInjector(idf_file_in=idfpath_in, idd_file=iddpath, idf_file_out=idfpath_out, wth_file=wth_file)
+    injector = IDFInjector(
+        idf_file_in=idfpath_in,
+        idd_file=iddpath,
+        idf_file_out=idfpath_out,
+        wth_file=wth_file,
+    )
     injector.inject_idf_outputs(eppy_output_objs=objstoinject)
     injector.save(idf_file_out=idfpath_out)
 

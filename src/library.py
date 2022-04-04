@@ -18,9 +18,9 @@ class IntegratedEconomizerControl(CheckLibBase):
     points = ["oa_min_flow", "oa_flow", "ccoil_out"]
 
     def verify(self):
-        self.result = (
-            self.df["oa_flow"] > self.df["oa_min_flow"]
-        ) & (self.df["ccoil_out"] > 0)
+        self.result = (self.df["oa_flow"] > self.df["oa_min_flow"]) & (
+            self.df["ccoil_out"] > 0
+        )
 
     def check_bool(self) -> bool:
         if len(self.result[self.result == True] > 0):
@@ -33,9 +33,7 @@ class IntegratedEconomizerControl(CheckLibBase):
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(
-                self.result[self.result == False]
-            ),
+            "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
         }
         print(output)
@@ -60,25 +58,17 @@ class SupplyAirTempReset(RuleCheckBase):
         )
         sns.distplot(self.df["T_sa_set"])
         plt.title("All samples distribution of T_sa_set")
-        plt.savefig(
-            f"{self.results_folder}/All_samples_distribution_of_T_sa_set.png"
-        )
+        plt.savefig(f"{self.results_folder}/All_samples_distribution_of_T_sa_set.png")
 
         super().plot(plot_option, plt_pts)
 
     def calculate_plot_day(self):
         """over write method to select day for day plot"""
-        for one_day in self.daterange(
-            date(2000, 1, 1), date(2001, 1, 1)
-        ):
+        for one_day in self.daterange(date(2000, 1, 1), date(2001, 1, 1)):
             daystr = f"{str(one_day.year)}-{str(one_day.month)}-{str(one_day.day)}"
             daydf = self.df[daystr]
             day = self.result[daystr]
-            if (
-                daydf["T_sa_set"].max()
-                - daydf["T_sa_set"].min()
-                > 0
-            ):
+            if daydf["T_sa_set"].max() - daydf["T_sa_set"].min() > 0:
                 return day, daydf
             return day, daydf
 
@@ -128,10 +118,7 @@ class EconomizerHighLimitC(RuleCheckBase):
             (self.df["oa_flow"] > self.df["oa_min_flow"])
             & (
                 (self.df["oa_db"] > self.df["oa_threshold"])
-                | (
-                    self.df["oa_enth"]
-                    > self.df["oa_enth_threshold"]
-                )
+                | (self.df["oa_enth"] > self.df["oa_enth_threshold"])
             )
         )
 
@@ -151,10 +138,7 @@ class EconomizerHighLimitD(RuleCheckBase):
             (self.df["oa_flow"] > self.df["oa_min_flow"])
             & (
                 (self.df["ret_a_enth"] < self.df["oa_enth"])
-                | (
-                    self.df["oa_db"]
-                    > self.df["oa_threshold"]
-                )
+                | (self.df["oa_db"] > self.df["oa_threshold"])
             )
         )
 
@@ -163,10 +147,7 @@ class ZoneTempControl(RuleCheckBase):
     points = ["T_z_set_cool", "T_z_set_heat"]
 
     def verify(self):
-        self.result = (
-            self.df["T_z_set_cool"]
-            - self.df["T_z_set_heat"]
-        ) > 2.77
+        self.result = (self.df["T_z_set_cool"] - self.df["T_z_set_heat"]) > 2.77
 
 
 class HWReset(RuleCheckBase):
@@ -187,41 +168,20 @@ class HWReset(RuleCheckBase):
             )  # add boundary relaxation in the rules for this one and chwreset
             | (
                 (self.df["T_oa_db"] <= self.df["T_oa_min"])
-                & (
-                    self.df["T_hw"]
-                    >= self.df["T_hw_max_st"] * 0.99
-                )
+                & (self.df["T_hw"] >= self.df["T_hw_max_st"] * 0.99)
+            )
+            | (
+                (self.df["T_oa_db"] >= (self.df["T_oa_max"]))
+                & (self.df["T_hw"] <= self.df["T_hw_min_st"] * 1.01)
             )
             | (
                 (
-                    self.df["T_oa_db"]
-                    >= (self.df["T_oa_max"])
+                    (self.df["T_oa_db"] >= self.df["T_oa_min"])
+                    & (self.df["T_oa_db"] <= self.df["T_oa_max"])
                 )
                 & (
-                    self.df["T_hw"]
-                    <= self.df["T_hw_min_st"] * 1.01
-                )
-            )
-            | (
-                (
-                    (
-                        self.df["T_oa_db"]
-                        >= self.df["T_oa_min"]
-                    )
-                    & (
-                        self.df["T_oa_db"]
-                        <= self.df["T_oa_max"]
-                    )
-                )
-                & (
-                    (
-                        self.df["T_hw"]
-                        >= self.df["T_hw_min_st"] * 0.99
-                    )
-                    & (
-                        self.df["T_hw"]
-                        <= self.df["T_hw_max_st"] * 1.01
-                    )
+                    (self.df["T_hw"] >= self.df["T_hw_min_st"] * 0.99)
+                    & (self.df["T_hw"] <= self.df["T_hw_max_st"] * 1.01)
                 )
             )
         )
@@ -254,38 +214,20 @@ class CHWReset(RuleCheckBase):
             (self.df["m_chw"] <= 0)
             | (
                 (self.df["T_oa_db"] <= self.df["T_oa_min"])
-                & (
-                    self.df["T_chw"]
-                    >= self.df["T_chw_max_st"] * 0.99
-                )
+                & (self.df["T_chw"] >= self.df["T_chw_max_st"] * 0.99)
             )
             | (
                 (self.df["T_oa_db"] >= self.df["T_oa_max"])
-                & (
-                    self.df["T_chw"]
-                    <= self.df["T_chw_min_st"] * 1.01
-                )
+                & (self.df["T_chw"] <= self.df["T_chw_min_st"] * 1.01)
             )
             | (
                 (
-                    (
-                        self.df["T_oa_db"]
-                        >= self.df["T_oa_min"]
-                    )
-                    & (
-                        self.df["T_oa_db"]
-                        <= self.df["T_oa_max"]
-                    )
+                    (self.df["T_oa_db"] >= self.df["T_oa_min"])
+                    & (self.df["T_oa_db"] <= self.df["T_oa_max"])
                 )
                 & (
-                    (
-                        self.df["T_chw"]
-                        >= self.df["T_chw_min_st"] * 0.99
-                    )
-                    & (
-                        self.df["T_chw"]
-                        <= self.df["T_chw_max_st"] * 1.01
-                    )
+                    (self.df["T_chw"] >= self.df["T_chw_min_st"] * 0.99)
+                    & (self.df["T_chw"] <= self.df["T_chw_max_st"] * 1.01)
                 )
             )
         )
@@ -295,9 +237,7 @@ class CHWReset(RuleCheckBase):
         print(
             "Specific plot method implemented, additional scatter plot is being added!"
         )
-        sns.scatterplot(
-            x="T_oa_db", y="T_chw", data=self.df
-        )
+        sns.scatterplot(x="T_oa_db", y="T_chw", data=self.df)
         plt.title("Scatter plot between T_oa_db and T_chw")
         plt.show()
 
@@ -320,9 +260,7 @@ class ZoneHeatSetpointMinimum(CheckLibBase):
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(
-                self.result[self.result == False]
-            ),
+            "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
         }
 
@@ -347,9 +285,7 @@ class ZoneCoolingSetpointMaximum(CheckLibBase):
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(
-                self.result[self.result == False]
-            ),
+            "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
         }
 
@@ -362,17 +298,10 @@ class ZoneHeatingResetDepth(CheckLibBase):
     points = ["T_heat_set"]
 
     def verify(self):
-        self.df["t_heat_set_min"] = min(
-            self.df["T_heat_set"]
-        )
-        self.df["t_heat_set_max"] = max(
-            self.df["T_heat_set"]
-        )
+        self.df["t_heat_set_min"] = min(self.df["T_heat_set"])
+        self.df["t_heat_set_max"] = max(self.df["T_heat_set"])
 
-        self.result = (
-            self.df["t_heat_set_max"]
-            - self.df["t_heat_set_min"]
-        ) >= 5.55
+        self.result = (self.df["t_heat_set_max"] - self.df["t_heat_set_min"]) >= 5.55
 
     def check_bool(self) -> bool:
         if len(self.result[self.result == True] > 0):
@@ -384,9 +313,7 @@ class ZoneHeatingResetDepth(CheckLibBase):
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(
-                self.result[self.result == False]
-            ),
+            "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
             "max(T_heat_set)": self.df["t_heat_set_max"][0],
             "min(T_heat_set)": self.df["t_heat_set_min"][0],
@@ -401,17 +328,10 @@ class ZoneCoolingResetDepth(CheckLibBase):
     points = ["T_cool_set"]
 
     def verify(self):
-        self.df["t_cool_set_min"] = min(
-            self.df["T_cool_set"]
-        )
-        self.df["t_cool_set_max"] = max(
-            self.df["T_cool_set"]
-        )
+        self.df["t_cool_set_min"] = min(self.df["T_cool_set"])
+        self.df["t_cool_set_max"] = max(self.df["T_cool_set"])
 
-        self.result = (
-            self.df["t_cool_set_max"]
-            - self.df["t_cool_set_min"]
-        ) >= 2.77
+        self.result = (self.df["t_cool_set_max"] - self.df["t_cool_set_min"]) >= 2.77
 
     def check_bool(self) -> bool:
         if len(self.result[self.result == True] > 0):
@@ -423,9 +343,7 @@ class ZoneCoolingResetDepth(CheckLibBase):
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(
-                self.result[self.result == False]
-            ),
+            "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
             "max(T_cool_set)": self.df["t_cool_set_max"][0],
             "min(T_cool_set)": self.df["t_cool_set_min"][0],
@@ -449,16 +367,10 @@ class NightCycleOperation(CheckLibBase):
         tol = 0.5
         if data["HVAC_operation_sch"] == 0:
             if data["Fan_elec_rate"] == 0:
-                if (
-                    data["T_heat_set"] - tol
-                    >= data["T_zone"]
-                ) or (
-                    data["T_zone"]
-                    >= data["T_cool_set"] + tol
+                if (data["T_heat_set"] - tol >= data["T_zone"]) or (
+                    data["T_zone"] >= data["T_cool_set"] + tol
                 ):
-                    data[
-                        "night_cycle_observed"
-                    ] = -1  # Fail, NC should be running
+                    data["night_cycle_observed"] = -1  # Fail, NC should be running
                 else:
                     data["night_cycle_observed"] = 0
             elif data["Fan_elec_rate"] > 0:
@@ -467,32 +379,20 @@ class NightCycleOperation(CheckLibBase):
 
     def verify(self):
         self.df["night_cycle_observed"] = np.nan
-        self.df = self.df.apply(
-            lambda r: self.night_cycle_operation(r), axis=1
-        )
-        self.result = ~(
-            self.df["night_cycle_observed"] == -1
-        )
+        self.df = self.df.apply(lambda r: self.night_cycle_operation(r), axis=1)
+        self.result = ~(self.df["night_cycle_observed"] == -1)
 
     def check_bool(self) -> bool:
         res = False
         if (
-            len(
-                self.df["night_cycle_observed"][
-                    self.df["night_cycle_observed"] == 1
-                ]
+            len(self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 1])
+            > 0
+            and len(
+                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 0]
             )
             > 0
             and len(
-                self.df["night_cycle_observed"][
-                    self.df["night_cycle_observed"] == 0
-                ]
-            )
-            > 0
-            and len(
-                self.df["night_cycle_observed"][
-                    self.df["night_cycle_observed"] == -1
-                ]
+                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == -1]
             )
             == 0
         ):
@@ -501,35 +401,23 @@ class NightCycleOperation(CheckLibBase):
 
     def check_detail(self) -> Dict:
         output = {
-            "Sample #": len(
-                self.df["night_cycle_observed"]
-            ),
+            "Sample #": len(self.df["night_cycle_observed"]),
             "night cycle 'on' observed #": len(
-                self.df["night_cycle_observed"][
-                    self.df["night_cycle_observed"] == 1
-                ]
+                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 1]
             ),
             "night cycle 'off' observed #": len(
-                self.df["night_cycle_observed"][
-                    self.df["night_cycle_observed"] == 0
-                ]
+                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 0]
             ),
             "night cycle NA observed #": len(
                 self.df["night_cycle_observed"][
-                    np.isnan(
-                        self.df["night_cycle_observed"]
-                    )
+                    np.isnan(self.df["night_cycle_observed"])
                 ]
             ),
             "Fail #": len(
-                self.df["night_cycle_observed"][
-                    self.df["night_cycle_observed"] == -1
-                ]
+                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == -1]
             ),
             "Pass #": len(
-                self.df["night_cycle_observed"][
-                    self.df["night_cycle_observed"] == 1
-                ]
+                self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 1]
             ),
             "Verification Passed?": self.check_bool(),
         }

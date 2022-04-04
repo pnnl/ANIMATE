@@ -39,7 +39,9 @@ for k, v in unique_idfs_to_items.items():
     j = 0
     for one_batch in batches:
         print(k)
-        writer_path = f"../../buildings/{k.split('.idf')[0].split('/')[-1]}_Batch{j}.json"
+        writer_path = (
+            f"../../buildings/{k.split('.idf')[0].split('/')[-1]}_Batch{j}.json"
+        )
         with open(writer_path, "w") as fw:
             json.dump({"cases": one_batch}, fw, indent=4)
         j += 1
