@@ -26,6 +26,9 @@ jobs:
 #          command: |
 #            mkdir /tmp/artifacts;
       - run:
+          name: black formatting
+          command: black -l 88 src --check
+      - run:
           name: run tests
           command: |
             export PYTHONUNBUFFERED=1
