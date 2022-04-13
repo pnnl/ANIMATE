@@ -5,7 +5,7 @@ from io import StringIO
 from datapoint import IdfOutputPoint
 from typing import List
 from eppy.modeleditor import IDF
-import shutil, os
+import shutil
 
 
 class Injector:
@@ -17,19 +17,15 @@ class Injector:
 class IDFInjector(Injector):
     """Inject idf output variable objects to IDF files"""
 
-    def __init__(self, idf_file_in, idd_file, idf_file_out, wth_file=""):
+    def __init__(self, idf_file_in, idd_file):
         """
 
         Args:
             idf_file_in: path to idf file to be injected
             idd_file: path to idd file for processing idf file with eppy
-            idf_file_out: path to injected idf file
-            wth_file: weather file used for the simulation
         """
         self.idf_file_in = idf_file_in
         IDF.setiddname(iddname=idd_file)
-        self.idf_file_out = idf_file_out
-        self.wth_file = wth_file
         self.appending_str = None
 
     def inject_idf_outputs(self, eppy_output_objs: List[IdfOutputPoint]) -> None:
@@ -56,8 +52,6 @@ class IDFInjector(Injector):
             str(obj) for obj in output_idf_objs.idfobjects["Output:Variable".upper()]
         ]
         self.appending_str = "\n".join(all_list)
-        if len(self.wth_file):
-            shutil.copyfile(self.wth_file, self.idf_file_out.replace(".idf", ".epw"))
 
     def save(self, idf_file_out=None):
         if idf_file_out is None:
