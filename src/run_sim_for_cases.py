@@ -2,7 +2,7 @@ from workflowsteps import *
 from library import *
 from datetimeep import DateTimeEP
 from tqdm import tqdm
-import sys, os
+import sys, shutil
 
 
 def run_sim_for_cases(
@@ -29,6 +29,7 @@ def run_sim_for_cases(
     if need_injection and run_sim:
         original_idf_path = item.item["simulation_IO"]["idf"].strip()
         idd_path = item.item["simulation_IO"]["idd"].strip()
+        wth_file = item.item["simulation_IO"]["weather"].strip()
         # run_path = f"{original_idf_path.split('.idf')[0]}"
         if ".idf" in original_idf_path.lower():
             run_path = f"{original_idf_path[:-4]}"
@@ -40,6 +41,11 @@ def run_sim_for_cases(
     if need_injection:
         instrumented_idf_path = f"{original_idf_path.split('.idf')[0]}_{batch_postfix}_injected_BatchVerification.idf"
         run_path = f"{run_path}_injected_BatchVerification"
+        if len(wth_file):
+            shutil.copyfile(
+                wth_file,
+                f"{original_idf_path.split('.idf')[0]}_{batch_postfix}_injected_BatchVerification.epw",
+            )
         inject_idf(
             iddpath=idd_path,
             idfpath_in=original_idf_path,
