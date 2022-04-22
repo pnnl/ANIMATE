@@ -74,12 +74,7 @@ class SupplyAirTempReset(RuleCheckBase):
 
 
 class EconomizerHighLimitA(RuleCheckBase):
-    points = [
-        "oa_db",
-        "oa_threshold",
-        "oa_min_flow",
-        "oa_flow",
-    ]
+    points = ["oa_db", "oa_threshold", "oa_min_flow", "oa_flow"]
 
     def verify(self):
         self.result = ~(
@@ -89,12 +84,7 @@ class EconomizerHighLimitA(RuleCheckBase):
 
 
 class EconomizerHighLimitB(RuleCheckBase):
-    points = [
-        "oa_flow",
-        "oa_db",
-        "ret_a_temp",
-        "oa_min_flow",
-    ]
+    points = ["oa_flow", "oa_db", "ret_a_temp", "oa_min_flow"]
 
     def verify(self):
         self.result = ~(
@@ -419,6 +409,86 @@ class NightCycleOperation(CheckLibBase):
             "Pass #": len(
                 self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 1]
             ),
+            "Verification Passed?": self.check_bool(),
+        }
+
+        print("Verification results dict: ")
+        print(output)
+        return output
+
+
+class ERVTemperatureControl(CheckLibBase):
+    points = [
+        "MIN_OA_FLOW",
+        "OA_FLOW",
+        "NOM_FLOW",
+        "HX_DSN_EFF_HTG",
+        "HX_DSN_EFF_HTG_75_PCT",
+        "HX_DSN_EFF_CLG",
+        "HX_DSN_EFF_CLG_75_PCT",
+        "T_OA",
+        "T_SO",
+        "T_SO_SP",
+        "T_EI",
+    ]
+
+    def erv_temperature_control(self, data):
+        economizer = True if data["OA_FLOW"] > data["MIN_OA_FLOW"] * 1.01 else False
+        hx_running = True if data["T_OA"] != data["T_SO"] else False
+        hx_sens_eff_dsn_htg = (
+            data["HX_DSN_EFF_HTG_75_PCT"]
+            + (data["HX_DSN_EFF_HTG"] - data["HX_DSN_EFF_HTG_75_PCT"])
+            * ((data["OA_FLOW"] / data["NOM_FLOW"]) - 0.75)
+            / 0.25
+        )
+        hx_sens_eff_dsn_clg = (
+            data["HX_DSN_EFF_CLG_75_PCT"]
+            + (data["HX_DSN_EFF_CLG"] - data["HX_DSN_EFF_CLG_75_PCT"])
+            * ((data["OA_FLOW"] / data["NOM_FLOW"]) - 0.75)
+            / 0.25
+        )
+        hx_sens_eff = (data["T_SO"] - data["T_OA"]) / (data["T_EI"] - data["T_OA"])
+        data["erv_temperature_control"] = 0  # pass by default
+        if not economizer and data["OA_FLOW"] > 0:  # non-economizer operation
+            if data["T_SO"] > data["T_SO_SP"] + 0.5:
+                if data["T_OA"] < data["T_EI"] and hx_running:  # deadband
+                    data["erv_temperature_control"] = 1
+                elif data["T_OA"] > data["T_EI"] and not (
+                    hx_running
+                    and hx_sens_eff_dsn_clg * 0.95
+                    < hx_sens_eff
+                    < hx_sens_eff_dsn_clg * 1.05
+                ):  # cooling
+                    data["erv_temperature_control"] = 1
+            elif data["T_SO"] < data["T_SO_SP"] - 0.5:  # heating
+                if not (
+                    hx_running
+                    and hx_sens_eff_dsn_htg * 0.9
+                    < hx_sens_eff
+                    < hx_sens_eff_dsn_htg * 1.1
+                ):
+                    data["erv_temperature_control"] = 1
+        else:  # economizer operation
+            if hx_running:
+                data["erv_temperature_control"] = 1
+        return data
+
+    def verify(self):
+        self.df["erv_temperature_control"] = np.nan
+        self.df = self.df.apply(lambda r: self.erv_temperature_control(r), axis=1)
+        self.result = self.df["erv_temperature_control"]
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == 1]) > 0:
+            return False
+        else:
+            return True
+
+    def check_detail(self) -> Dict:
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == 0]),
+            "Fail #": len(self.result[self.result == 1]),
             "Verification Passed?": self.check_bool(),
         }
 
