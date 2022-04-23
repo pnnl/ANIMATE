@@ -154,14 +154,14 @@ class CheckLibBase(ABC):
         plt.figure(figsize=(6.4, 4.8))
 
         # flag
-        ax1 = plt.subplot(211)
+        ax1 = plt.subplot(2, 1, 1)
         sns.scatterplot(x=self.result.index, y=self.result, linewidth=0, s=1)
         plt.xlim([self.df.index[0], self.df.index[-1]])
         plt.ylim([-0.2, 1.2])
         plt.title(f"All samples Pass / Fail flag plot - {self.__class__.__name__}")
 
         # datapoints
-        ax2 = plt.subplot(212)
+        ax2 = plt.subplot(2, 1, 2)
         self.df[plt_pts].plot(ax=ax2)
         pt_nan = self.df.isnull().any().to_dict()
         for i, line in enumerate(ax2.get_lines()):
@@ -180,7 +180,7 @@ class CheckLibBase(ABC):
         plt.figure(figsize=(6.4, 2.4 * num_plots))
 
         # flag
-        ax1 = plt.subplot(int(f"{num_plots}11"))
+        ax1 = plt.subplot(num_plots, 1, 1)
         sns.scatterplot(x=self.result.index, y=self.result, linewidth=0, s=1)
         plt.xlim([self.df.index[0], self.df.index[-1]])
         plt.ylim([-0.2, 1.2])
@@ -190,8 +190,7 @@ class CheckLibBase(ABC):
         pt_nan = self.df.isnull().any().to_dict()
         i = 2
         for pt in plt_pts:
-            subplot_int = int(f"{num_plots}1{i}")
-            axx = plt.subplot(subplot_int)
+            axx = plt.subplot(num_plots, 1, i)
             if pt_nan[pt]:
                 self.df[pt].plot(ax=axx, marker=".")
             else:
@@ -255,14 +254,14 @@ class CheckLibBase(ABC):
         plotday, plotdaydf = self.calculate_plot_day()
 
         # flag
-        ax1 = plt.subplot(211)
+        ax1 = plt.subplot(2, 1, 1)
         sns.scatterplot(x=plotday.index, y=plotday)
         plt.xlim([plotday.index[0], plotday.index[-1]])
         plt.ylim([-0.2, 1.2])
         plt.title(f"Example day Pass / Fail flag - {self.__class__.__name__}")
 
         # datapoints
-        ax2 = plt.subplot(212)
+        ax2 = plt.subplot(2, 1, 2)
         plotdaydf[plt_pts].plot(ax=ax2)
         pt_nan = plotdaydf.isnull().any().to_dict()
         for i, line in enumerate(ax2.get_lines()):
@@ -283,7 +282,7 @@ class CheckLibBase(ABC):
         plotday, plotdaydf = self.calculate_plot_day()
 
         # flag
-        ax1 = plt.subplot(int(f"{num_plots}11"))
+        ax1 = plt.subplot(num_plots, 1, 1)
         sns.scatterplot(x=plotday.index, y=plotday)
         plt.xlim([plotday.index[0], plotday.index[-1]])
         plt.ylim([-0.2, 1.2])
@@ -293,8 +292,7 @@ class CheckLibBase(ABC):
         pt_nan = plotdaydf.isnull().any().to_dict()
         i = 2
         for pt in plt_pts:
-            subplot_int = int(f"{num_plots}1{i}")
-            axx = plt.subplot(subplot_int)
+            axx = plt.subplot(num_plots, 1, i)
             if pt_nan[pt]:
                 plotdaydf[pt].plot(ax=axx, marker=".")
             else:
