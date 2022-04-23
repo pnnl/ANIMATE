@@ -163,6 +163,12 @@ class CheckLibBase(ABC):
         # datapoints
         ax2 = plt.subplot(212)
         self.df[plt_pts].plot(ax=ax2)
+        pt_nan = self.df.isnull().any().to_dict()
+        for i, line in enumerate(ax2.get_lines()):
+            line_label = line.get_label()
+            if pt_nan[line_label]:
+                line.set_marker(".")
+
         plt.title(f"All samples data points plot - {self.__class__.__name__}")
         plt.tight_layout()
         plt.savefig(f"{self.results_folder}/All_plot_aio.png")
@@ -181,11 +187,15 @@ class CheckLibBase(ABC):
         plt.title(f"All samples Pass / Fail flag plot - {self.__class__.__name__}")
 
         # datapoints
+        pt_nan = self.df.isnull().any().to_dict()
         i = 2
         for pt in plt_pts:
             subplot_int = int(f"{num_plots}1{i}")
             axx = plt.subplot(subplot_int)
-            self.df[pt].plot(ax=axx)
+            if pt_nan[pt]:
+                self.df[pt].plot(ax=axx, marker=".")
+            else:
+                self.df[pt].plot(ax=axx)
             plt.title(f"All samples - {pt} - {self.__class__.__name__}")
             i += 1
         plt.tight_layout()
@@ -254,6 +264,12 @@ class CheckLibBase(ABC):
         # datapoints
         ax2 = plt.subplot(212)
         plotdaydf[plt_pts].plot(ax=ax2)
+        pt_nan = plotdaydf.isnull().any().to_dict()
+        for i, line in enumerate(ax2.get_lines()):
+            line_label = line.get_label()
+            if pt_nan[line_label]:
+                line.set_marker(".")
+
         plt.title(f"Example day data points plot - {self.__class__.__name__}")
         plt.tight_layout()
         plt.savefig(f"{self.results_folder}/Day_plot_aio.png")
@@ -274,11 +290,15 @@ class CheckLibBase(ABC):
         plt.title(f"Example day Pass / Fail flag plot - {self.__class__.__name__}")
 
         # datapoints
+        pt_nan = plotdaydf.isnull().any().to_dict()
         i = 2
         for pt in plt_pts:
             subplot_int = int(f"{num_plots}1{i}")
             axx = plt.subplot(subplot_int)
-            plotdaydf[pt].plot(ax=axx)
+            if pt_nan[pt]:
+                plotdaydf[pt].plot(ax=axx, marker=".")
+            else:
+                plotdaydf[pt].plot(ax=axx)
             plt.title(f"Example day - {pt} - {self.__class__.__name__}")
             i += 1
         plt.tight_layout()
