@@ -2,7 +2,7 @@ from workflowsteps import *
 from library import *
 from datetimeep import DateTimeEP
 from tqdm import tqdm
-import sys, os
+import sys, os, re
 
 
 def run_sim_for_cases(
@@ -37,6 +37,14 @@ def run_sim_for_cases(
             run_path = f"{original_idf_path[:-7]}"
         else:
             run_path = original_idf_path
+
+    idf = open(original_idf_path, "r+").read()
+    idf_mod = re.sub(
+        "output:variable,\n.*.\n.*.\n.*.;.*.", "", idf, flags=re.IGNORECASE
+    )
+    idf_new = open(original_idf_path, "w+")
+    idf_new.write(idf_mod)
+    idf_new.close()
 
     if need_injection:
         instrumented_idf_path = f"{original_idf_path.split('.idf')[0]}_{batch_postfix}_injected_BatchVerification.idf"
