@@ -32,7 +32,7 @@ def run_verification_case(item_dict, run_path_postfix=""):
             csv_path=f"../resources/{item.item['simulation_IO']['output']}"
         )
     verification_class = item.item["verification_class"]
-    cls = getattr(globals()[verification_class] , verification_class)
+    cls = getattr(globals()[verification_class], verification_class)
     parameters = (
         item.item["datapoints_source"]["parameters"]
         if ("parameters" in item.item["datapoints_source"])
