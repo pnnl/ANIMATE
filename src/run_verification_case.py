@@ -1,5 +1,6 @@
 from workflowsteps import *
-from library import *
+from control_verification_case import *
+from datetimeep import DateTimeEP
 import sys, os, json
 from tqdm import tqdm
 
@@ -22,17 +23,22 @@ def run_verification_case(item_dict, run_path_postfix=""):
         run_path = f"{run_path}{run_path_postfix}_injected_BatchVerification"
 
     if run_sim:
-        df = item.read_points_values(
-            csv_path=f"{run_path}/eplusout.csv",
-            idf_path=f"{run_path}/in.idf",
-            idd_path=idd_path,
-        )
+        df = DateTimeEP(
+            item.read_points_values(
+                csv_path=f"{run_path}/eplusout.csv",
+                idf_path=f"{run_path}/in.idf",
+                idd_path=idd_path,
+            ),
+            year=2000,
+        ).transform()
     else:
-        df = item.read_points_values(
-            csv_path=f"../resources/{item.item['simulation_IO']['output']}"
-        )
+        df = DateTimeEP(
+            item.read_points_values(
+                csv_path=f"../resources/{item.item['simulation_IO']['output']}"
+            )
+        ).transform()
     verification_class = item.item["verification_class"]
-    cls = globals()[verification_class]
+    cls = getattr(globals()[verification_class] , verification_class)
     parameters = (
         item.item["datapoints_source"]["parameters"]
         if ("parameters" in item.item["datapoints_source"])
