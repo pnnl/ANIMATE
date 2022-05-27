@@ -23,20 +23,15 @@ def run_verification_case(item_dict, run_path_postfix=""):
         run_path = f"{run_path}{run_path_postfix}_injected_BatchVerification"
 
     if run_sim:
-        df = DateTimeEP(
-            item.read_points_values(
-                csv_path=f"{run_path}/eplusout.csv",
-                idf_path=f"{run_path}/in.idf",
-                idd_path=idd_path,
-            ),
-            year=2000,
-        ).transform()
+        df = item.read_points_values(
+            csv_path=f"{run_path}/eplusout.csv",
+            idf_path=f"{run_path}/in.idf",
+            idd_path=idd_path,
+        )
     else:
-        df = DateTimeEP(
-            item.read_points_values(
-                csv_path=f"../resources/{item.item['simulation_IO']['output']}"
-            )
-        ).transform()
+        df = item.read_points_values(
+            csv_path=f"../resources/{item.item['simulation_IO']['output']}"
+        )
     verification_class = item.item["verification_class"]
     cls = getattr(globals()[verification_class] , verification_class)
     parameters = (
