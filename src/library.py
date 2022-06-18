@@ -495,3 +495,202 @@ class ERVTemperatureControl(CheckLibBase):
         print("Verification results dict: ")
         print(output)
         return output
+
+
+class AutomaticOADamperControl(CheckLibBase):
+    points = ["o", "m_oa", "eco_onoff"]
+
+    def verify(self):
+        tol = 0.03
+        self.result = ~(
+            (self.df["o"] < tol) & (self.df["m_oa"] > 0) & (self.df["eco_onoff"] == 0)
+        )
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+        return output
+
+
+class FanStaticPressureResetControl(CheckLibBase):
+    points = ["p_set", "d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
+
+    def verify(self):
+        tol = 1
+        d_vav_points = ["d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
+        d_vav_df = self.df[d_vav_points].copy(deep=True)
+        self.df["result"] = True
+        self.df.at[
+            0, "result"
+        ] = True  # set first row True, reason: first row can't be determined
+
+        for row_num, (index, row) in enumerate(self.df.iterrows()):
+            if row_num != 0:
+                if (
+                    self.df.at[index, "p_set"] > self.df.at[prev_index, "p_set"] + tol
+                    and (d_vav_df.iloc[row_num] < 0.9).all()
+                ):
+                    self.df.at[index, "result"] = False
+            prev_index = index
+
+        self.result = self.df["result"].copy(deep=True)
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+        return output
+
+
+class HeatRejectionFanVariableFlowControlsCells(CheckLibBase):
+    points = [
+        "ct_op_cells",
+        "ct_cells",
+        "m",
+        "P_fan_ct",
+        "m_des",
+        "min_flow_frac_per_cell",
+    ]
+
+    def verify(self):
+        self.df["ct_cells_op_theo"] = np.nan
+        for index, row in self.df.iterrows():
+            self.df.at[index, "ct_cells_op_theo"] = min(
+                int(
+                    (
+                        self.df.loc[index, "m"]
+                        / self.df.loc[index, "m_des"]
+                        * self.df.loc[index, "min_flow_frac_per_cell"]
+                        / self.df.loc[index, "ct_cells"]
+                    )
+                    + 0.9999
+                ),
+                self.df.loc[index, "ct_cells"],
+            )
+        self.result = ~(
+            (self.df["ct_op_cells"] > 0)
+            & (self.df["ct_op_cells"] < self.df["ct_cells_op_theo"])
+            & (self.df["P_fan_ct"] > 0)
+        )
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+        return output
+
+
+class ServiceWaterHeatingSystemControl(CheckLibBase):
+    points = ["T_wh_inlet"]
+
+    def verify(self):
+        self.result = self.df["T_wh_inlet"] < 43.33
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+
+
+class ServiceWaterHeatingSystemControl(CheckLibBase):
+    points = ["T_wh_inlet"]
+
+    def verify(self):
+        self.result = self.df["T_wh_inlet"] < 43.33
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+
+
+class WLHPLoopHeatRejectionControl(CheckLibBase):
+    points = ["T_max_heating_loop", "T_min_cooling_loop", "m_pump"]
+
+    def verify(self):
+        tol = 0.556
+        self.df["T_max_heating_loop_max"] = (
+            self.df.query("m_pump >0")["T_max_heating_loop"]
+        ).max()
+        self.df["T_min_cooling_loop_min"] = (
+            self.df.query("m_pump >0")["T_min_cooling_loop"]
+        ).min()
+
+        self.result = (
+            self.df["T_max_heating_loop_max"] - self.df["T_min_cooling_loop_min"]
+        ) > 11.11 + tol
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+            "max(T_max_heating_loop0": self.df["T_max_heating_loop_max"][0],
+            "min(T_min_cooling_loop)": self.df["T_min_cooling_loop_min"][0],
+        }
+        print(output)
+        return
