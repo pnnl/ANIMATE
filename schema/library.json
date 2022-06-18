@@ -297,5 +297,122 @@
         ],
         "description_verification_type": "procedure-based",
         "assertions_type": "pass"
+    },
+	"AutomaticOADamperControl": {
+        "library_item_id": 17,
+        "description_brief": "",
+        "description_index": [
+            "Section 6.4.3.4.2 in 90.1-2016"
+        ],
+        "description_datapoints": {
+            "o": "Number of occupants",
+			"m_oa": "Air terminal outdoor air volumn flow rate",
+			"eco_onoff": "Air System Outdoor Air Economizer Status"
+        },
+        "description_assertions": [
+            "if o <= 0 + tol and m_ea + m_oa > 0 and  eco_onoff = 0, then false"
+        ],
+        "description_verification_type": "procedure-based",
+        "assertions_type": "pass"
+    },
+	"FanStaticPressureResetControl": {
+        "library_item_id": 18,
+        "description_brief": "The set point is reset lower until one zone damper is nearly wide open.",
+        "description_index": [
+            "Section  6.5.3.2.3 in 90.1-2016"
+        ],
+        "description_datapoints": {
+            "p_set": "Static pressure setpoint",
+			"d_VAV": "VAV Damper Position"
+        },
+        "description_assertions": [
+            "if d_VAV(n) (n=1,2,...,N) < 0.9 and p_set(t) > p_set(t-1), then fail"
+        ],
+        "description_verification_type": "procedure-based",
+        "assertions_type": "pass"
+    },
+	"HeatRejectionFanVariableFlowControlsCells": {
+        "library_item_id": 19,
+        "description_brief": "Heat rejection fan variable flow controls cells development",
+        "description_index": [
+            null
+        ],
+        "description_datapoints": {
+            "ct_op_cells": "Number of operating cooling tower cells",
+			"ct_cells": "Number of cooling tower cells",
+			"m": "Cooling tower mass flow rate",
+			"m_des": "Cooling tower design mass flow rate",
+			"min_flow_frac_per_cell": "Minimum flow fraction per cooling tower cell",
+			"P_fan_ct": "Cooling tower fan power"
+        },
+        "description_assertions": [
+            "if the number of operating cooling tower cells is euqal to the maximum number of cooling tower cells then pass else fail"
+        ],
+        "description_verification_type": "procedure-based",
+        "assertions_type": "pass"
+    },
+	"ServiceWaterHeatingSystemControl": {
+        "library_item_id": 20,
+        "description_brief": "Service water heating system control",
+        "description_index": [
+            null
+        ],
+        "description_datapoints": {
+            "T_wh_inlet": "Zone Thermostat Heating Setpoint Temperature"
+        },
+        "description_assertions": [
+            "if maximum(T_wh_inlet) < 43.33 °C Then pass else fail"
+        ],
+        "description_verification_type": "procedure-based",
+        "assertions_type": "pass"
+    },
+	"VAVStaticPressureSensorLocation": {
+        "library_item_id": 21,
+        "description_brief": "VAV static pressure sensor location requirement development",
+        "description_index": [
+            null
+        ],
+        "description_datapoints": {
+            "p_fan_setpoint": "Static pressure sensor setpoint"
+        },
+        "description_assertions": [
+            "if static pressure sensor setpoint is no greater than 1.2 in of water (298.608 Pa) then pass else fail"
+        ],
+        "description_verification_type": "procedure-based",
+        "assertions_type": "pass"
+    },
+	"VentilationFanControl": {
+        "library_item_id": 22,
+        "description_brief": "ventilation fan control development",
+        "description_index": [
+            null
+        ],
+        "description_datapoints": {
+            "no_of_occ": "People Occupant Count",
+            "Q_load": "Zone Predicted Sensible Load to Setpoint Heat Transfer Rate",
+            "P_fan": "Fan Electric Power"
+        },
+        "description_assertions": [
+            "if Q_load = 0 and no_of_occ = 0 and P_fan != 0 then fail else pass"
+        ],
+        "description_verification_type": "procedure-based",
+        "assertions_type": "pass"
+    },
+	"WLHPLoopHeatRejectionControl": {
+        "library_item_id": 23,
+        "description_brief": "Water-loop heat pump heat rejection control development",
+        "description_index": [
+            null
+        ],
+        "description_datapoints": {
+            "T_max_heating_loop": "maximum temperature of heating loop",
+            "T_min_cooling_loop": "minimum temperature of cooling loop",
+			"m_pump": "Pump Mass Flow Rate"
+        },
+        "description_assertions": [
+            "If T_max_heating_loop - T_min_cooling_loop > 11.67 °C then pass else fail"
+        ],
+        "description_verification_type": "procedure-based",
+        "assertions_type": "pass"
     }
 }
