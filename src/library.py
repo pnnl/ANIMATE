@@ -694,3 +694,94 @@ class WLHPLoopHeatRejectionControl(CheckLibBase):
         }
         print(output)
         return
+
+
+class AutomaticShutdown(CheckLibBase):
+    points = ["C_ref"]
+
+    def verify(self):
+
+        self.copied_df = self.df.copy(
+            deep=True
+        )  # copied not to store unnecessary intermediate variables in self.df dataframe
+        self.copied_df.reset_index(
+            inplace=True
+        )  # convert index column back to normal column
+        self.copied_df = self.copied_df.rename(
+            columns={"index": "Date"}
+        )  # rename the index column to Date
+        self.copied_df["C_ref_diff"] = self.copied_df[
+            "C_ref"
+        ].diff()  # calculate the difference between previous and current rows
+        self.copied_df = self.copied_df.dropna(axis=0)  # drop NaN row
+        self.copied_df = self.copied_df.loc[
+            self.copied_df["C_ref_diff"] != 0.0
+        ]  # filter out 0.0 values
+        self.copied_df["Date"] = pd.to_datetime(
+            self.copied_df["Date"], format="%Y/%m/%d %H:%M:%S"
+        )
+        self.df2 = self.copied_df.groupby(
+            pd.to_datetime(self.copied_df["Date"]).dt.date
+        ).apply(
+            lambda x: x.iloc[[0, -1]]
+        )  # group by start/end time
+
+        self.df["min_start_time"] = min(
+            self.df2["C_ref_diff"].iloc[::2]
+        )  # even number row
+        self.df["max_start_time"] = max(self.df2["C_ref_diff"].iloc[::2])
+        self.df["min_end_time"] = min(
+            self.df2["C_ref_diff"].iloc[1::2]
+        )  # odd number row
+        self.df["max_end_time"] = max(self.df2["C_ref_diff"].iloc[1::2])
+
+        self.result = (self.df["min_start_time"] != self.df["max_start_time"]) & (
+            self.df["min_end_time"] != self.df["max_end_time"]
+        )
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self) -> Dict:
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+            "min(start_time)": self.df["min_start_time"][0],
+            "max(start_time)": self.df["max_start_time"][0],
+            "min(end_time)": self.df["min_end_time"][0],
+            "max(end_time)": self.df["max_end_time"][0],
+        }
+        print(output)
+        return output
+
+
+class HeatRejectionFanVariableFlowControl(CheckLibBase):
+    points = ["m_ct_fan", "m_ct_fan_dsgn", "P_ct_fan", "P_ct_fan_dsgn"]
+
+    def verify(self):
+        self.result = (self.df["oa_flow"] > self.df["oa_min_flow"]) & (
+            self.df["ccoil_out"] > 0
+        )
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+        return output
