@@ -697,25 +697,26 @@ class WLHPLoopHeatRejectionControl(CheckLibBase):
 
 
 class AutomaticShutdown(CheckLibBase):
-    points = ["C_ref"]
+    points = ["hvac_set"]
 
     def verify(self):
 
         self.copied_df = self.df.copy(
             deep=True
         )  # copied not to store unnecessary intermediate variables in self.df dataframe
+        # self.copied_df.to_csv("self.copied_df.csv")
         self.copied_df.reset_index(
             inplace=True
         )  # convert index column back to normal column
         self.copied_df = self.copied_df.rename(
             columns={"index": "Date"}
         )  # rename the index column to Date
-        self.copied_df["C_ref_diff"] = self.copied_df[
-            "C_ref"
+        self.copied_df["hvac_set_diff"] = self.copied_df[
+            "hvac_set"
         ].diff()  # calculate the difference between previous and current rows
         self.copied_df = self.copied_df.dropna(axis=0)  # drop NaN row
         self.copied_df = self.copied_df.loc[
-            self.copied_df["C_ref_diff"] != 0.0
+            self.copied_df["hvac_set_diff"] != 0.0
         ]  # filter out 0.0 values
         self.copied_df["Date"] = pd.to_datetime(
             self.copied_df["Date"], format="%Y/%m/%d %H:%M:%S"
@@ -725,15 +726,17 @@ class AutomaticShutdown(CheckLibBase):
         ).apply(
             lambda x: x.iloc[[0, -1]]
         )  # group by start/end time
+        self.df["start_time"] = self.df2["hvac_set_diff"].iloc[::2]  # even number row
+        self.df["end_time"] = self.df2["hvac_set_diff"].iloc[1::2]  # odd number row
 
-        self.df["min_start_time"] = min(
-            self.df2["C_ref_diff"].iloc[::2]
-        )  # even number row
-        self.df["max_start_time"] = max(self.df2["C_ref_diff"].iloc[::2])
-        self.df["min_end_time"] = min(
-            self.df2["C_ref_diff"].iloc[1::2]
-        )  # odd number row
-        self.df["max_end_time"] = max(self.df2["C_ref_diff"].iloc[1::2])
+        # self.df["min_start_time"] = min(
+        #     self.df2["hvac_set_diff"].iloc[::2]
+        # )  # even number row
+        # self.df["max_start_time"] = max(self.df2["hvac_set_diff"].iloc[::2])
+        # self.df["min_end_time"] = min(
+        #     self.df2["hvac_set_diff"].iloc[1::2]
+        # )  # odd number row
+        # self.df["max_end_time"] = max(self.df2["hvac_set_diff"].iloc[1::2])
 
         self.result = (self.df["min_start_time"] != self.df["max_start_time"]) & (
             self.df["min_end_time"] != self.df["max_end_time"]
@@ -765,8 +768,62 @@ class HeatRejectionFanVariableFlowControl(CheckLibBase):
     points = ["m_ct_fan", "m_ct_fan_dsgn", "P_ct_fan", "P_ct_fan_dsgn"]
 
     def verify(self):
-        self.result = (self.df["oa_flow"] > self.df["oa_min_flow"]) & (
-            self.df["ccoil_out"] > 0
+        self.result = 1 # TODO fix the logic
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+        return output
+
+
+class HeatPumpSupplementalHeatLockout(CheckLibBase):
+    points = ["hvac_set", "C_t_mod", "L_op", "P_supp_ht"]
+
+    def verify(self):
+        self.df["C_op"] = self.df["hvac_set"] * self.df["C_t_mod"]
+
+        self.result = (self.df["C_op"] > self.df["L_op"]) & (
+            self.df["P_supp_ht"] == 0
+        )
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+        return output
+
+
+class DemandControlVentilation(CheckLibBase):
+    points = ["v_oa", "s_ahu", "s_eco", "o_z_i"]
+
+    def verify(self):
+        self.df["C_op"] = self.df["hvac_set"] * self.df["C_t_mod"] # TODO check this line is executed correctly
+
+        self.result = (self.df["C_op"] > self.df["L_op"]) & (
+            self.df["P_supp_ht"] == 0
         )
 
     def check_bool(self) -> bool:
