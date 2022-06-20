@@ -306,7 +306,7 @@
         ],
         "description_datapoints": {
             "o": "Number of occupants",
-			"m_oa": "Air terminal outdoor air volumn flow rate",
+			"m_oa": "Air terminal outdoor air volume flow rate",
 			"eco_onoff": "Air System Outdoor Air Economizer Status"
         },
         "description_assertions": [
