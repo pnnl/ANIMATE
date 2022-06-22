@@ -1,6 +1,6 @@
 {
     "cases": [
-         {
+        {
             "no": 1,
             "run_simulation": true,
             "simulation_IO": {
@@ -412,7 +412,7 @@
                         "variable": "Zone Air Temperature",
                         "frequency": "TimeStep"
                     },
-					"HVAC_operation_sch": {
+                    "HVAC_operation_sch": {
                         "subject": "HVACOperationSchd",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
@@ -422,7 +422,7 @@
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
                     },
-					"T_cool_set": {
+                    "T_cool_set": {
                         "subject": "CLGSETP_SCH_NO_OPTIMUM",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"

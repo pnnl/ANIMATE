@@ -300,14 +300,14 @@
     },
     "AutomaticOADamperControl": {
         "library_item_id": 17,
-        "description_brief": "",
+        "description_brief": "HVAC system shall be turned on and off everyday",
         "description_index": [
             "Section 6.4.3.4.2 in 90.1-2016"
         ],
         "description_datapoints": {
             "no_of_occ": "Number of occupants",
             "m_oa": "Air terminal outdoor air volume flow rate",
-			"eco_onoff": "Air System Outdoor Air Economizer Status"
+            "eco_onoff": "Air System Outdoor Air Economizer Status"
         },
         "description_assertions": [
             "if no_of_occ <= 0 + tol and m_ea + m_oa > 0 and  eco_onoff = 0, then false"
@@ -317,7 +317,7 @@
     },
     "FanStaticPressureResetControl": {
         "library_item_id": 18,
-        "description_brief": "The set point is reset lower until one zone damper is nearly wide open.",
+        "description_brief": "The set point is reset lower until one zone damper is nearly wide open",
         "description_index": [
             "Section  6.5.3.2.3 in 90.1-2016"
         ],
@@ -339,11 +339,11 @@
         ],
         "description_datapoints": {
             "ct_op_cells": "Number of operating cooling tower cells",
-			"ct_cells": "Number of cooling tower cells",
-			"m": "Cooling tower mass flow rate",
-			"m_des": "Cooling tower design mass flow rate",
-			"min_flow_frac_per_cell": "Minimum flow fraction per cooling tower cell",
-			"P_fan_ct": "Cooling tower fan power"
+            "ct_cells": "Number of cooling tower cells",
+            "m": "Cooling tower mass flow rate",
+            "m_des": "Cooling tower design mass flow rate",
+            "min_flow_frac_per_cell": "Minimum flow fraction per cooling tower cell",
+            "P_fan_ct": "Cooling tower fan power"
         },
         "description_assertions": [
             "if the number of operating cooling tower cells is equal to the maximum number of cooling tower cells then pass else fail"
