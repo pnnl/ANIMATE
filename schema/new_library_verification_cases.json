@@ -394,7 +394,7 @@
             },
             "verification_class": "CHWReset"
         },
-		{
+        {
             "no": 13,
             "run_simulation": true,
             "simulation_IO": {
@@ -473,7 +473,7 @@
             },
             "verification_class": "AutomaticOADamperControl"
         },
-		{
+        {
             "no": 15,
             "run_simulation": false,
             "simulation_IO": {
@@ -523,7 +523,7 @@
             },
             "verification_class": "FanStaticPressureResetControl"
         },
-		{
+        {
             "no": 16,
             "run_simulation": true,
             "simulation_IO": {
@@ -560,7 +560,7 @@
             },
             "verification_class": "HeatRejectionFanVariableFlowControlsCells"
         },
-		{
+        {
             "no": 17,
             "run_simulation": true,
             "simulation_IO": {
@@ -584,7 +584,7 @@
             },
             "verification_class": "ServiceWaterHeatingSystemControl"
         },
-		{
+        {
             "no": 18,
             "run_simulation": false,
             "simulation_IO": {
@@ -608,7 +608,7 @@
             },
             "verification_class": "VAVStaticPressureSensorLocation"
         },
-		 {
+        {
             "no": 19,
             "run_simulation": true,
             "simulation_IO": {
@@ -642,7 +642,7 @@
             },
             "verification_class": "VentilationFanControl"
         },
-		{
+        {
             "no": 20,
             "run_simulation": true,
             "simulation_IO": {
