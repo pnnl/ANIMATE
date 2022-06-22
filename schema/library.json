@@ -410,7 +410,7 @@
             "m_pump": "Pump Mass Flow Rate"
         },
         "description_assertions": [
-			"If the temperature difference between the maximum heating loop and minimum heating loop when the pump runs is greater than 11.11 °C, then pass else fail"
+            "If the temperature difference between the maximum heating loop and minimum heating loop when the pump runs is greater than 11.11 °C, then pass else fail"
         ],
         "description_verification_type": "procedure-based",
         "assertions_type": "pass"
