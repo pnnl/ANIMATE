@@ -433,8 +433,7 @@
                         "frequency": "TimeStep"
                     }
                 },
-                "parameters": {
-				}
+                "parameters": {}
             },
             "verification_class": "NightCycleOperation"
         },
@@ -467,8 +466,7 @@
                         "frequency": "TimeStep"
                     }
                 },
-                "parameters": {
-				}
+                "parameters": {}
             },
             "verification_class": "AutomaticOADamperControl"
         },
@@ -516,8 +514,7 @@
                         "frequency": "detailed"
                     }
                 },
-                "parameters": {
-				}
+                "parameters": {}
             },
             "verification_class": "FanStaticPressureResetControl"
         },
@@ -577,8 +574,7 @@
                         "frequency": "TimeStep"
                     }
                 },
-                "parameters": {
-				}
+                "parameters": {}
             },
             "verification_class": "ServiceWaterHeatingSystemControl"
         },
@@ -601,8 +597,7 @@
                         "frequency": "detailed"
                     }
                 },
-                "parameters": {
-				}
+                "parameters": {}
             },
             "verification_class": "VAVStaticPressureSensorLocation"
         },
@@ -635,8 +630,7 @@
                         "frequency": "Timestep"
                     }
                 },
-                "parameters": {
-				}
+                "parameters": {}
             },
             "verification_class": "VentilationFanControl"
         },
@@ -669,8 +663,7 @@
                         "frequency": "Timestep"
                     }
                 },
-                "parameters": {
-				}
+                "parameters": {}
             },
             "verification_class": "WLHPLoopHeatRejectionControl"
         }
