@@ -1,6 +1,6 @@
 {
     "cases": [
-        {
+         {
             "no": 1,
             "run_simulation": true,
             "simulation_IO": {
@@ -439,7 +439,7 @@
             },
             "verification_class": "NightCycleOperation"
         },
-		{
+        {
             "no": 14,
             "run_simulation": true,
             "simulation_IO": {
@@ -461,12 +461,12 @@
                         "subject": "CORE_BOTTOM VAV BOX COMPONENT",
                         "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
                         "frequency": "TimeStep"
-					},
-					"eco_onoff": {
+                    },
+                    "eco_onoff": {
                         "subject": "PACU_VAV_BOT",
                         "variable": "Air System Outdoor Air Economizer Status",
                         "frequency": "TimeStep"
-					}
+                    }
                 },
                 "parameters": {
                 }
@@ -491,27 +491,27 @@
                         "variable": "static_pressure_setpoint",
                         "frequency": "detailed"
                     },
-					"d_VAV_1": {
+                    "d_VAV_1": {
                         "subject": "measured_damper_position",
                         "variable": "South",
                         "frequency": "detailed"
                     },
-					"d_VAV_2": {
+                    "d_VAV_2": {
                         "subject": "measured_damper_position",
                         "variable": "East",
                         "frequency": "detailed"
                     },
-					"d_VAV_3": {
+                    "d_VAV_3": {
                         "subject": "measured_damper_position",
                         "variable": "North",
                         "frequency": "detailed"
                     },
-					"d_VAV_4": {
+                    "d_VAV_4": {
                         "subject": "measured_damper_position",
                         "variable": "West",
                         "frequency": "detailed"
                     },
-					"d_VAV_5": {
+                    "d_VAV_5": {
                         "subject": "measured_damper_position",
                         "variable": "Core",
                         "frequency": "detailed"
@@ -541,12 +541,12 @@
                         "variable": "Cooling Tower Operating Cells Count",
                         "frequency": "detailed"
                     },
-					"m": {
+                    "m": {
                         "subject": "TOWERWATERSYS COOLTOWER 2",
                         "variable": "Cooling Tower Mass Flow Rate",
                         "frequency": "detailed"
                     },
-					"P_fan_ct": {
+                    "P_fan_ct": {
                         "subject": "TOWERWATERSYS COOLTOWER 2",
                         "variable": "Cooling Tower Fan Electric Power",
                         "frequency": "detailed"
@@ -554,8 +554,8 @@
                 },
                 "parameters": {
                     "ct_cells": 4,
-					"m_des": 0.0375568,
-					"min_flow_frac_per_cell": 0.05
+                    "m_des": 0.0375568,
+                    "min_flow_frac_per_cell": 0.05
                 }
             },
             "verification_class": "HeatRejectionFanVariableFlowControlsCells"
@@ -597,7 +597,7 @@
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
-					"p_fan_setpoint": {
+                    "p_fan_setpoint": {
                         "subject": "sensor",
                         "variable": "static_pressure_setpoint",
                         "frequency": "detailed"
@@ -626,12 +626,12 @@
                         "variable": "People Occupant Count",
                         "frequency": "Timestep"
                     },
-					"Q_load": {
+                    "Q_load": {
                         "subject": "Core_ZN",
                         "variable": "Zone Predicted Sensible Load to Setpoint Heat Transfer Rate",
                         "frequency": "Timestep"
                     },
-					"P_fan": {
+                    "P_fan": {
                         "subject": "PSZ-AC:1 Fan",
                         "variable": "Fan Electric Power",
                         "frequency": "Timestep"
@@ -660,12 +660,12 @@
                         "variable": "System Node Temperature",
                         "frequency": "Timestep"
                     },
-					"T_min_cooling_loop": {
+                    "T_min_cooling_loop": {
                         "subject": "CENTRAL TOWER OUTLET NODE",
                         "variable": "System Node Temperature",
                         "frequency": "Timestep"
                     },
-					"m_pump": {
+                    "m_pump": {
                         "subject": "PLANT CIRC PUMP",
                         "variable": "Pump Mass Flow Rate",
                         "frequency": "Timestep"

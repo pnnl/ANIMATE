@@ -498,12 +498,12 @@ class ERVTemperatureControl(CheckLibBase):
 
 
 class AutomaticOADamperControl(CheckLibBase):
-    points = ["o", "m_oa", "eco_onoff"]
+    points = ["no_of_occ", "m_oa", "eco_onoff"]
 
     def verify(self):
         tol = 0.03
         self.result = ~(
-            (self.df["o"] < tol) & (self.df["m_oa"] > 0) & (self.df["eco_onoff"] == 0)
+            (self.df["no_of_occ"] < tol) & (self.df["m_oa"] > 0) & (self.df["eco_onoff"] == 0)
         )
 
     def check_bool(self) -> bool:
@@ -637,11 +637,38 @@ class ServiceWaterHeatingSystemControl(CheckLibBase):
         print(output)
 
 
-class ServiceWaterHeatingSystemControl(CheckLibBase):
-    points = ["T_wh_inlet"]
+class VAVStaticPressureSensorLocation(CheckLibBase):
+    points = ["p_fan_setpoint"]
 
     def verify(self):
-        self.result = self.df["T_wh_inlet"] < 43.33
+        tol = 2.98  # 1 % of 298.608 Pa
+
+        self.result = self.df["p_fan_setpoint"] < 298.608 + tol
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self) -> Dict:
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
+
+        print("Verification results dict: ")
+        print(output)
+        return output
+
+
+class VentilationFanControl(CheckLibBase):
+    points = ["Q_load", "no_of_occ", "P_fan"]
+
+    def verify(self):
+        self.result = ~((self.df["Q_load"] == 0) & (self.df["no_of_occ"] == 0) & (self.df["P_fan"] != 0))
 
     def check_bool(self) -> bool:
         if len(self.result[self.result == True] > 0):
@@ -658,6 +685,7 @@ class ServiceWaterHeatingSystemControl(CheckLibBase):
             "Verification Passed?": self.check_bool(),
         }
         print(output)
+        return output
 
 
 class WLHPLoopHeatRejectionControl(CheckLibBase):
