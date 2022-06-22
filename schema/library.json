@@ -310,7 +310,7 @@
             "eco_onoff": "Air System Outdoor Air Economizer Status"
         },
         "description_assertions": [
-            "if no_of_occ <= 0 + tol and m_ea + m_oa > 0 and  eco_onoff = 0, then false"
+            "if no_of_occ <= 0 + tol and m_ea + m_oa > 0 and eco_onoff = 0, then false"
         ],
         "description_verification_type": "procedure-based",
         "assertions_type": "pass"
