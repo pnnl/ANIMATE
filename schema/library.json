@@ -297,5 +297,23 @@
         ],
         "description_verification_type": "procedure-based",
         "assertions_type": "pass"
+    },
+	"HeatRejectionFanVariableFlowControl": {
+        "library_item_id": 17,
+        "description_brief": "",
+        "description_index": [
+            null
+        ],
+        "description_datapoints": {
+            "m_ct_fan": "Zone Air Temperature",
+            "m_ct_fan_dsgn": "HVAC Operation Schedule",
+            "P_ct_fan": "Zone Thermostat Heating Setpoint Temperature",
+            "P_ct_fan_dsgn": "Fan Electricity Rate"
+        },
+        "description_assertions": [
+            ""
+        ],
+        "description_verification_type": "procedure-based",
+        "assertions_type": "pass"
     }
 }
