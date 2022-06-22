@@ -503,7 +503,9 @@ class AutomaticOADamperControl(CheckLibBase):
     def verify(self):
         tol = 0.03
         self.result = ~(
-            (self.df["no_of_occ"] < tol) & (self.df["m_oa"] > 0) & (self.df["eco_onoff"] == 0)
+            (self.df["no_of_occ"] < tol)
+            & (self.df["m_oa"] > 0)
+            & (self.df["eco_onoff"] == 0)
         )
 
     def check_bool(self) -> bool:
@@ -668,7 +670,11 @@ class VentilationFanControl(CheckLibBase):
     points = ["Q_load", "no_of_occ", "P_fan"]
 
     def verify(self):
-        self.result = ~((self.df["Q_load"] == 0) & (self.df["no_of_occ"] == 0) & (self.df["P_fan"] != 0))
+        self.result = ~(
+            (self.df["Q_load"] == 0)
+            & (self.df["no_of_occ"] == 0)
+            & (self.df["P_fan"] != 0)
+        )
 
     def check_bool(self) -> bool:
         if len(self.result[self.result == True] > 0):
