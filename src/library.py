@@ -531,18 +531,18 @@ class FanStaticPressureResetControl(CheckLibBase):
     def verify(self):
         d_vav_points = ["d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
         d_vav_df = self.df[d_vav_points].copy(deep=True)
-        self.df["result"] = True
+        self.df["result"] = 1 # 0: false 1: true
 
         for row_num, (index, row) in enumerate(self.df.iterrows()):
             if row_num != 0:
                 if self.df.at[index, "p_set"] > self.df.at[prev_index, "p_set"] + self.df["tol"] and (d_vav_df.loc[index] < 0.9).all():
-                    self.df.at[index, "result"] = False
+                    self.df.at[index, "result"] = 0
             prev_index = index
 
         self.result = self.df["result"].copy(deep=True)
 
     def check_bool(self) -> bool:
-        if len(self.result[self.result == True] > 0):
+        if len(self.result[self.result == 1] > 0):
             return True
         else:
             return False
@@ -551,12 +551,22 @@ class FanStaticPressureResetControl(CheckLibBase):
         print("Verification results dict: ")
         output = {
             "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
+            "Pass #": len(self.result[self.result == 1]),
+            "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
         }
         print(output)
         return output
+
+    def calculate_plot_day(self):
+        """over write method to select day for day plot"""
+        for one_day in self.daterange(date(self.df.index[0].year, self.df.index[0].month, self.df.index[0].day),
+                                      date(self.df.index[-1].year, self.df.index[-1].month, self.df.index[-1].day)):
+            daystr = f"{str(one_day.year)}-{str(one_day.month)}-{str(one_day.day)}"
+            daydf = self.df[daystr]
+            day = self.result[daystr]
+
+            return day, daydf
 
 
 class HeatRejectionFanVariableFlowControlsCells(CheckLibBase):
