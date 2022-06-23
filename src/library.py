@@ -498,12 +498,11 @@ class ERVTemperatureControl(CheckLibBase):
 
 
 class AutomaticOADamperControl(CheckLibBase):
-    points = ["no_of_occ", "m_oa", "eco_onoff"]
+    points = ["no_of_occ", "m_oa", "eco_onoff", "tol"]
 
     def verify(self):
-        tol = 0.03
         self.result = ~(
-            (self.df["no_of_occ"] < tol)
+            (self.df["no_of_occ"] < self.df["tol"])
             & (self.df["m_oa"] > 0)
             & (self.df["eco_onoff"] == 0)
         )
@@ -527,10 +526,9 @@ class AutomaticOADamperControl(CheckLibBase):
 
 
 class FanStaticPressureResetControl(CheckLibBase):
-    points = ["p_set", "d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
+    points = ["p_set", "d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5", "tol"]
 
     def verify(self):
-        tol = 1
         d_vav_points = ["d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
         d_vav_df = self.df[d_vav_points].copy(deep=True)
         self.df["result"] = True
@@ -541,7 +539,7 @@ class FanStaticPressureResetControl(CheckLibBase):
         for row_num, (index, row) in enumerate(self.df.iterrows()):
             if row_num != 0:
                 if (
-                    self.df.at[index, "p_set"] > self.df.at[prev_index, "p_set"] + tol
+                    self.df.at[index, "p_set"] > self.df.at[prev_index, "p_set"] + self.df["tol"]
                     and (d_vav_df.iloc[row_num] < 0.9).all()
                 ):
                     self.df.at[index, "result"] = False
@@ -640,12 +638,10 @@ class ServiceWaterHeatingSystemControl(CheckLibBase):
 
 
 class VAVStaticPressureSensorLocation(CheckLibBase):
-    points = ["p_fan_setpoint"]
+    points = ["p_fan_setpoint", "tol"]
 
     def verify(self):
-        tol = 2.98  # 1 % of 298.608 Pa
-
-        self.result = self.df["p_fan_setpoint"] < 298.608 + tol
+         self.result = self.df["p_fan_setpoint"] < 298.608 + self.df["tol"]
 
     def check_bool(self) -> bool:
         if len(self.result[self.result == True] > 0):
@@ -695,10 +691,9 @@ class VentilationFanControl(CheckLibBase):
 
 
 class WLHPLoopHeatRejectionControl(CheckLibBase):
-    points = ["T_max_heating_loop", "T_min_cooling_loop", "m_pump"]
+    points = ["T_max_heating_loop", "T_min_cooling_loop", "m_pump", "tol"]
 
     def verify(self):
-        tol = 0.556
         self.df["T_max_heating_loop_max"] = (
             self.df.query("m_pump >0")["T_max_heating_loop"]
         ).max()
@@ -708,7 +703,7 @@ class WLHPLoopHeatRejectionControl(CheckLibBase):
 
         self.result = (
             self.df["T_max_heating_loop_max"] - self.df["T_min_cooling_loop_min"]
-        ) > 11.11 + tol
+        ) > 11.11 + self.df["tol"]
 
     def check_bool(self) -> bool:
         if len(self.result[self.result == True] > 0):

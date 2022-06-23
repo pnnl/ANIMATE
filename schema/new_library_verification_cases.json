@@ -466,7 +466,9 @@
                         "frequency": "TimeStep"
                     }
                 },
-                "parameters": {}
+                "parameters": {
+					"tol": 0.03
+                }
             },
             "verification_class": "AutomaticOADamperControl"
         },
@@ -514,7 +516,9 @@
                         "frequency": "detailed"
                     }
                 },
-                "parameters": {}
+                "parameters": {
+					"tol": 1
+                }
             },
             "verification_class": "FanStaticPressureResetControl"
         },
@@ -597,7 +601,9 @@
                         "frequency": "detailed"
                     }
                 },
-                "parameters": {}
+                "parameters": {
+					"tol": 2.98
+                }
             },
             "verification_class": "VAVStaticPressureSensorLocation"
         },
@@ -663,7 +669,9 @@
                         "frequency": "Timestep"
                     }
                 },
-                "parameters": {}
+                "parameters": {
+					"tol": 0.556
+                }
             },
             "verification_class": "WLHPLoopHeatRejectionControl"
         }
