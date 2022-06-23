@@ -700,7 +700,7 @@ class WLHPLoopHeatRejectionControl(CheckLibBase):
         ) > 11.11 + self.df["tol"]
 
     def check_bool(self) -> bool:
-        if len(self.result[self.result == True] > 0):
+        if self.result[0]:
             return True
         else:
             return False
@@ -709,11 +709,9 @@ class WLHPLoopHeatRejectionControl(CheckLibBase):
         print("Verification results dict: ")
         output = {
             "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
-            "max(T_max_heating_loop0": self.df["T_max_heating_loop_max"][0],
-            "min(T_min_cooling_loop)": self.df["T_min_cooling_loop_min"][0],
+            "max(T_max_heating_loop0": round(self.df["T_max_heating_loop_max"][0],1),
+            "min(T_min_cooling_loop)": round(self.df["T_min_cooling_loop_min"][0],1),
         }
         print(output)
-        return
+        return output
