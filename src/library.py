@@ -532,16 +532,10 @@ class FanStaticPressureResetControl(CheckLibBase):
         d_vav_points = ["d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
         d_vav_df = self.df[d_vav_points].copy(deep=True)
         self.df["result"] = True
-        self.df.at[
-            0, "result"
-        ] = True  # set first row True, reason: first row can't be determined
 
         for row_num, (index, row) in enumerate(self.df.iterrows()):
             if row_num != 0:
-                if (
-                    self.df.at[index, "p_set"] > self.df.at[prev_index, "p_set"] + self.df["tol"]
-                    and (d_vav_df.iloc[row_num] < 0.9).all()
-                ):
+                if self.df.at[index, "p_set"] > self.df.at[prev_index, "p_set"] + self.df["tol"] and (d_vav_df.loc[index] < 0.9).all():
                     self.df.at[index, "result"] = False
             prev_index = index
 
