@@ -693,6 +693,16 @@ class VentilationFanControl(CheckLibBase):
         print(output)
         return output
 
+    def calculate_plot_day(self):
+        """over write method to select day for day plot"""
+        for one_day in self.daterange(date(self.df.index[0].year, self.df.index[0].month, self.df.index[0].day),
+                                      date(self.df.index[-1].year, self.df.index[-1].month, self.df.index[-1].day)):
+            daystr = f"{str(one_day.year)}-{str(one_day.month)}-{str(one_day.day)}"
+            daydf = self.df[daystr]
+            day = self.result[daystr]
+
+            return day, daydf
+
 
 class WLHPLoopHeatRejectionControl(CheckLibBase):
     points = ["T_max_heating_loop", "T_min_cooling_loop", "m_pump", "tol"]
