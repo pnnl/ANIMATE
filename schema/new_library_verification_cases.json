@@ -479,7 +479,7 @@
                 "idf": "",
                 "idd": "",
                 "weather": "",
-                "output": "../resources/FanStatic PressureResetControl.csv",
+                "output": "../resources/FanStaticPressureResetControl.csv",
                 "ep_path": ""
             },
             "expected_result": "pass",
