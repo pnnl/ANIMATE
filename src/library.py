@@ -732,7 +732,7 @@ class WLHPLoopHeatRejectionControl(CheckLibBase):
         ) > 11.11 + self.df["tol"]
 
     def check_bool(self) -> bool:
-        if self.result[0]:
+        if len(self.result[self.result == True] > 0):
             return True
         else:
             return False
