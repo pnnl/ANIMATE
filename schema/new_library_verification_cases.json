@@ -572,6 +572,10 @@
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
+                    "hvac_set": {
+                        "subject": "HVACOPERATIONSCHD",
+                        "variable": "Schedule Value ",
+                        "frequency": "TimeStep"
                     "T_wh_inlet": {
                         "subject": "BATHROOMS_ZN_1_FLR_1 SHW_DEFAULT",
                         "variable": "Water Use Equipment Mixed Water Temperature",

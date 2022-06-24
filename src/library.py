@@ -729,30 +729,10 @@ class WLHPLoopHeatRejectionControl(RuleCheckBase):
 
         self.result = (
             self.df["T_max_heating_loop_max"] - self.df["T_min_cooling_loop_min"]
-<<<<<<< HEAD
-        ) > 11.11 + tol
-
-    def check_bool(self) -> bool:
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
-            return False
-
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
-            "Verification Passed?": self.check_bool(),
-            "max(T_max_heating_loop0": self.df["T_max_heating_loop_max"][0],
-            "min(T_min_cooling_loop)": self.df["T_min_cooling_loop_min"][0],
-        }
-        print(output)
-        return
+        ) > 11.11 + self.df["tol"]
 
 
-class AutomaticShutdown(CheckLibBase):
+class AutomaticShutdown(RuleCheckBase):
     points = ["hvac_set"]
 
     def verify(self):
@@ -798,50 +778,12 @@ class AutomaticShutdown(CheckLibBase):
             self.df["min_end_time"] != self.df["max_end_time"]
         )
 
-    def check_bool(self) -> bool:
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
-            return False
 
-    def check_detail(self) -> Dict:
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
-            "Verification Passed?": self.check_bool(),
-            "min(start_time)": self.df["min_start_time"][0],
-            "max(start_time)": self.df["max_start_time"][0],
-            "min(end_time)": self.df["min_end_time"][0],
-            "max(end_time)": self.df["max_end_time"][0],
-        }
-        print(output)
-        return output
-
-
-class HeatRejectionFanVariableFlowControl(CheckLibBase):
+class HeatRejectionFanVariableFlowControl(RuleCheckBase):
     points = ["m_ct_fan", "m_ct_fan_dsgn", "P_ct_fan", "P_ct_fan_dsgn"]
 
     def verify(self):
         self.result = 1 # TODO fix the logic
-
-    def check_bool(self) -> bool:
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
-            return False
-
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
-            "Verification Passed?": self.check_bool(),
-        }
-        print(output)
-        return output
 
 
 class HeatPumpSupplementalHeatLockout(CheckLibBase):
@@ -871,33 +813,3 @@ class HeatPumpSupplementalHeatLockout(CheckLibBase):
         print(output)
         return output
 
-
-class DemandControlVentilation(CheckLibBase):
-    points = ["v_oa", "s_ahu", "s_eco", "o_z_i"]
-
-    def verify(self):
-        self.df["C_op"] = self.df["hvac_set"] * self.df["C_t_mod"] # TODO check this line is executed correctly
-
-        self.result = (self.df["C_op"] > self.df["L_op"]) & (
-            self.df["P_supp_ht"] == 0
-        )
-
-    def check_bool(self) -> bool:
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
-            return False
-
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
-            "Verification Passed?": self.check_bool(),
-        }
-        print(output)
-        return output
-=======
-        ) > 11.11 + self.df["tol"]
->>>>>>> 369c179cc9af2d65ede93adc92197d243ea9379b
