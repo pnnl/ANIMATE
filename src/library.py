@@ -526,7 +526,16 @@ class AutomaticOADamperControl(CheckLibBase):
 
 
 class FanStaticPressureResetControl(CheckLibBase):
-    points = ["p_set", "p_set_min", "d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5", "tol"]
+    points = [
+        "p_set",
+        "p_set_min",
+        "d_VAV_1",
+        "d_VAV_2",
+        "d_VAV_3",
+        "d_VAV_4",
+        "d_VAV_5",
+        "tol",
+    ]
 
     def verify(self):
         d_vav_points = ["d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
@@ -539,7 +548,10 @@ class FanStaticPressureResetControl(CheckLibBase):
                     self.df.at[index, "result"] = 1  # true
                 else:
                     if self.df.at[index, "p_set"] > self.df.at[index, "p_set_min"]:
-                        if self.df.at[index, "p_set"] < self.df.at[prev_index, "p_set"] + self.df["tol"]:
+                        if (
+                            self.df.at[index, "p_set"]
+                            < self.df.at[prev_index, "p_set"] + self.df["tol"]
+                        ):
                             self.df.at[index, "result"] = 1
                         else:
                             self.df.at[index, "result"] = 0  # false
