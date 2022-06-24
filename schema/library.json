@@ -1,21 +1,4 @@
 {
-<<<<<<< HEAD
-	"AutomaticShutdown": {
-		"library_item_id": 1,
-		"description_brief": "HVAC system Automatic shutdown verification",
-		"description_index": [
-			null
-		],
-		"description_datapoints": {
-			"hvac_set": "HVAC system operation status"
-		},
-		"description_assertions": [
-			"If the system is programmed to come on and turn ooff at different time then pass else fail"
-		],
-		"description_verification_type": "procedure-based",
-		"assertions_type": "pass"
-	}
-=======
     "SupplyAirTempReset": {
         "library_item_id": 1,
         "description_brief": "Cooling supply air temperature reset scale (25%)",
@@ -152,7 +135,7 @@
     "ZoneTempControl": {
         "library_item_id": 8,
         "description_brief": "Zone temperature setpoint deadband >= 5F (2.77C)",
-        "description_detail": "Where used to control both heating and cooling, zone thermostatic controls shall be capable of and configured to provide a temperature range or dead band of at least 5\u00c2\u00b0F within which the supply of heating and cooling energy to the zone is shut off or reduced to a minimum. (case study for zone temperature reset, not for this one)",
+        "description_detail": "Where used to control both heating and cooling, zone thermostatic controls shall be capable of and configured to provide a temperature range or dead band of at least 5 °F within which the supply of heating and cooling energy to the zone is shut off or reduced to a minimum. (case study for zone temperature reset, not for this one)",
         "description_index": [
             "Section 6.4.3.1.2 in 90.1-2016"
         ],
@@ -213,7 +196,7 @@
     "ZoneHeatSetpointMinimum": {
         "library_item_id": 11,
         "description_brief": "Zone heating setpoint reset temperature minimum value check",
-        "description_detail": "Heating systems located in climate zones 2-8 shall be equipped with controls that have the capability to automatically restart and temporarily operate the system as required to maintain zone temperatures above a heating setpoint adjustable down to 55\u00c2\u00b0F or lower. (case study)",
+        "description_detail": "Heating systems located in climate zones 2-8 shall be equipped with controls that have the capability to automatically restart and temporarily operate the system as required to maintain zone temperatures above a heating setpoint adjustable down to 55 °F or lower. (case study)",
         "description_index": [
             "Section 6.4.3.2.2 in 90.1-2004"
         ],
@@ -228,7 +211,7 @@
     },
     "ZoneCoolingSetpointMaximum": {
         "library_item_id": 12,
-        "description_brief": " Cooling systems located in climate zones 1b, 2b, and 3b shall be equipped with controls that have the capability to automatically restart and temporarily operate the system as required to maintain zone temperatures below a cooling setpoint adjustable up to 90\u00c2\u00b0F or higher or to prevent high space humidity levels. (case study)",
+        "description_brief": " Cooling systems located in climate zones 1b, 2b, and 3b shall be equipped with controls that have the capability to automatically restart and temporarily operate the system as required to maintain zone temperatures below a cooling setpoint adjustable up to 90 °F or higher or to prevent high space humidity levels. (case study)",
         "description_index": [
             "Section 6.4.3.2.2 in 90.1-2004"
         ],
@@ -243,7 +226,7 @@
     },
     "ZoneHeatingResetDepth": {
         "library_item_id": 13,
-        "description_brief": "Heating systems shall be equipped with controls capable of and configured to automatically restart and temporarily operate the system as required to maintain zone temperatures above an adjustable heating set point at least 10\u00c2\u00b0F below (will be 60\u00c2\u00b0F) the occupied heating set point. (case study)",
+        "description_brief": "Heating systems shall be equipped with controls capable of and configured to automatically restart and temporarily operate the system as required to maintain zone temperatures above an adjustable heating set point at least 10 °F below (will be 60 °F) the occupied heating set point. (case study)",
         "description_index": [
             "Section 6.4.3.3.2 in 90.1-2016"
         ],
@@ -258,7 +241,7 @@
     },
     "ZoneCoolingResetDepth": {
         "library_item_id": 14,
-        "description_brief": "Cooling systems shall be equipped with controls capable of and configured to automatically restart and temporarily operate the mechanical cooling system as required to maintain zone temperatures below an adjustable cooling set point at least 5\u00c2\u00b0F above the occupied cooling set point or to prevent high space humidity levels. (case study)",
+        "description_brief": "Cooling systems shall be equipped with controls capable of and configured to automatically restart and temporarily operate the mechanical cooling system as required to maintain zone temperatures below an adjustable cooling set point at least 5 °F above the occupied cooling set point or to prevent high space humidity levels. (case study)",
         "description_index": [
             "Section 6.4.3.3.2 in 90.1-2016"
         ],
@@ -327,7 +310,7 @@
             "eco_onoff": "Air System Outdoor Air Economizer Status"
         },
         "description_assertions": [
-            "if no_of_occ <= 0 + tol and m_ea + m_oa > 0 and eco_onoff = 0, then false"
+            "if no_of_occ <= 0 + tol and m_ea + m_oa > 0 and eco_onoff = 0, then false else pass"
         ],
         "description_verification_type": "procedure-based",
         "assertions_type": "pass"
@@ -336,14 +319,14 @@
         "library_item_id": 18,
         "description_brief": "The set point is reset lower until one zone damper is nearly wide open",
         "description_index": [
-            "Section  6.5.3.2.3 in 90.1-2016"
+            "Section 6.5.3.2.3 in 90.1-2016"
         ],
         "description_datapoints": {
             "p_set": "Static pressure setpoint",
             "d_VAV": "VAV Damper Position"
         },
         "description_assertions": [
-            "if d_VAV(n) (n=1,2,...,N) < 0.9 and p_set(t) > p_set(t-1), then fail"
+            "if d_VAV(n) (n=1,2,...,N) < 0.9 and p_set(t) > p_set(t-1), then fail else pass"
         ],
         "description_verification_type": "procedure-based",
         "assertions_type": "pass"
@@ -352,7 +335,7 @@
         "library_item_id": 19,
         "description_brief": "Heat rejection fan variable flow controls cells",
         "description_index": [
-            null
+            "Section 6.5.5.2.2 in 90.1-2016"
         ],
         "description_datapoints": {
             "ct_op_cells": "Number of operating cooling tower cells",
@@ -372,13 +355,13 @@
         "library_item_id": 20,
         "description_brief": "Service water heating system control",
         "description_index": [
-            null
+            "Section 7.4.4.3 in 90.1-2016"
         ],
         "description_datapoints": {
             "T_wh_inlet": "Water temperature on demand side from the water heater"
         },
         "description_assertions": [
-            "if maximum(T_wh_inlet) < 43.33 \u00c2\u00b0C Then pass else fail"
+            "if maximum(T_wh_inlet) < 43.33 °C Then pass else fail"
         ],
         "description_verification_type": "procedure-based",
         "assertions_type": "pass"
@@ -387,7 +370,7 @@
         "library_item_id": 21,
         "description_brief": "VAV static pressure sensor location requirement",
         "description_index": [
-            null
+            "Section 6.5.3.2.2 in 90.1-2016"
         ],
         "description_datapoints": {
             "p_fan_setpoint": "Static pressure setpoint"
@@ -402,7 +385,7 @@
         "library_item_id": 22,
         "description_brief": "Ventilation fan control",
         "description_index": [
-            null
+            "Section 6.4.3.4.4 in 90.1-2016"
         ],
         "description_datapoints": {
             "no_of_occ": "People Occupant Count",
@@ -419,7 +402,7 @@
         "library_item_id": 23,
         "description_brief": "Water-loop heat pump heat rejection control",
         "description_index": [
-            null
+            "Section 6.5.2.2.3 (a) in 90.1-2016"
         ],
         "description_datapoints": {
             "T_max_heating_loop": "maximum temperature of heating loop",
@@ -427,10 +410,9 @@
             "m_pump": "Pump Mass Flow Rate"
         },
         "description_assertions": [
-            "If the temperature difference between the maximum heating loop and minimum heating loop when the pump runs is greater than 11.11 \u00c2\u00b0C, then pass else fail"
+            "If the temperature difference between the maximum heating loop and minimum heating loop when the pump runs is greater than 11.11 °C, then pass else fail"
         ],
         "description_verification_type": "procedure-based",
         "assertions_type": "pass"
     }
->>>>>>> 0b4692377207edb2411ddc2bd81e0200971e5bb7
 }

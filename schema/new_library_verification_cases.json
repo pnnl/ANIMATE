@@ -4,10 +4,6 @@
             "no": 1,
             "run_simulation": true,
             "simulation_IO": {
-<<<<<<< HEAD
-                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeSmall_STD2019_Seattle.idf",
-                "idd": "../resources/Energy+V9_0_1.idd",
-=======
                 "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case1.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
@@ -470,7 +466,9 @@
                         "frequency": "TimeStep"
                     }
                 },
-                "parameters": {}
+                "parameters": {
+                     "tol": 0.03
+                }
             },
             "verification_class": "AutomaticOADamperControl"
         },
@@ -481,7 +479,7 @@
                 "idf": "",
                 "idd": "",
                 "weather": "",
-                "output": "../resources/FanStatic PressureResetControl.csv",
+                "output": "../resources/FanStaticPressureResetControl.csv",
                 "ep_path": ""
             },
             "expected_result": "pass",
@@ -518,7 +516,9 @@
                         "frequency": "detailed"
                     }
                 },
-                "parameters": {}
+                "parameters": {
+                    "tol": 1
+                }
             },
             "verification_class": "FanStaticPressureResetControl"
         },
@@ -563,27 +563,23 @@
             "no": 17,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeSmall_STD2019_Seattle_case17.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_SchoolSecondary_STD2016_Atlanta_case17.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
->>>>>>> 0b4692377207edb2411ddc2bd81e0200971e5bb7
-                "weather": "../weather/USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
                 "output": "eplusout.csv",
                 "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
-                    "hvac_set": {
-                        "subject": "HVACOPERATIONSCHD",
-                        "variable": "Schedule Value ",
-                        "frequency": "TimeStep"
+                    "T_wh_inlet": {
+                        "subject": "BATHROOMS_ZN_1_FLR_1 SHW_DEFAULT",
+                        "variable": "Water Use Equipment Mixed Water Temperature",
+                        "frequency": "detailed"
                     }
                 },
                 "parameters": {}
             },
-<<<<<<< HEAD
-            "verification_class": "AutomaticShutdown"
-=======
             "verification_class": "ServiceWaterHeatingSystemControl"
         },
         {
@@ -605,7 +601,9 @@
                         "frequency": "detailed"
                     }
                 },
-                "parameters": {}
+                "parameters": {
+                    "tol": 2.98
+                }
             },
             "verification_class": "VAVStaticPressureSensorLocation"
         },
@@ -671,10 +669,11 @@
                         "frequency": "Timestep"
                     }
                 },
-                "parameters": {}
+                "parameters": {
+                    "tol": 0.556
+                }
             },
             "verification_class": "WLHPLoopHeatRejectionControl"
->>>>>>> 0b4692377207edb2411ddc2bd81e0200971e5bb7
         }
     ]
 }
