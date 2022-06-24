@@ -795,6 +795,7 @@ class AutomaticShutdown(RuleCheckBase):
         # overwrite this method because daily plot isn't meaningful
         pass
 
+
 class HeatPumpSupplementalHeatLockout(CheckLibBase):
     points = ["C_ref", "L_op", "P_supp_ht", "C_t_mod", "C_ff_mod", "L_defrost"]
 
@@ -840,18 +841,18 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
 
     def verify(self):
         self.df.loc[:, "m_ct_fan"] = (
-                self.df.loc[:, "m_ct_fan_ratio"] * self.df.loc[:, "m_ct_fan_dsgn"]
+            self.df.loc[:, "m_ct_fan_ratio"] * self.df.loc[:, "m_ct_fan_dsgn"]
         )
         self.df.loc[:, "normalized_m_ct_fan"] = (
-                self.df.loc[:, "m_ct_fan"] / self.df.loc[:, "m_ct_fan_dsgn"]
+            self.df.loc[:, "m_ct_fan"] / self.df.loc[:, "m_ct_fan_dsgn"]
         )
         self.df.loc[:, "normalized_P_ct_fan"] = (
-                self.df.loc[:, "P_ct_fan"] / self.df.loc[:, "P_ct_fan_dsgn"]
+            self.df.loc[:, "P_ct_fan"] / self.df.loc[:, "P_ct_fan_dsgn"]
         )
 
         self.df = self.df.loc[
             self.df["normalized_P_ct_fan"] > 0.0
-            ]  # filter out 0 values
+        ]  # filter out 0 values
         self.df["normalized_m_ct_fan"] -= 1  # minus 1 to transform the data
         self.df["normalized_P_ct_fan"] -= 1
 
