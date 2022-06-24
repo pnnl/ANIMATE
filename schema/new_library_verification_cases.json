@@ -383,7 +383,6 @@
                         "subject": "CoolSys1 Supply Outlet Node",
                         "variable": "System Node Mass Flow Rate",
                         "frequency": "TimeStep"
-                    }
                 },
                 "parameters": {
                     "T_oa_max": 21.11,
@@ -423,7 +422,7 @@
                         "frequency": "TimeStep"
                     },
                     "T_cool_set": {
-                        "subject": "CLGSETP_SCH_NO_OPTIMUM",
+=                        "subject": "CLGSETP_SCH_NO_OPTIMUM",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
                     },
@@ -674,6 +673,10 @@
                 }
             },
             "verification_class": "WLHPLoopHeatRejectionControl"
+                "parameters": {
+                }
+            },
+            "verification_class": "NightCycleOperation"
         }
     ]
 }
