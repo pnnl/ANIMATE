@@ -716,7 +716,7 @@ class VentilationFanControl(CheckLibBase):
             return day, daydf
 
 
-class WLHPLoopHeatRejectionControl(CheckLibBase):
+class WLHPLoopHeatRejectionControl(RuleCheckBase):
     points = ["T_max_heating_loop", "T_min_cooling_loop", "m_pump", "tol"]
 
     def verify(self):
@@ -730,20 +730,3 @@ class WLHPLoopHeatRejectionControl(CheckLibBase):
         self.result = (
             self.df["T_max_heating_loop_max"] - self.df["T_min_cooling_loop_min"]
         ) > 11.11 + self.df["tol"]
-
-    def check_bool(self) -> bool:
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
-            return False
-
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Verification Passed?": self.check_bool(),
-            "max(T_max_heating_loop0": round(self.df["T_max_heating_loop_max"][0], 1),
-            "min(T_min_cooling_loop)": round(self.df["T_min_cooling_loop_min"][0], 1),
-        }
-        print(output)
-        return output
