@@ -517,7 +517,8 @@
                     }
                 },
                 "parameters": {
-                    "tol": 1
+                    "p_set_min": 50.0,
+                    "tol": 1.0
                 }
             },
             "verification_class": "FanStaticPressureResetControl"
