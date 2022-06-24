@@ -563,9 +563,9 @@
             "no": 17,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeSmall_STD2019_Seattle_case17.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_SchoolSecondary_STD2016_Atlanta_case17.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
-                "weather": "../weather/USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
                 "output": "eplusout.csv",
                 "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
@@ -573,9 +573,9 @@
             "datapoints_source": {
                 "idf_output_variables": {
                     "T_wh_inlet": {
-                        "subject": "Core_ZN Water Equipment Water Inlet Node",
-                        "variable": "System Node Temperature",
-                        "frequency": "TimeStep"
+                        "subject": "BATHROOMS_ZN_1_FLR_1 SHW_DEFAULT",
+                        "variable": "Water Use Equipment Mixed Water Temperature",
+                        "frequency": "detailed"
                     }
                 },
                 "parameters": {}
