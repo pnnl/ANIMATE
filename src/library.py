@@ -527,7 +527,16 @@ class AutomaticOADamperControl(CheckLibBase):
 
 
 class FanStaticPressureResetControl(CheckLibBase):
-    points = ["p_set", "d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5", "tol"]
+    points = [
+        "p_set",
+        "p_set_min",
+        "d_VAV_1",
+        "d_VAV_2",
+        "d_VAV_3",
+        "d_VAV_4",
+        "d_VAV_5",
+        "tol",
+    ]
 
     def verify(self):
         d_vav_points = ["d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
@@ -536,12 +545,19 @@ class FanStaticPressureResetControl(CheckLibBase):
 
         for row_num, (index, row) in enumerate(self.df.iterrows()):
             if row_num != 0:
-                if (
-                    self.df.at[index, "p_set"]
-                    > self.df.at[prev_index, "p_set"] + self.df["tol"]
-                    and (d_vav_df.loc[index] < 0.9).all()
-                ):
-                    self.df.at[index, "result"] = 0
+                if (d_vav_df.loc[index] > 0.9).any():
+                    self.df.at[index, "result"] = 1  # true
+                else:
+                    if self.df.at[index, "p_set"] > self.df.at[index, "p_set_min"]:
+                        if (
+                            self.df.at[index, "p_set"]
+                            < self.df.at[prev_index, "p_set"] + self.df["tol"]
+                        ):
+                            self.df.at[index, "result"] = 1
+                        else:
+                            self.df.at[index, "result"] = 0  # false
+                    else:
+                        self.df.at[index, "result"] = 1
             prev_index = index
 
         self.result = self.df["result"].copy(deep=True)

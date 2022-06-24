@@ -383,7 +383,7 @@
                         "subject": "CoolSys1 Supply Outlet Node",
                         "variable": "System Node Mass Flow Rate",
                         "frequency": "TimeStep"
-                    }
+						}
                 },
                 "parameters": {
                     "T_oa_max": 21.11,
@@ -517,7 +517,8 @@
                     }
                 },
                 "parameters": {
-                    "tol": 1
+                    "p_set_min": 50.0,
+                    "tol": 1.0
                 }
             },
             "verification_class": "FanStaticPressureResetControl"
