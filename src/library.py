@@ -853,7 +853,7 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
             self.df["normalized_P_ct_fan"] > 0.0
             ]  # filter out 0 values
         self.df["normalized_m_ct_fan"] -= 1  # minus 1 to transform the data
-        self.df["normalized_P_ct_fan"] -= 1  # minus 1 to transform the data
+        self.df["normalized_P_ct_fan"] -= 1
 
         # linear regression
         reg = LinearRegression(fit_intercept=False).fit(
