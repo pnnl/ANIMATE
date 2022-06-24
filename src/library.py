@@ -12,6 +12,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
+from sklearn.linear_model import LinearRegression
 
 
 class IntegratedEconomizerControl(CheckLibBase):
@@ -736,68 +737,88 @@ class AutomaticShutdown(RuleCheckBase):
     points = ["hvac_set"]
 
     def verify(self):
-
-        self.copied_df = self.df.copy(
+        copied_df = self.df.copy(
             deep=True
         )  # copied not to store unnecessary intermediate variables in self.df dataframe
-        # self.copied_df.to_csv("self.copied_df.csv")
-        self.copied_df.reset_index(
+        copied_df.reset_index(
             inplace=True
         )  # convert index column back to normal column
-        self.copied_df = self.copied_df.rename(
+        copied_df = copied_df.rename(
             columns={"index": "Date"}
         )  # rename the index column to Date
-        self.copied_df["hvac_set_diff"] = self.copied_df[
+        copied_df["hvac_set_diff"] = copied_df[
             "hvac_set"
         ].diff()  # calculate the difference between previous and current rows
-        self.copied_df = self.copied_df.dropna(axis=0)  # drop NaN row
-        self.copied_df = self.copied_df.loc[
-            self.copied_df["hvac_set_diff"] != 0.0
+        copied_df = copied_df.dropna(axis=0)  # drop NaN row
+        copied_df = copied_df.loc[
+            copied_df["hvac_set_diff"] != 0.0
         ]  # filter out 0.0 values
-        self.copied_df["Date"] = pd.to_datetime(
-            self.copied_df["Date"], format="%Y/%m/%d %H:%M:%S"
+        copied_df["Date"] = pd.to_datetime(
+            copied_df["Date"], format="%Y-%m-%d %H:%M:%S"
         )
-        self.df2 = self.copied_df.groupby(
-            pd.to_datetime(self.copied_df["Date"]).dt.date
-        ).apply(
+        df2 = copied_df.groupby(pd.to_datetime(copied_df["Date"]).dt.date).apply(
             lambda x: x.iloc[[0, -1]]
         )  # group by start/end time
-        self.df["start_time"] = self.df2["hvac_set_diff"].iloc[::2]  # even number row
-        self.df["end_time"] = self.df2["hvac_set_diff"].iloc[1::2]  # odd number row
 
-        # self.df["min_start_time"] = min(
-        #     self.df2["hvac_set_diff"].iloc[::2]
-        # )  # even number row
-        # self.df["max_start_time"] = max(self.df2["hvac_set_diff"].iloc[::2])
-        # self.df["min_end_time"] = min(
-        #     self.df2["hvac_set_diff"].iloc[1::2]
-        # )  # odd number row
-        # self.df["max_end_time"] = max(self.df2["hvac_set_diff"].iloc[1::2])
+        copied_df["start_time"] = df2["hvac_set_diff"].iloc[::2]  # even number row
+        copied_df["end_time"] = df2["hvac_set_diff"].iloc[1::2]  # odd number row
 
-        self.result = (self.df["min_start_time"] != self.df["max_start_time"]) & (
-            self.df["min_end_time"] != self.df["max_end_time"]
-        )
+        copied_df["min_start_time"] = copied_df.query("start_time == 1")["Date"].min()
+        copied_df["max_start_time"] = copied_df.query("start_time == 1")["Date"].max()
+        copied_df["min_end_time"] = copied_df.query("end_time == -1")["Date"].min()
+        copied_df["max_end_time"] = copied_df.query("end_time == -1")["Date"].max()
 
-
-class HeatRejectionFanVariableFlowControl(RuleCheckBase):
-    points = ["m_ct_fan", "m_ct_fan_dsgn", "P_ct_fan", "P_ct_fan_dsgn"]
-
-    def verify(self):
-        self.result = 1 # TODO fix the logic
-
-
-class HeatPumpSupplementalHeatLockout(CheckLibBase):
-    points = ["hvac_set", "C_t_mod", "L_op", "P_supp_ht"]
-
-    def verify(self):
-        self.df["C_op"] = self.df["hvac_set"] * self.df["C_t_mod"]
-
-        self.result = (self.df["C_op"] > self.df["L_op"]) & (
-            self.df["P_supp_ht"] == 0
+        self.result = (copied_df["min_start_time"] != copied_df["max_start_time"]) & (
+            copied_df["min_end_time"] != copied_df["max_end_time"]
         )
 
     def check_bool(self) -> bool:
-        if len(self.result[self.result == True] > 0):
+        if len(self.result[self.result == 1]) > 0:
+            return True
+        else:
+            return False
+
+    def check_detail(self) -> Dict:
+        print("Verification results dict: ")
+        output = {
+            "Sample #": 1,
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+        return output
+
+    def day_plot_aio(self, plt_pts):
+        # overwrite this method because daily plot isn't meaningful
+        pass
+
+    def day_plot_obo(self, plt_pts):
+        # overwrite this method because daily plot isn't meaningful
+        pass
+
+class HeatPumpSupplementalHeatLockout(CheckLibBase):
+    points = ["C_ref", "L_op", "P_supp_ht", "C_t_mod", "C_ff_mod", "L_defrost"]
+
+    def heating_coil_verification(self, data):
+        if data["P_supp_ht"] == 0:
+            data["result"] = 1  # True
+        else:
+            if data["L_defrost"] > 0:
+                data["result"] = 1
+            else:
+                if data["C_op"] > data["L_op"]:
+                    data["result"] = 0  # False
+                else:
+                    data["result"] = 1
+        return data
+
+    def verify(self):
+        self.df["C_op"] = self.df["C_ref"] * self.df["C_t_mod"] * self.df["C_ff_mod"]
+        self.df["result"] = np.nan
+        self.df = self.df.apply(lambda r: self.heating_coil_verification(r), axis=1)
+        self.result = self.df["result"]
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == 1] > 0):
             return True
         else:
             return False
@@ -806,10 +827,67 @@ class HeatPumpSupplementalHeatLockout(CheckLibBase):
         print("Verification results dict: ")
         output = {
             "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
+            "Pass #": len(self.result[self.result == 1]),
+            "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
         }
         print(output)
         return output
 
+
+class HeatRejectionFanVariableFlowControl(RuleCheckBase):
+    points = ["P_ct_fan", "m_ct_fan_ratio", "P_ct_fan_dsgn", "m_ct_fan_dsgn"]
+
+    def verify(self):
+        self.df.loc[:, "m_ct_fan"] = (
+                self.df.loc[:, "m_ct_fan_ratio"] * self.df.loc[:, "m_ct_fan_dsgn"]
+        )
+        self.df.loc[:, "normalized_m_ct_fan"] = (
+                self.df.loc[:, "m_ct_fan"] / self.df.loc[:, "m_ct_fan_dsgn"]
+        )
+        self.df.loc[:, "normalized_P_ct_fan"] = (
+                self.df.loc[:, "P_ct_fan"] / self.df.loc[:, "P_ct_fan_dsgn"]
+        )
+
+        self.df = self.df.loc[
+            self.df["normalized_P_ct_fan"] > 0.0
+            ]  # filter out 0 values
+        self.df["normalized_m_ct_fan"] -= 1  # minus 1 to transform the data
+        self.df["normalized_P_ct_fan"] -= 1  # minus 1 to transform the data
+
+        # linear regression
+        reg = LinearRegression(fit_intercept=False).fit(
+            self.df["normalized_m_ct_fan"].values.reshape(-1, 1),
+            self.df["normalized_P_ct_fan"],
+        )  # fit_intercept=False is for set the intercept to 0
+
+        if reg.coef_[0] >= 1.4:
+            self.df["result"] = 1  # True
+        else:
+            self.df["result"] = 0  # False
+
+        self.result = self.df["result"].copy(deep=True)
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == 0] > 0):
+            return False
+        else:
+            return True
+
+    def check_detail(self) -> Dict:
+        output = {
+            "Sample #": 1,
+            "Verification Passed?": self.check_bool(),
+        }
+
+        print("Verification results dict: ")
+        print(output)
+        return output
+
+    def day_plot_aio(self, plt_pts):
+        # This method is wverwritten because day plot can't be plotted for this verification item
+        pass
+
+    def day_plot_obo(self, plt_pts):
+        # This method is wverwritten because day plot can't be plotted for this verification item
+        pass

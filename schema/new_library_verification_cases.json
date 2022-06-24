@@ -467,7 +467,7 @@
                     }
                 },
                 "parameters": {
-                     "tol": 0.03
+                    "tol": 0.03
                 }
             },
             "verification_class": "AutomaticOADamperControl"
@@ -576,6 +576,7 @@
                         "subject": "HVACOPERATIONSCHD",
                         "variable": "Schedule Value ",
                         "frequency": "TimeStep"
+                    },
                     "T_wh_inlet": {
                         "subject": "BATHROOMS_ZN_1_FLR_1 SHW_DEFAULT",
                         "variable": "Water Use Equipment Mixed Water Temperature",
@@ -678,6 +679,105 @@
                 }
             },
             "verification_class": "WLHPLoopHeatRejectionControl"
+        },
+        {
+            "no": 21,
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeSmall_STD2019_Seattle.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "hvac_set": {
+                        "subject": "HVACOPERATIONSCHD",
+                        "variable": "Schedule Value",
+                        "frequency": "TimeStep"
+                    }
+                },
+                "parameters": {}
+            },
+            "verification_class": "AutomaticShutdown"
+        },
+        {
+            "no": 22,
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeSmall_STD2016_Seattle.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "L_op": {
+                        "subject": "PSZ-AC:1 HEAT PUMP DX HEATING COIL",
+                        "variable": "Heating Coil Heating Rate",
+                        "frequency": "detailed"
+                    },
+                    "P_supp_ht": {
+                        "subject": "PSZ-AC:1 HEAT PUMP DX SUPP HEATING COIL",
+                        "variable": "Heating Coil Gas Rate",
+                        "frequency": "detailed"
+                    },
+                    "C_t_mod": {
+                        "subject": "HPACHEATCAPFT",
+                        "variable": "Performance Curve Output Value",
+                        "frequency": "detailed"
+                    },
+                    "C_ff_mod": {
+                        "subject": "HPACHeatCapFFF",
+                        "variable": "Performance Curve Output Value",
+                        "frequency": "detailed"
+                    },
+                    "L_defrost": {
+                        "subject": "PSZ-AC:1 HEAT PUMP DX HEATING COIL",
+                        "variable": "Heating Coil Defrost Electric Power",
+                        "frequency": "detailed"
+                    }
+                },
+                "parameters": {
+                    "C_ref": 5091.29
+                }
+            },
+            "verification_class": "HeatPumpSupplementalHeatLockout"
+        },
+        {
+            "no": 23,
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "P_ct_fan": {
+                        "subject": "TOWERWATERSYS COOLTOWER 2",
+                        "variable": "Cooling Tower Fan Electric Power",
+                        "frequency": "TimeStep"
+                    },
+                    "m_ct_fan_ratio": {
+                        "subject": "TOWERWATERSYS COOLTOWER 2",
+                        "variable": "Cooling Tower Air Flow Rate Ratio",
+                        "frequency": "TimeStep"
+                    }
+                },
+                "parameters": {
+                    "m_ct_fan_dsgn": 36.47,
+                    "P_ct_fan_dsgn": 13359.2
+                }
+            },
+            "verification_class": "HeatRejectionFanVariableFlowControl"
         }
     ]
 }
