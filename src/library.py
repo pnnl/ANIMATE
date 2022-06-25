@@ -804,11 +804,11 @@ class AutomaticShutdown(RuleCheckBase):
         return output
 
     def day_plot_aio(self, plt_pts):
-        # overwrite this method because daily plot isn't meaningful
+        # This method is overwritten because day plot can't be plotted for this verification item
         pass
 
     def day_plot_obo(self, plt_pts):
-        # overwrite this method because daily plot isn't meaningful
+        # This method is overwritten because day plot can't be plotted for this verification item
         pass
 
 
@@ -902,11 +902,11 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
         return output
 
     def day_plot_aio(self, plt_pts):
-        # This method is wverwritten because day plot can't be plotted for this verification item
+        # This method is overwritten because day plot can't be plotted for this verification item
         pass
 
     def day_plot_obo(self, plt_pts):
-        # This method is wverwritten because day plot can't be plotted for this verification item
+        # This method is overwritten because day plot can't be plotted for this verification item
         pass
 
 
