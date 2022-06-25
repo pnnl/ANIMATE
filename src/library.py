@@ -908,3 +908,10 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
     def day_plot_obo(self, plt_pts):
         # This method is wverwritten because day plot can't be plotted for this verification item
         pass
+
+
+class DemandControlVentilation(CheckLibBase):
+
+
+    def verify(self):
+        pass
