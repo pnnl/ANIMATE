@@ -13,7 +13,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 from sklearn.linear_model import LinearRegression
-
+from scipy.stats import pearsonr
+from sklearn.cluster import KMeans
 
 class IntegratedEconomizerControl(CheckLibBase):
     points = ["oa_min_flow", "oa_flow", "ccoil_out"]
@@ -911,7 +912,53 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
 
 
 class DemandControlVentilation(CheckLibBase):
-
+    points = ["v_oa", "s_eco", "no_of_occ"]
 
     def verify(self):
+        df_filtered = self.df.query("s_eco != 0.0") # filter out data when economizer isn't enabled
+
+        # Pearson’s correlation
+        corr, _ = pearsonr(df_filtered["no_of_occ"], df_filtered["v_oa"])
+
+        # Linear regression
+        reg = LinearRegression().fit(df_filtered["no_of_occ"].values.reshape(-1, 1), df_filtered["v_oa"])
+
+        # clustering
+        no_of_clus = 2
+
+        if len(df_filtered["no_of_occ"].unique()) == 1 or len(df_filtered["v_oa"].unique()) == 1:
+            self.result = 0 # NO DCV is observed
+            self.dcv_type = "NO DCV"
+        elif no_of_clus == 2:
+            self.result = 0  # DCV with binary control is observed
+            self.dcv_type = "DCV with binary control"
+        elif corr > 0:
+            self.result = 1  # DCV with occupant-counting based control
+            self.dcv_type = "DCV with occupant-counting based control"
+
+    def check_bool(self) -> bool:
+        if self.result > 0:
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": 1,
+            "Verification Passed?": self.check_bool(),
+            "Type of Demand Control Ventilation": self.dcv_type
+        }
+        print(output)
+        return output
+
+    def day_plot_aio(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
         pass
+
+    def day_plot_obo(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
+
+

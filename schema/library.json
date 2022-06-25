@@ -465,5 +465,22 @@
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
+    },
+	"DemandControlVentilation": {
+        "library_item_id": 27,
+        "description_brief": "",
+        "description_index": [
+            "Section 6.4.3.8 in 90.1-2016"
+        ],
+        "description_datapoints": {
+            "v_oa": "Zone Air Terminal Outdoor Air Volume Flow Rate",
+            "s_eco": "Air System Outdoor Air Economizer Status",
+			"no_of_occ":"People Occupant Count"
+        },
+        "description_assertions": [
+            ""
+        ],
+        "description_verification_type": "rule-based",
+        "assertions_type": "pass"
     }
 }
