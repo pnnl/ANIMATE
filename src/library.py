@@ -15,6 +15,8 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from scipy.stats import pearsonr
 from sklearn.cluster import KMeans
+from numpy import cov
+
 
 class IntegratedEconomizerControl(CheckLibBase):
     points = ["oa_min_flow", "oa_flow", "ccoil_out"]
@@ -912,32 +914,71 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
 
 
 class DemandControlVentilation(CheckLibBase):
-    points = ["v_oa", "s_eco", "no_of_occ"]
+    points = ["v_oa", "s_ahu", "s_eco", "no_of_occ"]
+
+    def cluster(self, data):
+        from sklearn.preprocessing import StandardScaler
+        from sklearn.cluster import KMeans
+        from kneed import KneeLocator
+
+        # Standardize the data reason:
+        scaler = StandardScaler()
+        scaled_df = scaler.fit_transform(data)
+
+        kmeans_kwargs = {
+            "init": "random",
+            "n_init": 10,
+            "max_iter": 300,
+        }
+
+        # evaluate the appropriate no. clusters,
+        # use elbow method: run several K-means, increment k with each iteration and record the SSE
+        # sweet spot is where the SSE curve starts to bend (a.k.a elbow point)
+        # the silhouette coefficient isn't used because it requires to have at least 2 clusters. However, DCV data could have only 0 or 1 cluster
+        SSE = []
+        for k in range(1, 11):
+            kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
+            kmeans.fit(scaled_df)
+            SSE.append(kmeans.inertia_)
+
+        no_of_cluster = KneeLocator(
+            range(1, 11), SSE, curve="convex", direction="decreasing"
+        ).elbow
+
+        return no_of_cluster
 
     def verify(self):
-        df_filtered = self.df.query("s_eco != 0.0") # filter out data when economizer isn't enabled
+        df_filtered = self.df.loc[
+            (self.df["s_eco"] != 0.0) & (self.df["s_ahu"] != 0.0)
+        ]  # filter out data when economizer isn't enabled
 
         # Pearson’s correlation
         corr, _ = pearsonr(df_filtered["no_of_occ"], df_filtered["v_oa"])
 
         # Linear regression
-        reg = LinearRegression().fit(df_filtered["no_of_occ"].values.reshape(-1, 1), df_filtered["v_oa"])
+        reg = LinearRegression().fit(
+            df_filtered["no_of_occ"].values.reshape(-1, 1), df_filtered["v_oa"]
+        )
 
         # clustering
-        no_of_clus = 2
+        no_of_clus = self.cluster(df_filtered)
 
-        if len(df_filtered["no_of_occ"].unique()) == 1 or len(df_filtered["v_oa"].unique()) == 1:
-            self.result = 0 # NO DCV is observed
-            self.dcv_type = "NO DCV"
+        if (
+            len(df_filtered["no_of_occ"].unique()) == 1
+            or len(df_filtered["v_oa"].unique()) == 1
+        ):
+            self.df["DCV_type"] = 0  # NO DCV is observed
+            self.dcv_msg = "NO DCV"
         elif no_of_clus == 2:
-            self.result = 0  # DCV with binary control is observed
-            self.dcv_type = "DCV with binary control"
+            self.df["DCV_type"] = 1  # DCV with binary control is observed
+            self.dcv_msg = "DCV with binary control"
         elif corr > 0:
-            self.result = 1  # DCV with occupant-counting based control
-            self.dcv_type = "DCV with occupant-counting based control"
+            self.df["DCV_type"] = 2  # DCV with occupant-counting based control
+            self.dcv_msg = "DCV with occupant-counting based control"
+        self.result = self.df["DCV_type"]
 
     def check_bool(self) -> bool:
-        if self.result > 0:
+        if len(self.result[self.result != 0] > 0):
             return True
         else:
             return False
@@ -947,7 +988,7 @@ class DemandControlVentilation(CheckLibBase):
         output = {
             "Sample #": 1,
             "Verification Passed?": self.check_bool(),
-            "Type of Demand Control Ventilation": self.dcv_type
+            "Type of Demand Control Ventilation": self.dcv_msg,
         }
         print(output)
         return output
@@ -961,4 +1002,78 @@ class DemandControlVentilation(CheckLibBase):
         pass
 
 
+class OptimumStart(CheckLibBase):
+    points = ["T_oa_dry", "T_z_measure", "T_z_set", "s_AHU"]
 
+    def verify(self):
+        #
+        self.df["t_length"] = 1
+
+        t_length = pd.DataFrame()
+        s_AHU_off_to_on =
+
+        df_filtered = pd.DataFrame()
+        df_filtered["T_oa_dry_filtered"] =  self.df[]
+        df_filtered["T_z_measured_filtered"] = self.df[]
+
+
+        if len(self.df["s_AHU"].unique()) == 1 and self.df["s_AHU"].unique() in [0, 1]:
+            self.result = 0
+            self.optimum_start_type = "No ooptimum start"
+        else:
+            if len(self.df["t_length"].unique()) == 1:
+                self.result = 0
+                self.optimum_start_type = "No ooptimum start"
+            else:
+                if cov(self.df["t_length"], self.df["T_oa_dry"]) > 0.5 or cov(self.df["t_length"], self.df["t_diff"]) > 0.5:
+                    self.result = 1
+                    self.optimum_start_type = "Optimum start is observed and confirmed"
+                else:
+                    self.result = 0
+                    self.optimum_start_type = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
+
+    def check_bool(self) -> bool:
+        if self.result == 1:
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": 1,
+            "Verification Passed?": self.check_bool(),
+            "Optimum start?": self.optimum_start_type
+        }
+        print(output)
+        return output
+
+    def day_plot_aio(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
+    def day_plot_obo(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
+
+class GuestRoomControlTemp(CheckLibBase):
+    points = ["", "", "", "T_z_hea_set", "T_z_coo_set", "", "no_of_occ", "tol"]
+
+    def verify(self):
+
+        for in self.df[].iterrows():
+            if
+                if self.df["no_of_occ"] <= 0 + self.df["tol"]:
+                    if self.df["T_z_hea_set"] < self.df[""] - 4.0 or self.df["T_z_coo_set"] > self.df[""] + 4.0:
+                        self.result = 1 # pass
+                    else:
+                        self.result = 0 # fail
+                else:
+                    self.result = 1
+            else:
+                if self.df["T_z_hea_set"] < 15.6 and self.df["T_z_coo_set"] > 26.7:
+                    self.result = 1  # pass
+                else:
+                    self.result = 0
+        return
