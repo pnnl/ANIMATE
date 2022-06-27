@@ -539,7 +539,7 @@ class FanStaticPressureResetControl(CheckLibBase):
 
     def verify(self):
         d_vav_points = ["d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
-        d_vav_df = self.df[d_vav_points].copy(deep=True)
+        d_vav_df = self.df[d_vav_points].copy()
         self.df["result"] = 1  # 0: false 1: true
 
         for row_num, (index, row) in enumerate(self.df.iterrows()):
@@ -559,7 +559,7 @@ class FanStaticPressureResetControl(CheckLibBase):
                         self.df.at[index, "result"] = 1
             prev_index = index
 
-        self.result = self.df["result"].copy(deep=True)
+        self.result = self.df["result"].copy()
 
     def check_bool(self) -> bool:
         if len(self.result[self.result == 1] > 0):
