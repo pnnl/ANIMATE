@@ -753,8 +753,8 @@ class AutomaticShutdown(RuleCheckBase):
     points = ["hvac_set"]
 
     def verify(self):
-        copied_df = self.df.copy(
-            deep=True
+        copied_df = (
+            self.df.copy()
         )  # copied not to store unnecessary intermediate variables in self.df dataframe
         copied_df.reset_index(
             inplace=True
