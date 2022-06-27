@@ -1010,12 +1010,11 @@ class OptimumStart(CheckLibBase):
         self.df["t_length"] = 1
 
         t_length = pd.DataFrame()
-        s_AHU_off_to_on =
+        s_AHU_off_to_on = 1
 
         df_filtered = pd.DataFrame()
-        df_filtered["T_oa_dry_filtered"] =  self.df[]
-        df_filtered["T_z_measured_filtered"] = self.df[]
-
+        df_filtered["T_oa_dry_filtered"] = 1  # self.df[]
+        df_filtered["T_z_measured_filtered"] = 1  # self.df[]
 
         if len(self.df["s_AHU"].unique()) == 1 and self.df["s_AHU"].unique() in [0, 1]:
             self.result = 0
@@ -1025,7 +1024,10 @@ class OptimumStart(CheckLibBase):
                 self.result = 0
                 self.optimum_start_type = "No ooptimum start"
             else:
-                if cov(self.df["t_length"], self.df["T_oa_dry"]) > 0.5 or cov(self.df["t_length"], self.df["t_diff"]) > 0.5:
+                if (
+                    cov(self.df["t_length"], self.df["T_oa_dry"]) > 0.5
+                    or cov(self.df["t_length"], self.df["t_diff"]) > 0.5
+                ):
                     self.result = 1
                     self.optimum_start_type = "Optimum start is observed and confirmed"
                 else:
@@ -1043,7 +1045,7 @@ class OptimumStart(CheckLibBase):
         output = {
             "Sample #": 1,
             "Verification Passed?": self.check_bool(),
-            "Optimum start?": self.optimum_start_type
+            "Optimum start?": self.optimum_start_type,
         }
         print(output)
         return output
@@ -1062,18 +1064,18 @@ class GuestRoomControlTemp(CheckLibBase):
 
     def verify(self):
 
-        for in self.df[].iterrows():
-            if
-                if self.df["no_of_occ"] <= 0 + self.df["tol"]:
-                    if self.df["T_z_hea_set"] < self.df[""] - 4.0 or self.df["T_z_coo_set"] > self.df[""] + 4.0:
-                        self.result = 1 # pass
-                    else:
-                        self.result = 0 # fail
-                else:
-                    self.result = 1
-            else:
-                if self.df["T_z_hea_set"] < 15.6 and self.df["T_z_coo_set"] > 26.7:
-                    self.result = 1  # pass
-                else:
-                    self.result = 0
+        # for in self.df[].iterrows():
+        #     if
+        #         if self.df["no_of_occ"] <= 0 + self.df["tol"]:
+        #             if self.df["T_z_hea_set"] < self.df[""] - 4.0 or self.df["T_z_coo_set"] > self.df[""] + 4.0:
+        #                 self.result = 1 # pass
+        #             else:
+        #                 self.result = 0 # fail
+        #         else:
+        #             self.result = 1
+        #     else:
+        #         if self.df["T_z_hea_set"] < 15.6 and self.df["T_z_coo_set"] > 26.7:
+        #             self.result = 1  # pass
+        #         else:
+        #             self.result = 0
         return
