@@ -921,7 +921,8 @@ class DemandControlVentilation(CheckLibBase):
         from sklearn.cluster import KMeans
         from kneed import KneeLocator
 
-        # Standardize the data reason:
+        # Standardize the data to have a mean of 0 and standard deviation of 1 (feature scaling)
+        # reason: the algorithm may consider the greater values in data because some feature values are greater and have higher variability because of unit difference.
         scaler = StandardScaler()
         scaled_df = scaler.fit_transform(data)
 
@@ -1002,80 +1003,94 @@ class DemandControlVentilation(CheckLibBase):
         pass
 
 
-class OptimumStart(CheckLibBase):
-    points = ["T_oa_dry", "T_z_measure", "T_z_set", "s_AHU"]
-
-    def verify(self):
-        #
-        self.df["t_length"] = 1
-
-        t_length = pd.DataFrame()
-        s_AHU_off_to_on = 1
-
-        df_filtered = pd.DataFrame()
-        df_filtered["T_oa_dry_filtered"] = 1  # self.df[]
-        df_filtered["T_z_measured_filtered"] = 1  # self.df[]
-
-        if len(self.df["s_AHU"].unique()) == 1 and self.df["s_AHU"].unique() in [0, 1]:
-            self.result = 0
-            self.optimum_start_type = "No ooptimum start"
-        else:
-            if len(self.df["t_length"].unique()) == 1:
-                self.result = 0
-                self.optimum_start_type = "No ooptimum start"
-            else:
-                if (
-                    cov(self.df["t_length"], self.df["T_oa_dry"]) > 0.5
-                    or cov(self.df["t_length"], self.df["t_diff"]) > 0.5
-                ):
-                    self.result = 1
-                    self.optimum_start_type = "Optimum start is observed and confirmed"
-                else:
-                    self.result = 0
-                    self.optimum_start_type = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
-
-    def check_bool(self) -> bool:
-        if self.result == 1:
-            return True
-        else:
-            return False
-
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": 1,
-            "Verification Passed?": self.check_bool(),
-            "Optimum start?": self.optimum_start_type,
-        }
-        print(output)
-        return output
-
-    def day_plot_aio(self, plt_pts):
-        # This method is overwritten because day plot can't be plotted for this verification item
-        pass
-
-    def day_plot_obo(self, plt_pts):
-        # This method is overwritten because day plot can't be plotted for this verification item
-        pass
+# class OptimumStart(CheckLibBase):
+#     points = ["T_oa_dry", "T_z_measure", "T_z_set", "s_AHU"]
+# 
+#     def verify(self):
+#         #
+#         self.df["t_length"] = 1
+# 
+#         t_length = pd.DataFrame()
+#         s_AHU_off_to_on = 1
+# 
+#         df_filtered = pd.DataFrame()
+#         df_filtered["T_oa_dry_filtered"] = 1  # self.df[]
+#         df_filtered["T_z_measured_filtered"] = 1  # self.df[]
+# 
+#         if len(self.df["s_AHU"].unique()) == 1 and self.df["s_AHU"].unique() in [0, 1]:
+#             self.result = 0
+#             self.optimum_start_type = "No ooptimum start"
+#         else:
+#             if len(self.df["t_length"].unique()) == 1:
+#                 self.result = 0
+#                 self.optimum_start_type = "No ooptimum start"
+#             else:
+#                 if (
+#                     cov(self.df["t_length"], self.df["T_oa_dry"]) > 0.5
+#                     or cov(self.df["t_length"], self.df["t_diff"]) > 0.5
+#                 ):
+#                     self.result = 1
+#                     self.optimum_start_type = "Optimum start is observed and confirmed"
+#                 else:
+#                     self.result = 0
+#                     self.optimum_start_type = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
+# 
+#     def check_bool(self) -> bool:
+#         if self.result == 1:
+#             return True
+#         else:
+#             return False
+# 
+#     def check_detail(self):
+#         print("Verification results dict: ")
+#         output = {
+#             "Sample #": 1,
+#             "Verification Passed?": self.check_bool(),
+#             "Optimum start?": self.optimum_start_type,
+#         }
+#         print(output)
+#         return output
+# 
+#     def day_plot_aio(self, plt_pts):
+#         # This method is overwritten because day plot can't be plotted for this verification item
+#         pass
+# 
+#     def day_plot_obo(self, plt_pts):
+#         # This method is overwritten because day plot can't be plotted for this verification item
+#         pass
 
 
 class GuestRoomControlTemp(CheckLibBase):
-    points = ["", "", "", "T_z_hea_set", "T_z_coo_set", "", "no_of_occ", "tol"]
+    points = ["T_z_hea_set", "T_z_coo_set", "m_z_oa", "no_of_occ", "tol"]
 
     def verify(self):
+        T_z_hea_occ_set = self.df["T_z_hea_set"]
+        T_z_coo_occ_set = self.df["T_z_coo_set"]
 
-        # for in self.df[].iterrows():
-        #     if
-        #         if self.df["no_of_occ"] <= 0 + self.df["tol"]:
-        #             if self.df["T_z_hea_set"] < self.df[""] - 4.0 or self.df["T_z_coo_set"] > self.df[""] + 4.0:
-        #                 self.result = 1 # pass
-        #             else:
-        #                 self.result = 0 # fail
-        #         else:
-        #             self.result = 1
-        #     else:
-        #         if self.df["T_z_hea_set"] < 15.6 and self.df["T_z_coo_set"] > 26.7:
-        #             self.result = 1  # pass
-        #         else:
-        #             self.result = 0
-        return
+        self.df["guest_room_control"] = np.nan
+
+        for in
+            if data["T_z_hea_set"] == T_z_hea_occ_set and data["T_z_coo_set"] == T_z_coo_occ_set: # confirmed this room is rented out
+                if data["no_of_occ"] <= data["tol"]: # confirmed this room has unoccupied period
+                    if data["m_z_oa"] == 0: # checking ventilation control
+                        data["guest_room_control"] = 1 # pass, confirm the OA flow is turned off
+                    else:
+                        data["guest_room_control"] = 0 # fail, ventilation was not turned off when occupants leave the room
+                else:
+                    data["guest_room_control"] = 1  # This room is always occupied, no reset is needed.
+            else: # this room is not rented out
+                # checking ventilation control
+                if data["m_z_oa"] > 0:  # we might skip the next subsection if it is too complicated to implement
+                    for : # for every 24 hours
+                    if :
+                        data["guest_room_control"] = 0 # preoccupancy purge cycle was observed
+
+                    else:
+                        data["guest_room_control"] = 1 # ventilation was observed but not an appropriate preoccupancy purge cycle
+                else:
+                    data["guest_room_control"] = 1 # no ventilation was observed
+
+
+        self.result = self.df["guest_room_control"]
+
+

@@ -43,76 +43,35 @@
             "no": 2,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeMedium_STD2019_Atlanta.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeLarge_STD2016_Denver",
                 "idd": "../resources/Energy+V9_0_1.idd",
-                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "weather": "../weather/USA_CO_Denver-Aurora-Buckley.AFB.724695_TMY3.epw",
                 "output": "eplusout.csv",
                 "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
-                    "T_oa_dry": {
-                        "subject": "",
-                        "variable": "Outdoor Air Drybulb Temperature",
-                        "frequency": "TimeStep"
-                    },
-					"T_z_measure": {
-                        "subject": "",
-                        "variable": "Zone Air Temperature",
-                        "frequency": "TimeStep"
-                    },
-					"T_z_set": {
-                        "subject": "",
-                        "variable": "",
-                        "frequency": "TimeStep"
-                    },
-					"s_AHU": {
-                        "subject": "HVACOperationSchd",
-                        "variable": "Schedule Value",
-                        "frequency": "TimeStep"
-                    }
-                },
-                "parameters": {}
-            },
-            "verification_class": "OptimumStart"
-        },
-		{
-            "no": 3,
-            "run_simulation": true,
-            "simulation_IO": {
-                "idf": "../test_cases/doe_prototype_cases/",
-                "idd": "../resources/Energy+V9_0_1.idd",
-                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv",
-                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
-            },
-            "expected_result": "pass",
-            "datapoints_source": {
-                "idf_output_variables": {
-					"T_z_measure": {
-                        "subject": "",
-                        "variable": "",
-                        "frequency": "TimeStep"
-                    },
 					"T_z_hea_set": {
-                        "subject": "",
+                        "subject": "CORE_TOP",
                         "variable": "Zone Thermostat Heating Setpoint Temperature",
                         "frequency": "TimeStep"
                     },
 					"T_z_coo_set": {
-                        "subject": "",
+                        "subject": "CORE_TOP",
                         "variable": "Zone Thermostat Cooling Setpoint Temperature",
                         "frequency": "TimeStep"
                     },
-					"s_AHU": {
-                        "subject": "HVACOperationSchd",
-                        "variable": "Schedule Value",
+					"m_z_oa": {
+                        "subject": "CORE_TOP",
+                        "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
                         "frequency": "TimeStep"
                     }
                 },
                 "parameters": {
-					"tol": 0.03, 
+					"Area":,
+					"Height":,
+				    "tol": 0.03,
 				}
             },
             "verification_class": "GuestRoomControlTemp"

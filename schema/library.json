@@ -501,5 +501,23 @@
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
-    }
+    },
+	"GuestRoomControlTemp": {
+        "library_item_id": 27,
+        "description_brief": "",
+        "description_index": [
+            "Section 6.4.3.3.3 in 90.1-2016"
+        ],
+        "description_datapoints": {
+            "T_oa_dry": "",
+            "T_z_measure": "",
+			"T_z_set": "",
+			"s_AHU": ""
+        },
+        "description_assertions": [
+            ""
+        ],
+        "description_verification_type": "rule-based",
+        "assertions_type": "pass"
+    },
 }
