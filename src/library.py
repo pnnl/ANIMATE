@@ -604,18 +604,16 @@ class HeatRejectionFanVariableFlowControlsCells(CheckLibBase):
     ]
 
     def verify(self):
-        self.df["ct_cells_op_theo"] = np.nan
-        self.df["ct_cells_op_theo_intermediate"] = np.nan
+        self.df["ct_cells_op_theo_intermediate"] = (
+            self.df["m"]
+            / self.df["m_des"]
+            * self.df["min_flow_frac_per_cell"]
+            / self.df["ct_cells"]
+        ) + 0.9999
+        self.df["ct_cells_op_theo_intermediate"] = self.df[
+            "ct_cells_op_theo_intermediate"
+        ].astype("int")
 
-        self.df["ct_cells_op_theo_intermediate"] = int(
-            (
-                self.df["m"]
-                / self.df["m_des"]
-                * self.df["min_flow_frac_per_cell"]
-                / self.df["ct_cells"]
-            )
-            + 0.9999
-        )
         self.df["ct_cells_op_theo"] = self.df[
             ["ct_cells_op_theo_intermediate", "ct_cells"]
         ].min(axis=1)
