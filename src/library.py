@@ -543,7 +543,7 @@ class FanStaticPressureResetControl(CheckLibBase):
 
     def verify(self):
         d_vav_points = ["d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
-        d_vav_df = self.df[d_vav_points].copy(deep=True)
+        d_vav_df = self.df[d_vav_points].copy()
         self.df["result"] = 1  # 0: false 1: true
 
         for row_num, (index, row) in enumerate(self.df.iterrows()):
@@ -563,7 +563,7 @@ class FanStaticPressureResetControl(CheckLibBase):
                         self.df.at[index, "result"] = 1
             prev_index = index
 
-        self.result = self.df["result"].copy(deep=True)
+        self.result = self.df["result"].copy()
 
     def check_bool(self) -> bool:
         if len(self.result[self.result == 1] > 0):
@@ -608,20 +608,20 @@ class HeatRejectionFanVariableFlowControlsCells(CheckLibBase):
     ]
 
     def verify(self):
-        self.df["ct_cells_op_theo"] = np.nan
-        for index, row in self.df.iterrows():
-            self.df.at[index, "ct_cells_op_theo"] = min(
-                int(
-                    (
-                        self.df.loc[index, "m"]
-                        / self.df.loc[index, "m_des"]
-                        * self.df.loc[index, "min_flow_frac_per_cell"]
-                        / self.df.loc[index, "ct_cells"]
-                    )
-                    + 0.9999
-                ),
-                self.df.loc[index, "ct_cells"],
-            )
+        self.df["ct_cells_op_theo_intermediate"] = (
+            self.df["m"]
+            / self.df["m_des"]
+            * self.df["min_flow_frac_per_cell"]
+            / self.df["ct_cells"]
+        ) + 0.9999
+        self.df["ct_cells_op_theo_intermediate"] = self.df[
+            "ct_cells_op_theo_intermediate"
+        ].astype("int")
+
+        self.df["ct_cells_op_theo"] = self.df[
+            ["ct_cells_op_theo_intermediate", "ct_cells"]
+        ].min(axis=1)
+
         self.result = ~(
             (self.df["ct_op_cells"] > 0)
             & (self.df["ct_op_cells"] < self.df["ct_cells_op_theo"])
@@ -756,8 +756,8 @@ class AutomaticShutdown(RuleCheckBase):
     points = ["hvac_set"]
 
     def verify(self):
-        copied_df = self.df.copy(
-            deep=True
+        copied_df = (
+            self.df.copy()
         )  # copied not to store unnecessary intermediate variables in self.df dataframe
         copied_df.reset_index(
             inplace=True
