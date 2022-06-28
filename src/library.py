@@ -1003,93 +1003,109 @@ class DemandControlVentilation(CheckLibBase):
         pass
 
 
-# class OptimumStart(CheckLibBase):
-#     points = ["T_oa_dry", "T_z_measure", "T_z_set", "s_AHU"]
-# 
-#     def verify(self):
-#         #
-#         self.df["t_length"] = 1
-# 
-#         t_length = pd.DataFrame()
-#         s_AHU_off_to_on = 1
-# 
-#         df_filtered = pd.DataFrame()
-#         df_filtered["T_oa_dry_filtered"] = 1  # self.df[]
-#         df_filtered["T_z_measured_filtered"] = 1  # self.df[]
-# 
-#         if len(self.df["s_AHU"].unique()) == 1 and self.df["s_AHU"].unique() in [0, 1]:
-#             self.result = 0
-#             self.optimum_start_type = "No ooptimum start"
-#         else:
-#             if len(self.df["t_length"].unique()) == 1:
-#                 self.result = 0
-#                 self.optimum_start_type = "No ooptimum start"
-#             else:
-#                 if (
-#                     cov(self.df["t_length"], self.df["T_oa_dry"]) > 0.5
-#                     or cov(self.df["t_length"], self.df["t_diff"]) > 0.5
-#                 ):
-#                     self.result = 1
-#                     self.optimum_start_type = "Optimum start is observed and confirmed"
-#                 else:
-#                     self.result = 0
-#                     self.optimum_start_type = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
-# 
-#     def check_bool(self) -> bool:
-#         if self.result == 1:
-#             return True
-#         else:
-#             return False
-# 
-#     def check_detail(self):
-#         print("Verification results dict: ")
-#         output = {
-#             "Sample #": 1,
-#             "Verification Passed?": self.check_bool(),
-#             "Optimum start?": self.optimum_start_type,
-#         }
-#         print(output)
-#         return output
-# 
-#     def day_plot_aio(self, plt_pts):
-#         # This method is overwritten because day plot can't be plotted for this verification item
-#         pass
-# 
-#     def day_plot_obo(self, plt_pts):
-#         # This method is overwritten because day plot can't be plotted for this verification item
-#         pass
+class OptimumStart(CheckLibBase):
+    points = ["T_oa_dry", "T_z_measure", "T_z_hea_set", "T_z_coo_set", "s_AHU", "occ"]
+
+    def verify(self):
+        self.df["result"] = np.nan
+        for idx, day in self.df.groupby(self.df.index.date): # https://stackoverflow.com/questions/41893612/iterate-over-days-pandas
+            # print(f"idx: {idx}, day: {day}")
+            day_occ_queried = day.query('occ > 0')
+            day_s_AHU_queried = day.query('s_AHU > 0')
+
+            if len(day_occ_queried) > 0:
+                t_length_occ = day_occ_queried["occ"]
+            else:
+                t_length_occ = pd.DataFrame()
+            if len(day_s_AHU_queried) > 0:
+                t_length_s_AHU = day_s_AHU_queried["s_AHU"]
+            else:
+                t_length_s_AHU = pd.DataFrame()
+
+            t_length = t_length_occ - t_length_s_AHU
+
+            T_oa_dry_filtered = day_s_AHU_queried["T_oa_dry"]
+            T_z_measure_filtered = day_s_AHU_queried["T_z_measure"]
+
+            T_z_hea_set_occ = day_occ_queried["T_z_hea_set"]
+            T_z_hea_set_unocc = day.query('occ == 0')["T_z_hea_set"]
+
+            T_z_coo_set_occ = day_occ_queried["T_z_coo_set"]
+            T_z_coo_set_unocc = day.query('occ == 0')["T_z_coo_set"]
+
+            T_diff_heating = T_z_measure_filtered - T_z_hea_set_occ
+            T_diff_cooling = T_z_measure_filtered - T_z_coo_set_occ
+
+            # if len(day["s_AHU"].unique()) == 1 and day["s_AHU"].unique() in [0, 1]:
+            #     if len(day["s_AHU"].unique()) == 0:
+            #         self.df["result"] = 0
+            #         self.optimum_start_type = "No optimum start"
+            #     else:
+            #         t_length =
+            #         if (np.cov(day["t_length"], day["T_oa_dry"]) > 0.5 or np.cov(day["t_length"], day["t_diff"]) > 0.5):
+            #             self.df["result"] = 1
+            #             self.optimum_start_type = "Optimum start is observed and confirmed"
+            #         else:
+            #             self.df["result"] = 0
+            #             self.optimum_start_type = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
+            # else:
+            #     if 1: ########## t_length is a constant @ all t
+            #         self.df["result"] = 0
+            #         self.optimum_start_type = "No optimum start"
+            #     else:
+            #         if (np.cov(day["t_length"], day["T_oa_dry"]) > 0.5 or np.cov(day["t_length"], day["t_diff"]) > 0.5):
+            #             self.df["result"] = 1
+            #             self.optimum_start_type = "Optimum start is observed and confirmed"
+            #         else:
+            #             self.df["result"] = 0
+            #             self.optimum_start_type = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
+        self.result = self.df["result"]
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": 1,
+            "Verification Passed?": self.check_bool(),
+            # "Optimum start?": self.optimum_start_type,
+        }
+        print(output)
+        return output
+
+    def day_plot_aio(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
+    def day_plot_obo(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
 
 
 class GuestRoomControlTemp(CheckLibBase):
-    points = ["T_z_hea_set", "T_z_coo_set", "m_z_oa", "no_of_occ", "tol"]
+    points = ["T_z_hea_set", "T_z_coo_set", "O_sch", "tol_occ", "tol_temp"]
 
     def verify(self):
-        T_z_hea_occ_set = self.df["T_z_hea_set"]
-        T_z_coo_occ_set = self.df["T_z_coo_set"]
+        for idx, day in self.df.groupby(self.df.index.date): # https://stackoverflow.com/questions/41893612/iterate-over-days-pandas
 
-        self.df["guest_room_control"] = np.nan
+            if self.df["O_sch"] <= self.df["tol"]: # confirmed this room is rented out
+                T_z_hea_occ_set = self.df["T_z_hea_set"].query('O_sch > 0.0')
+                T_z_coo_occ_set = self.df["T_z_coo_set"].query('O_sch > 0.0')
 
-        for in
-            if data["T_z_hea_set"] == T_z_hea_occ_set and data["T_z_coo_set"] == T_z_coo_occ_set: # confirmed this room is rented out
-                if data["no_of_occ"] <= data["tol"]: # confirmed this room has unoccupied period
-                    if data["m_z_oa"] == 0: # checking ventilation control
-                        data["guest_room_control"] = 1 # pass, confirm the OA flow is turned off
-                    else:
-                        data["guest_room_control"] = 0 # fail, ventilation was not turned off when occupants leave the room
+                if self.df["T_z_hea_set"] < T_z_hea_occ_set - 2.22 or self.df["T_z_coo_set"] > T_z_coo_occ_set + 2.22:
+                    self.df["guest_room_control"] = 1 # pass,confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
                 else:
-                    data["guest_room_control"] = 1  # This room is always occupied, no reset is needed.
+                    self.df["guest_room_control"] = 0 # fail, reset does not meet the standard or no reset was observed.
+
             else: # this room is not rented out
-                # checking ventilation control
-                if data["m_z_oa"] > 0:  # we might skip the next subsection if it is too complicated to implement
-                    for : # for every 24 hours
-                    if :
-                        data["guest_room_control"] = 0 # preoccupancy purge cycle was observed
-
-                    else:
-                        data["guest_room_control"] = 1 # ventilation was observed but not an appropriate preoccupancy purge cycle
+                if self.df["T_z_hea_set"] < 15.6 + self.df["tol_temp"] and self.df["T_z_coo_set"] > 26.7 + self.df["tol_temp"]:
+                    self.df["guest_room_control"] = 1  # pass, confirmed zone temperature setpoint reset during the unrented period
                 else:
-                    data["guest_room_control"] = 1 # no ventilation was observed
-
+                    self.df["guest_room_control"] = 0  # fail, zone temperature setpoint was not reset correctly
 
         self.result = self.df["guest_room_control"]
 

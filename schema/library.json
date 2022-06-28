@@ -491,10 +491,11 @@
             "Section 6.4.3.3.3 in 90.1-2016"
         ],
         "description_datapoints": {
-            "T_oa_dry": "",
-            "T_z_measure": "",
-			"T_z_set": "",
-			"s_AHU": ""
+            "T_oa_dry": "Site Outdoor Air Drybulb Temperature",
+            "T_z_measure": "Zone Air Temperature",
+			"T_z_hea_set": "Zone Thermostat Heating Setpoint Temperature",
+			"T_z_coo_set": "Zone Thermostat Cooling Setpoint Temperature",
+			"s_AHU": "Status of HVAC operation"
         },
         "description_assertions": [
             ""
@@ -503,21 +504,22 @@
         "assertions_type": "pass"
     },
 	"GuestRoomControlTemp": {
-        "library_item_id": 27,
+        "library_item_id": 28,
         "description_brief": "",
         "description_index": [
-            "Section 6.4.3.3.3 in 90.1-2016"
+            "Section 6.4.3.3.5 in 90.1-2016"
         ],
         "description_datapoints": {
-            "T_oa_dry": "",
-            "T_z_measure": "",
-			"T_z_set": "",
-			"s_AHU": ""
+            "T_z_hea_set": "Zone Thermostat Heating Setpoint Temperature",
+            "T_z_coo_set": "Zone Thermostat Cooling Setpoint Temperature",
+			"O_sch": "Occupant schedule",
+			"tol_occ": "Tolerence for occupant's schedule",
+			"tol_temp": "Tolerance for temperature"
         },
         "description_assertions": [
             ""
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
-    },
+    }
 }
