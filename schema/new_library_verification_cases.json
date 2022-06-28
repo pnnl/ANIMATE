@@ -760,12 +760,12 @@
                     "P_ct_fan": {
                         "subject": "TOWERWATERSYS COOLTOWER 2",
                         "variable": "Cooling Tower Fan Electric Power",
-                        "frequency": "TimeStep"
+                        "frequency": "Detailed"
                     },
                     "m_ct_fan_ratio": {
                         "subject": "TOWERWATERSYS COOLTOWER 2",
                         "variable": "Cooling Tower Air Flow Rate Ratio",
-                        "frequency": "TimeStep"
+                        "frequency": "Detailed"
                     }
                 },
                 "parameters": {
