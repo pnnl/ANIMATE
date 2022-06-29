@@ -14,7 +14,9 @@ import seaborn as sns
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from scipy.stats import pearsonr
+from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
+from kneed import KneeLocator
 from numpy import cov
 
 
@@ -917,10 +919,6 @@ class DemandControlVentilation(CheckLibBase):
     points = ["v_oa", "s_ahu", "s_eco", "no_of_occ"]
 
     def cluster(self, data):
-        from sklearn.preprocessing import StandardScaler
-        from sklearn.cluster import KMeans
-        from kneed import KneeLocator
-
         # Standardize the data to have a mean of 0 and standard deviation of 1 (feature scaling)
         # reason: the algorithm may consider the greater values in data because some feature values are greater and have higher variability because of unit difference.
         scaler = StandardScaler()
@@ -1007,7 +1005,7 @@ class OptimumStart(CheckLibBase):
     points = ["T_oa_dry", "T_z_measure", "T_z_hea_set", "T_z_coo_set", "s_AHU", "occ"]
 
     def verify(self):
-        self.df["result"] = np.nan
+        result_repo = []
         for idx, day in self.df.groupby(self.df.index.date): # https://stackoverflow.com/questions/41893612/iterate-over-days-pandas
             # print(f"idx: {idx}, day: {day}")
             day_occ_queried = day.query('occ > 0')
@@ -1016,11 +1014,11 @@ class OptimumStart(CheckLibBase):
             if len(day_occ_queried) > 0:
                 t_length_occ = day_occ_queried["occ"]
             else:
-                t_length_occ = pd.DataFrame()
+                t_length_occ = 0
             if len(day_s_AHU_queried) > 0:
                 t_length_s_AHU = day_s_AHU_queried["s_AHU"]
             else:
-                t_length_s_AHU = pd.DataFrame()
+                t_length_s_AHU = 0
 
             t_length = t_length_occ - t_length_s_AHU
 
@@ -1036,33 +1034,35 @@ class OptimumStart(CheckLibBase):
             T_diff_heating = T_z_measure_filtered - T_z_hea_set_occ
             T_diff_cooling = T_z_measure_filtered - T_z_coo_set_occ
 
-            # if len(day["s_AHU"].unique()) == 1 and day["s_AHU"].unique() in [0, 1]:
-            #     if len(day["s_AHU"].unique()) == 0:
-            #         self.df["result"] = 0
-            #         self.optimum_start_type = "No optimum start"
-            #     else:
-            #         t_length =
-            #         if (np.cov(day["t_length"], day["T_oa_dry"]) > 0.5 or np.cov(day["t_length"], day["t_diff"]) > 0.5):
-            #             self.df["result"] = 1
-            #             self.optimum_start_type = "Optimum start is observed and confirmed"
-            #         else:
-            #             self.df["result"] = 0
-            #             self.optimum_start_type = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
-            # else:
-            #     if 1: ########## t_length is a constant @ all t
-            #         self.df["result"] = 0
-            #         self.optimum_start_type = "No optimum start"
-            #     else:
-            #         if (np.cov(day["t_length"], day["T_oa_dry"]) > 0.5 or np.cov(day["t_length"], day["t_diff"]) > 0.5):
-            #             self.df["result"] = 1
-            #             self.optimum_start_type = "Optimum start is observed and confirmed"
-            #         else:
-            #             self.df["result"] = 0
-            #             self.optimum_start_type = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
-        self.result = self.df["result"]
+            if len(day["s_AHU"].unique()) == 1 and day["s_AHU"].unique() in [0, 1]:
+                if len(day["s_AHU"].unique()) == 0:
+                    result_repo.append(0) # No optimum start
+                else:
+                    t_length = 1 # t_length_occ -
+                    # if (np.cov(t_length, day["T_oa_dry"]) > 0.5 or np.cov(t_length, T_diff_heating) > 0.5 or np.cov(t_length, T_diff_cooling) > 0.5):
+                    corr_T_oa_dry, _ = pearsonr(t_length, day["T_oa_dry"])
+                    corr_T_diff_hea, _ = pearsonr(t_length, T_diff_heating)
+                    corr_T_diff_coo, _ = pearsonr(t_length, T_diff_cooling)
+                    if corr_T_oa_dry > 0.5 or corr_T_diff_hea > 0.5 or corr_T_diff_coo > 0.5:
+                        result_repo.append(1) # Optimum start is observed and confirmed
+                    else:
+                        result_repo.append(0) # Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well
+            else:
+                if len(t_length.unique()) == 1: # t_length is a constant @ all t
+                    result_repo.append(0) # No optimum start
+                else:
+                    # if (np.cov(t_length, day["T_oa_dry"]) > 0.5 or np.cov(t_length, T_diff_heating) > 0.5 or np.cov(t_length, T_diff_cooling) > 0.5):
+                    corr_T_oa_dry, _ = pearsonr(t_length, day["T_oa_dry"])
+                    corr_T_diff_hea, _ = pearsonr(t_length, T_diff_heating)
+                    corr_T_diff_coo, _ = pearsonr(t_length, T_diff_cooling)
+                    if corr_T_oa_dry > 0.5 or corr_T_diff_hea > 0.5 or corr_T_diff_coo > 0.5:
+                        result_repo.append(1) # Optimum start is observed and confirmed
+                    else:
+                        result_repo.append(0) # Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well
+        self.result = result_repo
 
     def check_bool(self) -> bool:
-        if len(self.result[self.result == True] > 0):
+        if len(self.result[self.result == 1] > 0):
             return True
         else:
             return False
@@ -1070,9 +1070,10 @@ class OptimumStart(CheckLibBase):
     def check_detail(self):
         print("Verification results dict: ")
         output = {
-            "Sample #": 1,
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == 1]),
+            "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
-            # "Optimum start?": self.optimum_start_type,
         }
         print(output)
         return output
@@ -1090,23 +1091,66 @@ class GuestRoomControlTemp(CheckLibBase):
     points = ["T_z_hea_set", "T_z_coo_set", "O_sch", "tol_occ", "tol_temp"]
 
     def verify(self):
-        for idx, day in self.df.groupby(self.df.index.date): # https://stackoverflow.com/questions/41893612/iterate-over-days-pandas
+        result_repo = {"result":[]}
+        tol_occ = self.df["tol_occ"][0]
+        tol_temp = self.df["tol_temp"][0]
+        year_info = 2000
+        for idx, day in self.df.groupby(self.df.index.date):
+            if day.index.month[0] == 2 and day.index.day[0] == 29: # skip leap year, although E+ doesn't have leap year the date for loop assumes so because 24:00 time step so, it's intentionally skipped here
+                pass
+            elif year_info != day.index.year[0]: # remove the Jan 1st of next year reason: the pandas date for loop iterates one more loop is hour is 24:00:00
+                pass
+            else:
+                if day["O_sch"].all() <= tol_occ: # confirmed this room is rented out
+                    T_z_hea_occ_set = day.query('O_sch > 0.0')["T_z_hea_set"].max()
+                    T_z_coo_occ_set = day.query('O_sch > 0.0')["T_z_coo_set"].min()
 
-            if self.df["O_sch"] <= self.df["tol"]: # confirmed this room is rented out
-                T_z_hea_occ_set = self.df["T_z_hea_set"].query('O_sch > 0.0')
-                T_z_coo_occ_set = self.df["T_z_coo_set"].query('O_sch > 0.0')
+                    if day["T_z_hea_set"].all() < T_z_hea_occ_set - 2.22 + tol_temp or day["T_z_coo_set"].all() > T_z_coo_occ_set + 2.22 - tol_temp:
+                        result_repo["result"] += [1 for _ in range(24)] # pass, confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
+                    else:
+                        result_repo["result"] += [0 for _ in range(24)] # fail, reset does not meet the standard or no reset was observed.
 
-                if self.df["T_z_hea_set"] < T_z_hea_occ_set - 2.22 or self.df["T_z_coo_set"] > T_z_coo_occ_set + 2.22:
-                    self.df["guest_room_control"] = 1 # pass,confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
-                else:
-                    self.df["guest_room_control"] = 0 # fail, reset does not meet the standard or no reset was observed.
+                else: # room is not rented out
+                    if day["T_z_hea_set"].all() < 15.6 + tol_temp and day["T_z_coo_set"].all() > 26.7 - tol_temp:
+                        result_repo["result"] += [1 for _ in range(24)] # pass, confirmed zone temperature setpoint reset during the unrented period
+                    else:
+                        result_repo["result"] += [0 for _ in range(24)] # fail, zone temperature setpoint was not reset correctly
+                year_info = day.index.year[0]
 
-            else: # this room is not rented out
-                if self.df["T_z_hea_set"] < 15.6 + self.df["tol_temp"] and self.df["T_z_coo_set"] > 26.7 + self.df["tol_temp"]:
-                    self.df["guest_room_control"] = 1  # pass, confirmed zone temperature setpoint reset during the unrented period
-                else:
-                    self.df["guest_room_control"] = 0  # fail, zone temperature setpoint was not reset correctly
+        self.result = pd.DataFrame(data=result_repo)
+        testing=1
+    def check_bool(self) -> bool:
+        if len(self.result[self.result["result"] == 1] > 0):
+            return True
+        else:
+            return False
 
-        self.result = self.df["guest_room_control"]
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result["result"]== 1]),
+            "Fail #": len(self.result[self.result["result"] == 0]),
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+        return output
+
+    # def all_plot_aio(self, plt_pts):
+    #     # This method is overwritten because day plot can't be plotted for this verification item
+    #     pass
+    #
+    # def all_plot_obo(self, plt_pts):
+    #     # This method is overwritten because day plot can't be plotted for this verification item
+    #     pass
+
+    def day_plot_aio(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
+    def day_plot_obo(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
 
 
