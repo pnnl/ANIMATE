@@ -516,9 +516,28 @@
         "description_datapoints": {
             "T_z_hea_set": "Zone Thermostat Heating Setpoint Temperature",
             "T_z_coo_set": "Zone Thermostat Cooling Setpoint Temperature",
+			"O_sch": "Occupant Schedule",
+			"tol_occ": "Tolerence for Occupant Schedule",
+			"tol_temp": "Tolerance for Temperature"
+        },
+        "description_assertions": [
+            ""
+        ],
+        "description_verification_type": "rule-based",
+        "assertions_type": "pass"
+    },
+	"GuestRoomControlVent": {
+        "library_item_id": 29,
+        "description_brief": "",
+        "description_index": [
+            "Section  in 90.1-2016"
+        ],
+        "description_datapoints": {
+			"m_z_oa_set": "Outdoor Airflow Supplied to the Zone Setpoint",
+            "m_z_oa": "Outdoor Airflow Supplied to the Zone",
 			"O_sch": "Occupant schedule",
 			"tol_occ": "Tolerence for occupant's schedule",
-			"tol_temp": "Tolerance for temperature"
+			"tol_m": "Tolerance for Outdoor Airflow"
         },
         "description_assertions": [
             ""
