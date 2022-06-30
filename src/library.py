@@ -17,7 +17,6 @@ from scipy.stats import pearsonr
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from kneed import KneeLocator
-from numpy import cov
 
 
 class IntegratedEconomizerControl(CheckLibBase):
