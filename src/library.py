@@ -940,11 +940,6 @@ class DemandControlVentilation(CheckLibBase):
             kmeans.fit(scaled_df)
             SSE.append(kmeans.inertia_)
 
-            # if k == 4:
-            #     print(kmeans.labels_)
-            #     label = kmeans.labels_
-            #     np.savetxt('label.csv', label, delimiter=",")
-
         no_of_cluster = KneeLocator(
             range(1, 11), SSE, curve="convex", direction="decreasing"
         ).elbow
@@ -981,7 +976,7 @@ class DemandControlVentilation(CheckLibBase):
             self.df["DCV_type"] = 2  # DCV with occupant-counting based control
             self.dcv_msg = "DCV with occupant-counting based control"
         self.result = self.df["DCV_type"]
-
+        testing = 1
     def check_bool(self) -> bool:
         if len(self.result[self.result != 0] > 0):
             return True
@@ -1151,29 +1146,59 @@ class GuestRoomControlTemp(CheckLibBase):
 
 
 class GuestRoomControlVent(CheckLibBase):
-    points = ["m_z_oa_set", "m_z_oa", "O_sch", "v_zone", "tol_occ", "tol_m"]
+    points = ["damper_sch", "m_z_oa_fraction", "O_sch", "m_z_oa_heat_design", "m_z_oa_cool_design", "area_z", "height_z", "v_outdoor_per_zone", "tol_occ", "tol_m"]
 
     def verify(self):
-        result_repo = []
         tol_occ = self.df["tol_occ"][0]
         tol_m = self.df["tol_m"][0]
-        zone_volume = self.df["v_zone"][0]
+        zone_volume = self.df["area_z"][0] * self.df["height_z"][0]
+
+        self.df["m_z_oa_heat"] = self.df["m_z_oa_heat_design"] * self.df["m_z_oa_fraction"]
+        self.df["m_z_oa_cool"] = self.df["m_z_oa_cool_design"] * self.df["m_z_oa_fraction"]
+        self.df["m_z_oa_set"] = self.df["damper_sch"] * self.df["v_outdoor_per_zone"] * self.df["area_z"]
+
         year_info = 2000
+        result_repo = []
+        self.df["result"] = np.nan
         for idx, day in self.df.groupby(self.df.index.date):
-            if day.index.month[0] == 2 and day.index.day[0] == 29:  # skip leap year, although E+ doesn't have leap year the date for loop assumes so because 24:00 time step so, it's intentionally skipped here
+            if day.index.month[0] == 2 and day.index.day[0] == 29:
                 pass
-            elif year_info != day.index.year[0]:  # remove the Jan 1st of next year reason: the pandas date for loop iterates one more loop is hour is 24:00:00
+            elif year_info != day.index.year[0]:
                 pass
             else:
-                if day["O_sch"].all() <= tol_occ:  # check if this room is rented out
-                    if day["m_z_oa"] == 0:
+                if (day["O_sch"] <= tol_occ).all():  # confirmed this room is NOT rented out
+                    if (day["m_z_oa_heat"] == 0).all() and (day["m_z_oa_cool"] == 0).all():
                         result_repo += [1 for _ in range(24)]  # pass,
+                        self.df["result"] = 1
                     else:
-                        result_repo += [0 for _ in range(24)]  # fail,
-                else:
-                    if day["m_z_oa"] == 0:
-                        if day["m_z_oa"] == day["m_z_oa_set"] or day["m_z_oa"] == zone_volume:
-                            result_repo += [1 for _ in range(24)]  # pass,
+                        result_repo += [0 for _ in range(24)]  # fail
+                        self.df["result"] = 0
+                else: # room is rented out
+                    if (day["m_z_oa_heat"] > 0).all() or (day["m_z_oa_cool"] > 0).all():
+                        if day["m_z_oa"] == day["m_z_oa_set"] or day["m_z_oa"].sum(axis=1) == zone_volume:
+                            result_repo += [1 for _ in range(24)]  # pass
+                            self.df["result"] = 1
                         else:
-                            result_repo += [0 for _ in range(24)]  # fail,
+                            result_repo += [0 for _ in range(24)]  # fail
+                            self.df["result"] = 0
+                year_info = day.index.year[0]
+
+        self.result = self.df["result"]
+        tesing = 1
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == 1] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == 1]),
+            "Fail #": len(self.result[self.result == 0]),
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+        return output
 
