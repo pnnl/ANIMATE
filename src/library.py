@@ -56,7 +56,6 @@ class SupplyAirTempReset(RuleCheckBase):
         self.result = (t_sa_set_max - t_sa_set_min) >= (
             self.df["T_z_coo"] - t_sa_set_min
         ) * 0.25 * 0.99  # 0.99 being the numeric threshold
-        testing = 1
 
     def plot(self, plot_option, plt_pts=None):
         print(
@@ -991,7 +990,6 @@ class DemandControlVentilation(CheckLibBase):
             self.df["DCV_type"] = 2  # DCV with occupant-counting based control
             self.dcv_msg = "DCV with occupant-counting based control"
         self.result = self.df["DCV_type"]
-        testing = 1
 
     def check_bool(self) -> bool:
         if len(self.result[self.result != 0] > 0):
