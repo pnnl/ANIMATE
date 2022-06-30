@@ -958,7 +958,7 @@ class DemandControlVentilation(CheckLibBase):
         df_filtered = self.df.loc[
             (self.df["s_eco"] == 0.0) & (self.df["s_ahu"] != 0.0)
         ]  # filter out data when economizer isn't enabled
-        # df_filtered.to_csv("filtered_df.csv")
+
         df_filtered["no_of_occ"] = (
             df_filtered["no_of_occ_per1"]
             + df_filtered["no_of_occ_per2"]
@@ -1073,7 +1073,7 @@ class OptimumStart(CheckLibBase):
                 t_length_s_AHU = pd.to_datetime(t_length_s_AHU)
                 t_length = (
                     pd.Timedelta(t_length_s_AHU - t_length_s_hea).seconds
-                ) / 3600  # divide by 3660 to obtain t_length in hour
+                ) / 3600  # divide by 3600 to obtain t_length in hour
 
                 T_oa_dry = T_s_AHU_diff["T_oa_dry"]
                 T_z_measured = T_s_AHU_diff["T_z_measure"]
@@ -1163,12 +1163,11 @@ class GuestRoomControlTemp(CheckLibBase):
                 pass
             else:
                 if (
-                    day["O_sch"].all() <= tol_occ
-                ):  # confirmed this room is NOT rented out
-                    if (
-                        day["T_z_hea_set"].all() < 15.6 + tol_temp
-                        and day["T_z_coo_set"].all() > 26.7 - tol_temp
-                    ):
+                    day["O_sch"] <= tol_occ
+                ).all():  # confirmed this room is NOT rented out
+                    if (day["T_z_hea_set"] < 15.6 + tol_temp).all() and (
+                        day["T_z_coo_set"] > 26.7 - tol_temp
+                    ).all():
                         result_repo.append(
                             1
                         )  # pass, confirmed zone temperature setpoint reset during the unrented period
@@ -1181,9 +1180,10 @@ class GuestRoomControlTemp(CheckLibBase):
                     T_z_coo_occ_set = day.query("O_sch > 0.0")["T_z_coo_set"].min()
 
                     if (
-                        day["T_z_hea_set"].all() < T_z_hea_occ_set - 2.22 + tol_temp
-                        or day["T_z_coo_set"].all() > T_z_coo_occ_set + 2.22 - tol_temp
-                    ):
+                        day["T_z_hea_set"] < T_z_hea_occ_set - 2.22 + tol_temp
+                    ).all() or (
+                        day["T_z_coo_set"] > T_z_coo_occ_set + 2.22 - tol_temp
+                    ).all():
                         result_repo.append(
                             1
                         )  # pass, confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
@@ -1259,8 +1259,6 @@ class GuestRoomControlVent(CheckLibBase):
             elif year_info != day.index.year[0]:
                 pass
             else:
-                # ts[0][count] = count + 5
-                # count += 1
                 if (
                     day["O_sch"] <= tol_occ
                 ).all():  # confirmed this room is NOT rented out
