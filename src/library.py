@@ -752,13 +752,13 @@ class WLHPLoopHeatRejectionControl(RuleCheckBase):
 class AutomaticShutdown(RuleCheckBase):
     points = ["hvac_set"]
 
-    def verify(self):
+    def verify(self): # JXL TODO I don't understand this and page not in slides
         copied_df = (
             self.df.copy()
-        )  # copied not to store unnecessary intermediate variables in self.df dataframe
+        )  # copied not to store unnecessary intermediate variables in self.df dataframe TODO JXL ?
         copied_df.reset_index(
             inplace=True
-        )  # convert index column back to normal column
+        )  # convert index column back to normal column TODO JXL check why
         copied_df = copied_df.rename(
             columns={"index": "Date"}
         )  # rename the index column to Date
@@ -789,7 +789,7 @@ class AutomaticShutdown(RuleCheckBase):
         )
 
     def check_bool(self) -> bool:
-        if len(self.result[self.result == 1]) > 0:
+        if len(self.result[self.result == 1]) > 0: # TODO JXL why 1 here?
             return True
         else:
             return False
@@ -812,12 +812,12 @@ class AutomaticShutdown(RuleCheckBase):
         pass
 
 
-class HeatPumpSupplementalHeatLockout(CheckLibBase):
+class HeatPumpSupplementalHeatLockout(CheckLibBase): # TODO JXL maybe rule based to simplify?
     points = ["C_ref", "L_op", "P_supp_ht", "C_t_mod", "C_ff_mod", "L_defrost"]
 
     def heating_coil_verification(self, data):
         if data["P_supp_ht"] == 0:
-            data["result"] = 1  # True
+            data["result"] = 1  # True TODO JXL why 1 and 0
         else:
             if data["L_defrost"] > 0:
                 data["result"] = 1
@@ -855,7 +855,7 @@ class HeatPumpSupplementalHeatLockout(CheckLibBase):
 class HeatRejectionFanVariableFlowControl(RuleCheckBase):
     points = ["P_ct_fan", "m_ct_fan_ratio", "P_ct_fan_dsgn", "m_ct_fan_dsgn"]
 
-    def verify(self):
+    def verify(self): # TODO JXL loc not necessary
         self.df.loc[:, "m_ct_fan"] = (
             self.df.loc[:, "m_ct_fan_ratio"] * self.df.loc[:, "m_ct_fan_dsgn"]
         )
@@ -866,7 +866,7 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
             self.df.loc[:, "P_ct_fan"] / self.df.loc[:, "P_ct_fan_dsgn"]
         )
 
-        self.df = self.df.loc[
+        self.df = self.df.loc[ # TODO JXL this would drop samples, maybe not something we want
             self.df["normalized_P_ct_fan"] > 0.0
         ]  # filter out 0 values
         self.df["normalized_m_ct_fan"] -= 1  # minus 1 to transform the data
@@ -885,7 +885,7 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
 
         self.result = self.df["result"].copy(deep=True)
 
-    def check_bool(self) -> bool:
+    def check_bool(self) -> bool: # TODO JXL not necessary, same as superclass
         if len(self.result[self.result == 0] > 0):
             return False
         else:

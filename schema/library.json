@@ -444,7 +444,8 @@
             "C_ref": "Heating Coil Reference Capacity",
             "L_op": "Heating Coil Runtime Fraction",
             "C_t_mod": "Heating Coil Heating Rate",
-            "P_supp_ht": "Heating Coil Gas Rate"
+            "P_supp_ht": "Heating Coil Gas Rate",
+            // there are 6 points in the code
         },
         "description_assertions": [
             "If C_ref * C_t_mod >= L_op and P_supp_ht == 0 then pass else fail"
