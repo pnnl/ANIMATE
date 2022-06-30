@@ -481,7 +481,7 @@
             "v_oa": "Zone Air Terminal Outdoor Air Volume Flow Rate",
             "s_ahu": "status of HVAC system operation",
             "s_eco": "Air System Outdoor Air Economizer Status",
-            "no_of_occ": "People Occupant Count"
+            "no_of_occ": "People Occupant Count" // align this with code
         },
         "description_assertions": [
             "i) If v_oa is constant over time, NO DCV presents. ii) If v_oa has two clusters, DCV with hbinary control presents. iii) v_oa is linearly correlated to o_ahu, DCV with occupant-counting based control presents"

@@ -933,7 +933,7 @@ class DemandControlVentilation(CheckLibBase):
     def verify(self):
         df_filtered = self.df.loc[
             (self.df["s_eco"] == 0.0) & (self.df["s_ahu"] != 0.0)
-        ]  # filter out data when economizer isn't enabled
+        ]  # filter out data when economizer isn't enabled TODO JXL == float is probably not something we want to do. use a threshold
 
         df_filtered["no_of_occ"] = (
             df_filtered["no_of_occ_per1"]
@@ -948,7 +948,7 @@ class DemandControlVentilation(CheckLibBase):
         if (
             len(df_filtered["no_of_occ"].unique()) == 1
             or len(df_filtered["v_oa"].unique()) == 1
-        ):
+        ): # TODO JXL this does not allow noice in data, probably not practical
             self.df["DCV_type"] = 0  # NO DCV is observed
             self.dcv_msg = "NO DCV"
         elif corr >= 0.3 and p_value <= 0.05:
@@ -960,7 +960,7 @@ class DemandControlVentilation(CheckLibBase):
 
         self.result = self.df["DCV_type"]
 
-    def check_bool(self) -> bool:
+    def check_bool(self) -> bool: # TODO JXL confirm binary flag
         if len(self.result[self.result == 1] > 0):
             return True
         else:
@@ -1012,7 +1012,7 @@ class OptimumStart(CheckLibBase):
         else:
             return 0  # Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well
 
-    def verify(self):
+    def verify(self): # TODO JXL I don't understand this. there are unused variabels in the code.
         year_info = 2000
         result_repo = []
         for idx, day in self.df.groupby(self.df.index.date):
@@ -1089,7 +1089,7 @@ class OptimumStart(CheckLibBase):
         dti = pd.date_range("2020-01-01", periods=365, freq="D")
         self.result = pd.Series(result_repo, index=dti)
 
-    def check_bool(self) -> bool:
+    def check_bool(self) -> bool: # TODO JXL check for binary flag
         if len(self.result[self.result == 1] > 0):
             return True
         else:
@@ -1115,7 +1115,7 @@ class OptimumStart(CheckLibBase):
         pass
 
 
-class GuestRoomControlTemp(CheckLibBase):
+class GuestRoomControlTemp(CheckLibBase): # TODO JXL check for this and other verification item's super class, use rule base when possible to simplify implementation.
     points = ["T_z_hea_set", "T_z_coo_set", "O_sch", "tol_occ", "tol_temp"]
 
     def verify(self):
@@ -1211,7 +1211,7 @@ class GuestRoomControlVent(CheckLibBase):
         m_z_oa_set = self.df["v_outdoor_per_zone"][0] * self.df["area_z"][0]
 
         year_info = 2000
-        result_repo = []
+        result_repo = [] # TODO JXL this is probably going to be problematic if not appending date together with value
         for idx, day in self.df.groupby(self.df.index.date):
             if day.index.month[0] == 2 and day.index.day[0] == 29:
                 pass
