@@ -1,6 +1,6 @@
 {
     "cases": [
-		 {
+        {
             "no": 1,
             "run_simulation": true,
             "simulation_IO": {
@@ -383,7 +383,7 @@
                         "subject": "CoolSys1 Supply Outlet Node",
                         "variable": "System Node Mass Flow Rate",
                         "frequency": "TimeStep"
-						}
+                    }
                 },
                 "parameters": {
                     "T_oa_max": 21.11,
@@ -775,7 +775,7 @@
             },
             "verification_class": "HeatRejectionFanVariableFlowControl"
         },
-	    {
+        {
             "no": 24,
             "run_simulation": true,
             "simulation_IO": {
@@ -788,35 +788,35 @@
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
-					"damper_sch": {
+                    "damper_sch": {
                         "subject": "MINOA_MOTORIZEDDAMPER_SCHED",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
                     },
-					"m_z_oa_fraction": {
+                    "m_z_oa_fraction": {
                         "subject": "PSZ-AC:1",
                         "variable": "Air System Outdoor Air Flow Fraction",
                         "frequency": "TimeStep"
                     },
-					"O_sch": {
+                    "O_sch": {
                         "subject": "BLDG_OCC_SCH_wo_SB",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
                     }
                 },
                 "parameters": {
-					"m_z_oa_heat_design": 0.24818,
-					"m_z_oa_cool_design": 0.0324409,
-					"area_z": 149.66,
-					"height_z": 3.05, 
-					"v_outdoor_per_zone": 0.000431773,
-				    "tol_occ": 0.05,
-					"tol_m": 0.0003
-				}
+                    "m_z_oa_heat_design": 0.24818,
+                    "m_z_oa_cool_design": 0.0324409,
+                    "area_z": 149.66,
+                    "height_z": 3.05,
+                    "v_outdoor_per_zone": 0.000431773,
+                    "tol_occ": 0.05,
+                    "tol_m": 0.0003
+                }
             },
             "verification_class": "GuestRoomControlVent"
         },
-		{
+        {
             "no": 25,
             "run_simulation": true,
             "simulation_IO": {
@@ -829,30 +829,30 @@
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
-					"T_z_hea_set": {
+                    "T_z_hea_set": {
                         "subject": "ROOM_2_FLR_3",
                         "variable": "Zone Thermostat Heating Setpoint Temperature",
                         "frequency": "TimeStep"
                     },
-					"T_z_coo_set": {
+                    "T_z_coo_set": {
                         "subject": "ROOM_2_FLR_3",
                         "variable": "Zone Thermostat Cooling Setpoint Temperature",
                         "frequency": "TimeStep"
                     },
-					"O_sch": {
+                    "O_sch": {
                         "subject": "GuestRoom_Occ_Sch",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
                     }
                 },
                 "parameters": {
-				    "tol_occ": 0.05,
-					"tol_temp": 1.0
-				}
+                    "tol_occ": 0.05,
+                    "tol_temp": 1.0
+                }
             },
             "verification_class": "GuestRoomControlTemp"
         },
-		{
+        {
             "no": 26,
             "run_simulation": true,
             "simulation_IO": {
@@ -865,33 +865,33 @@
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
-					"T_oa_dry": {
+                    "T_oa_dry": {
                         "subject": "Environment",
                         "variable": "Site Outdoor Air Drybulb Temperature",
                         "frequency": "TimeStep"
                     },
-					"T_z_measure": {
+                    "T_z_measure": {
                         "subject": "CORE_TOP",
                         "variable": "Zone Air Temperature",
                         "frequency": "TimeStep"
                     },
-					"T_z_hea_set": {
+                    "T_z_hea_set": {
                         "subject": "CORE_TOP",
                         "variable": "Zone Thermostat Heating Setpoint Temperature",
                         "frequency": "TimeStep"
                     },
-					"T_z_coo_set": {
+                    "T_z_coo_set": {
                         "subject": "CORE_TOP",
                         "variable": "Zone Thermostat Cooling Setpoint Temperature",
                         "frequency": "TimeStep"
                     },
-					"s_AHU": {
-					    "subject": "HVACOperationSchd",
+                    "s_AHU": {
+                        "subject": "HVACOperationSchd",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
                     },
-					"occ": {
-					    "subject": "BLDG_OCC_SCH_wo_SB",
+                    "occ": {
+                        "subject": "BLDG_OCC_SCH_wo_SB",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
                     }
@@ -900,7 +900,7 @@
             },
             "verification_class": "OptimumStart"
         },
-		{
+        {
             "no": 27,
             "run_simulation": true,
             "simulation_IO": {
@@ -918,44 +918,43 @@
                         "variable": "System Node Standard Density Volume Flow Rate",
                         "frequency": "TimeStep"
                     },
-					"s_ahu": {
-					    "subject": "HVACOperationSchd",
+                    "s_ahu": {
+                        "subject": "HVACOperationSchd",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
                     },
-					"s_eco": {
-					    "subject": "PACU_VAV_BOT",
+                    "s_eco": {
+                        "subject": "PACU_VAV_BOT",
                         "variable": "Air System Outdoor Air Economizer Status",
                         "frequency": "TimeStep"
                     },
-					"no_of_occ_core": {
+                    "no_of_occ_core": {
                         "subject": "CORE_BOTTOM",
                         "variable": "People Occupant Count",
                         "frequency": "TimeStep"
                     },
-					"no_of_occ_per1": {
+                    "no_of_occ_per1": {
                         "subject": "Perimeter_bot_ZN_1",
                         "variable": "People Occupant Count",
                         "frequency": "TimeStep"
                     },
-					"no_of_occ_per2": {
+                    "no_of_occ_per2": {
                         "subject": "Perimeter_bot_ZN_2",
                         "variable": "People Occupant Count",
                         "frequency": "TimeStep"
                     },
-					"no_of_occ_per3": {
+                    "no_of_occ_per3": {
                         "subject": "Perimeter_bot_ZN_3",
                         "variable": "People Occupant Count",
                         "frequency": "TimeStep"
                     },
-					"no_of_occ_per4": {
+                    "no_of_occ_per4": {
                         "subject": "Perimeter_bot_ZN_4",
                         "variable": "People Occupant Count",
                         "frequency": "TimeStep"
                     }
                 },
-                "parameters": {
-                }
+                "parameters": {}
             },
             "verification_class": "DemandControlVentilation"
         }

@@ -470,7 +470,7 @@
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
     },
-	"DemandControlVentilation": {
+    "DemandControlVentilation": {
         "library_item_id": 27,
         "description_brief": "Demand control ventilation verification for high-occupancy areas",
         "description_index": [
@@ -480,7 +480,7 @@
             "v_oa": "Zone Air Terminal Outdoor Air Volume Flow Rate",
             "s_ahu": "status of HVAC system operation",
             "s_eco": "Air System Outdoor Air Economizer Status",
-			"no_of_occ":"People Occupant Count"
+            "no_of_occ": "People Occupant Count"
         },
         "description_assertions": [
             "i) If v_oa is constant over time, NO DCV presents. ii) If v_oa has two clusters, DCV with hbinary control presents. iii) v_oa is linearly correlated to o_ahu, DCV with occupant-counting based control presents"
@@ -488,7 +488,7 @@
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
     },
-	"OptimumStart": {
+    "OptimumStart": {
         "library_item_id": 27,
         "description_brief": "The algorithm aims to detect whether there is optimum start happened",
         "description_index": [
@@ -497,9 +497,9 @@
         "description_datapoints": {
             "T_oa_dry": "Site Outdoor Air Drybulb Temperature",
             "T_z_measure": "Zone Air Temperature",
-			"T_z_hea_set": "Zone Thermostat Heating Setpoint Temperature",
-			"T_z_coo_set": "Zone Thermostat Cooling Setpoint Temperature",
-			"s_AHU": "Status of HVAC operation"
+            "T_z_hea_set": "Zone Thermostat Heating Setpoint Temperature",
+            "T_z_coo_set": "Zone Thermostat Cooling Setpoint Temperature",
+            "s_AHU": "Status of HVAC operation"
         },
         "description_assertions": [
             "Check the correlation between length of time between occupied hours and HVAC system operation hours, zone air temperature, and heating/cooling setpoint temperatures"
@@ -507,7 +507,7 @@
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
     },
-	"GuestRoomControlTemp": {
+    "GuestRoomControlTemp": {
         "library_item_id": 28,
         "description_brief": "Verify whether there is guest room temperature control during operation hours",
         "description_index": [
@@ -516,9 +516,9 @@
         "description_datapoints": {
             "T_z_hea_set": "Zone Thermostat Heating Setpoint Temperature",
             "T_z_coo_set": "Zone Thermostat Cooling Setpoint Temperature",
-			"O_sch": "Occupant Schedule",
-			"tol_occ": "Tolerence for Occupant Schedule",
-			"tol_temp": "Tolerance for Temperature"
+            "O_sch": "Occupant Schedule",
+            "tol_occ": "Tolerence for Occupant Schedule",
+            "tol_temp": "Tolerance for Temperature"
         },
         "description_assertions": [
             "Check the two different temperature control logics when the room is/isn't rented out"
@@ -526,22 +526,22 @@
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
     },
-	"GuestRoomControlVent": {
+    "GuestRoomControlVent": {
         "library_item_id": 29,
         "description_brief": "Verify whether there is guest room outdoor airflow control during operation hours",
         "description_index": [
             "Section 6.4.3.3.5.2 in 90.1-2016"
         ],
         "description_datapoints": {
-			"damper_sch": "Damper Schdule",
+            "damper_sch": "Damper Schdule",
             "m_z_oa_fraction": "Air System Outdoor Air Flow Fraction",
-			"O_sch": "Occupant schedule",
-			"m_z_oa_heat_design": "Design Heating Air Flow Rate",
-			"m_z_oa_cool_design": "Design Cooling Air Flow Rate",
-			"volume": "Zone Volume",
-			"v_outdoor_per_zone": "Outdoor Air Flow per Zone Floor Area",
-			"tol_occ": "Tolerence for occupant Schedule",
-			"tol_m": "Tolerance for Outdoor Airflow"
+            "O_sch": "Occupant schedule",
+            "m_z_oa_heat_design": "Design Heating Air Flow Rate",
+            "m_z_oa_cool_design": "Design Cooling Air Flow Rate",
+            "volume": "Zone Volume",
+            "v_outdoor_per_zone": "Outdoor Air Flow per Zone Floor Area",
+            "tol_occ": "Tolerence for occupant Schedule",
+            "tol_m": "Tolerance for Outdoor Airflow"
         },
         "description_assertions": [
             "Check the two different airflow control logics when the room is/isn't rented out"
