@@ -57,6 +57,7 @@ class SupplyAirTempReset(RuleCheckBase):
         self.result = (t_sa_set_max - t_sa_set_min) >= (
             self.df["T_z_coo"] - t_sa_set_min
         ) * 0.25 * 0.99  # 0.99 being the numeric threshold
+        testing = 1
 
     def plot(self, plot_option, plt_pts=None):
         print(
@@ -916,7 +917,16 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
 
 
 class DemandControlVentilation(CheckLibBase):
-    points = ["v_oa", "s_ahu", "s_eco", "no_of_occ_per1", "no_of_occ_per2", "no_of_occ_per3", "no_of_occ_per4", "no_of_occ_core"]
+    points = [
+        "v_oa",
+        "s_ahu",
+        "s_eco",
+        "no_of_occ_per1",
+        "no_of_occ_per2",
+        "no_of_occ_per3",
+        "no_of_occ_per4",
+        "no_of_occ_core",
+    ]
 
     def cluster(self, data):
         # Standardize the data to have a mean of 0 and standard deviation of 1 (feature scaling)
@@ -951,7 +961,13 @@ class DemandControlVentilation(CheckLibBase):
             (self.df["s_eco"] == 0.0) & (self.df["s_ahu"] != 0.0)
         ]  # filter out data when economizer isn't enabled
         # df_filtered.to_csv("filtered_df.csv")
-        df_filtered["no_of_occ"] = df_filtered["no_of_occ_per1"] + df_filtered["no_of_occ_per2"] + df_filtered["no_of_occ_per3"] + df_filtered["no_of_occ_per4"] + df_filtered["no_of_occ_core"]
+        df_filtered["no_of_occ"] = (
+            df_filtered["no_of_occ_per1"]
+            + df_filtered["no_of_occ_per2"]
+            + df_filtered["no_of_occ_per3"]
+            + df_filtered["no_of_occ_per4"]
+            + df_filtered["no_of_occ_core"]
+        )
         # Pearson’s correlation
         corr, _ = pearsonr(df_filtered["no_of_occ"], df_filtered["v_oa"])
 
@@ -977,6 +993,7 @@ class DemandControlVentilation(CheckLibBase):
             self.dcv_msg = "DCV with occupant-counting based control"
         self.result = self.df["DCV_type"]
         testing = 1
+
     def check_bool(self) -> bool:
         if len(self.result[self.result != 0] > 0):
             return True
@@ -1005,24 +1022,39 @@ class DemandControlVentilation(CheckLibBase):
 class OptimumStart(CheckLibBase):
     points = ["T_oa_dry", "T_z_measure", "T_z_hea_set", "T_z_coo_set", "s_AHU", "occ"]
 
-    def correlation(self, len_of_s_AHU, *cor_data): # cor_data: t_length, T_oa_dry, T_diff_heating, T_diff_cooling
+    def correlation(
+        self, len_of_s_AHU, *cor_data
+    ):  # cor_data: t_length, T_oa_dry, T_diff_heating, T_diff_cooling
         if len_of_s_AHU > 1:
-            if pearsonr([cor_data[0] for _ in range(len(cor_data[1]))], cor_data[1])[0] > 0.5:
+            if (
+                pearsonr([cor_data[0] for _ in range(len(cor_data[1]))], cor_data[1])[0]
+                > 0.5
+            ):
                 return 1  # Optimum start is observed and confirmed
-            elif pearsonr([cor_data[0] for _ in range(len(cor_data[2]))], cor_data[2])[0] > 0.5:
+            elif (
+                pearsonr([cor_data[0] for _ in range(len(cor_data[2]))], cor_data[2])[0]
+                > 0.5
+            ):
                 return 1
-            elif pearsonr([cor_data[0] for _ in range(len(cor_data[3]))], cor_data[3])[0] > 0.5:
+            elif (
+                pearsonr([cor_data[0] for _ in range(len(cor_data[3]))], cor_data[3])[0]
+                > 0.5
+            ):
                 return 1
         else:
-            return 0 # Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well
+            return 0  # Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well
 
     def verify(self):
-        result_repo = []
         year_info = 2000
+        result_repo = []
         for idx, day in self.df.groupby(self.df.index.date):
-            if day.index.month[0] == 2 and day.index.day[0] == 29:  # skip leap year, although E+ doesn't have leap year the date for loop assumes so because 24:00 time step so, it's intentionally skipped here
+            if (
+                day.index.month[0] == 2 and day.index.day[0] == 29
+            ):  # skip leap year, although E+ doesn't have leap year the date for loop assumes so because 24:00 time step so, it's intentionally skipped here
                 pass
-            elif year_info != day.index.year[0]:  # remove the Jan 1st of next year reason: the pandas date for loop iterates one more loop is hour is 24:00:00
+            elif (
+                year_info != day.index.year[0]
+            ):  # remove the Jan 1st of next year reason: the pandas date for loop iterates one more loop is hour is 24:00:00
                 pass
             else:
                 T_heat_diff = day[day["T_z_hea_set"].diff() >= 0.01]
@@ -1034,38 +1066,60 @@ class OptimumStart(CheckLibBase):
                     t_length_s_hea = 0
 
                 if len(T_s_AHU_diff["s_AHU"]) != 0:
-                    t_length_s_AHU = (day[day["s_AHU"].diff() >= 0.01]["s_AHU"]).index[0]
+                    t_length_s_AHU = (day[day["s_AHU"].diff() >= 0.01]["s_AHU"]).index[
+                        0
+                    ]
                 else:
                     t_length_s_AHU = 0
 
                 t_length_s_hea = pd.to_datetime(t_length_s_hea)
                 t_length_s_AHU = pd.to_datetime(t_length_s_AHU)
-                t_length = (pd.Timedelta(t_length_s_AHU - t_length_s_hea).seconds)/3600 # divide by 3660 to obtain t_length in hour
+                t_length = (
+                    pd.Timedelta(t_length_s_AHU - t_length_s_hea).seconds
+                ) / 3600  # divide by 3660 to obtain t_length in hour
 
                 T_oa_dry = T_s_AHU_diff["T_oa_dry"]
                 T_z_measured = T_s_AHU_diff["T_z_measure"]
 
-                T_z_hea_set_occ = day.query('occ > 0')["T_z_hea_set"].max()
-                T_z_hea_set_unocc = day.query('occ == 0')["T_z_hea_set"].max()
+                T_z_hea_set_occ = day.query("occ > 0")["T_z_hea_set"].max()
+                T_z_hea_set_unocc = day.query("occ == 0")["T_z_hea_set"].max()
 
-                T_z_coo_set_occ = day.query('occ > 0')["T_z_coo_set"].min()
-                T_z_coo_set_unocc = day.query('occ == 0')["T_z_coo_set"].min()
+                T_z_coo_set_occ = day.query("occ > 0")["T_z_coo_set"].min()
+                T_z_coo_set_unocc = day.query("occ == 0")["T_z_coo_set"].min()
 
                 T_diff_heating = T_z_measured - T_z_hea_set_occ
                 T_diff_cooling = T_z_measured - T_z_coo_set_occ
 
                 if len(day["s_AHU"].unique()) == 1 and day["s_AHU"].unique() in [0, 1]:
                     if len(day["s_AHU"].unique()) == 0:
-                        result_repo.append(0) # No optimum start
+                        result_repo.append(0)  # No optimum start
                     else:
-                        result_repo.append(self.correlation(len(T_s_AHU_diff), T_oa_dry, T_diff_heating, T_diff_cooling))
+                        result_repo.append(
+                            self.correlation(
+                                len(T_s_AHU_diff),
+                                T_oa_dry,
+                                T_diff_heating,
+                                T_diff_cooling,
+                            )
+                        )
                 else:
-                    if False: # len(t_length.unique()) == 1: # t_length is a constant @ all t # TODO ask Yan
-                        result_repo.append(0) # No optimum start
+                    if (
+                        False
+                    ):  # len(t_length.unique()) == 1: # t_length is a constant @ all t # TODO ask Yan
+                        result_repo.append(0)  # No optimum start
                     else:
-                        result_repo.append(self.correlation(len(T_s_AHU_diff), T_oa_dry, T_diff_heating, T_diff_cooling))
+                        result_repo.append(
+                            self.correlation(
+                                len(T_s_AHU_diff),
+                                T_oa_dry,
+                                T_diff_heating,
+                                T_diff_cooling,
+                            )
+                        )
                 year_info = day.index.year[0]
-        self.result = result_repo
+
+        dti = pd.date_range("2020-01-01", periods=365, freq="D")
+        self.result = pd.Series(result_repo, index=dti)
 
     def check_bool(self) -> bool:
         if len(self.result[self.result == 1] > 0):
@@ -1097,35 +1151,53 @@ class GuestRoomControlTemp(CheckLibBase):
     points = ["T_z_hea_set", "T_z_coo_set", "O_sch", "tol_occ", "tol_temp"]
 
     def verify(self):
-        result_repo = []
         tol_occ = self.df["tol_occ"][0]
         tol_temp = self.df["tol_temp"][0]
         year_info = 2000
+        result_repo = []
         for idx, day in self.df.groupby(self.df.index.date):
-            if day.index.month[0] == 2 and day.index.day[0] == 29: # skip leap year, although E+ doesn't have leap year the date for loop assumes so because 24:00 time step so, it's intentionally skipped here
+            if (
+                day.index.month[0] == 2 and day.index.day[0] == 29
+            ):  # skip leap year, although E+ doesn't have leap year the date for loop assumes so because 24:00 time step so, it's intentionally skipped here
                 pass
-            elif year_info != day.index.year[0]: # remove the Jan 1st of next year reason: the pandas date for loop iterates one more loop is hour is 24:00:00
+            elif (
+                year_info != day.index.year[0]
+            ):  # remove the Jan 1st of next year reason: the pandas date for loop iterates one more loop is hour is 24:00:00
                 pass
             else:
-                if day["O_sch"].all() <= tol_occ: # confirmed this room is NOT rented out
-                    if day["T_z_hea_set"].all() < 15.6 + tol_temp and day["T_z_coo_set"].all() > 26.7 - tol_temp:
-                        result_repo += [1 for _ in range(24)] # pass, confirmed zone temperature setpoint reset during the unrented period
+                if (
+                    day["O_sch"].all() <= tol_occ
+                ):  # confirmed this room is NOT rented out
+                    if (
+                        day["T_z_hea_set"].all() < 15.6 + tol_temp
+                        and day["T_z_coo_set"].all() > 26.7 - tol_temp
+                    ):
+                        result_repo.append(
+                            1
+                        )  # pass, confirmed zone temperature setpoint reset during the unrented period
                     else:
-                        result_repo += [0 for _ in range(24)] # fail, zone temperature setpoint was not reset correctly
+                        result_repo.append(
+                            0
+                        )  # fail, zone temperature setpoint was not reset correctly
+                else:  # room is rented out
+                    T_z_hea_occ_set = day.query("O_sch > 0.0")["T_z_hea_set"].max()
+                    T_z_coo_occ_set = day.query("O_sch > 0.0")["T_z_coo_set"].min()
 
-                else: # room is rented out
-                    T_z_hea_occ_set = day.query('O_sch > 0.0')["T_z_hea_set"].max()
-                    T_z_coo_occ_set = day.query('O_sch > 0.0')["T_z_coo_set"].min()
-
-                    if day["T_z_hea_set"].all() < T_z_hea_occ_set - 2.22 + tol_temp or day["T_z_coo_set"].all() > T_z_coo_occ_set + 2.22 - tol_temp:
-                        result_repo += [1 for _ in range(24)]  # pass, confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
+                    if (
+                        day["T_z_hea_set"].all() < T_z_hea_occ_set - 2.22 + tol_temp
+                        or day["T_z_coo_set"].all() > T_z_coo_occ_set + 2.22 - tol_temp
+                    ):
+                        result_repo.append(
+                            1
+                        )  # pass, confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
                     else:
-                        result_repo += [0 for _ in range(24)]  # fail, reset does not meet the standard or no reset was observed.
+                        result_repo.append(
+                            0
+                        )  # fail, reset does not meet the standard or no reset was observed.
                 year_info = day.index.year[0]
 
-        self.result = pd.DataFrame(data=result_repo)
-        print(f"shape of result is {self.result.shape}")
-        palceholder = 1
+        dti = pd.date_range("2020-01-01", periods=365, freq="D")
+        self.result = pd.Series(result_repo, index=dti)
 
     def check_bool(self) -> bool:
         if len(self.result[self.result == 1] > 0):
@@ -1144,47 +1216,79 @@ class GuestRoomControlTemp(CheckLibBase):
         print(output)
         return output
 
+    def day_plot_aio(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
+    def day_plot_obo(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
 
 class GuestRoomControlVent(CheckLibBase):
-    points = ["damper_sch", "m_z_oa_fraction", "O_sch", "m_z_oa_heat_design", "m_z_oa_cool_design", "area_z", "height_z", "v_outdoor_per_zone", "tol_occ", "tol_m"]
+    points = [
+        "damper_sch",
+        "m_z_oa_fraction",
+        "O_sch",
+        "m_z_oa_heat_design",
+        "m_z_oa_cool_design",
+        "area_z",
+        "height_z",
+        "v_outdoor_per_zone",
+        "tol_occ",
+        "tol_m",
+    ]
 
     def verify(self):
         tol_occ = self.df["tol_occ"][0]
         tol_m = self.df["tol_m"][0]
         zone_volume = self.df["area_z"][0] * self.df["height_z"][0]
 
-        self.df["m_z_oa_heat"] = self.df["m_z_oa_heat_design"] * self.df["m_z_oa_fraction"]
-        self.df["m_z_oa_cool"] = self.df["m_z_oa_cool_design"] * self.df["m_z_oa_fraction"]
-        self.df["m_z_oa_set"] = self.df["damper_sch"] * self.df["v_outdoor_per_zone"] * self.df["area_z"]
+        self.df["m_z_oa_heat"] = (
+            self.df["m_z_oa_heat_design"] * self.df["m_z_oa_fraction"]
+        )
+        self.df["m_z_oa_cool"] = (
+            self.df["m_z_oa_cool_design"] * self.df["m_z_oa_fraction"]
+        )
+        self.df["m_z_oa_set"] = (
+            self.df["damper_sch"] * self.df["v_outdoor_per_zone"] * self.df["area_z"]
+        )
 
         year_info = 2000
         result_repo = []
-        self.df["result"] = np.nan
         for idx, day in self.df.groupby(self.df.index.date):
             if day.index.month[0] == 2 and day.index.day[0] == 29:
                 pass
             elif year_info != day.index.year[0]:
                 pass
             else:
-                if (day["O_sch"] <= tol_occ).all():  # confirmed this room is NOT rented out
-                    if (day["m_z_oa_heat"] == 0).all() and (day["m_z_oa_cool"] == 0).all():
-                        result_repo += [1 for _ in range(24)]  # pass,
-                        self.df["result"] = 1
+                # ts[0][count] = count + 5
+                # count += 1
+                if (
+                    day["O_sch"] <= tol_occ
+                ).all():  # confirmed this room is NOT rented out
+                    if (day["m_z_oa_heat"] == 0).all() and (
+                        day["m_z_oa_cool"] == 0
+                    ).all():
+                        result_repo.append(1)  # pass,
                     else:
-                        result_repo += [0 for _ in range(24)]  # fail
-                        self.df["result"] = 0
-                else: # room is rented out
+                        result_repo.append(0)  # fail
+                else:  # room is rented out
                     if (day["m_z_oa_heat"] > 0).all() or (day["m_z_oa_cool"] > 0).all():
-                        if day["m_z_oa"] == day["m_z_oa_set"] or day["m_z_oa"].sum(axis=1) == zone_volume:
-                            result_repo += [1 for _ in range(24)]  # pass
-                            self.df["result"] = 1
+                        if (
+                            day["m_z_oa"] == day["m_z_oa_set"]
+                            or day["m_z_oa"].sum(axis=1) == zone_volume
+                        ):
+                            result_repo.append(1)  # pass
                         else:
-                            result_repo += [0 for _ in range(24)]  # fail
-                            self.df["result"] = 0
+                            result_repo.append(0)  # fail
+                    else:
+                        result_repo.append(0)
                 year_info = day.index.year[0]
 
-        self.result = self.df["result"]
-        tesing = 1
+        dti = pd.date_range("2020-01-01", periods=365, freq="D")
+        self.result = pd.Series(result_repo, index=dti)
+
     def check_bool(self) -> bool:
         if len(self.result[self.result == 1] > 0):
             return True
@@ -1202,3 +1306,10 @@ class GuestRoomControlVent(CheckLibBase):
         print(output)
         return output
 
+    def day_plot_aio(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
+    def day_plot_obo(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass

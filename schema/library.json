@@ -472,7 +472,7 @@
     },
 	"DemandControlVentilation": {
         "library_item_id": 27,
-        "description_brief": "",
+        "description_brief": "Demand control ventilation verification for high-occupancy areas",
         "description_index": [
             "Section 6.4.3.8 in 90.1-2016"
         ],
@@ -483,14 +483,14 @@
 			"no_of_occ":"People Occupant Count"
         },
         "description_assertions": [
-            ""
+            "i) If v_oa is constant over time, NO DCV presents. ii) If v_oa has two clusters, DCV with hbinary control presents. iii) v_oa is linearly correlated to o_ahu, DCV with occupant-counting based control presents"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
     },
 	"OptimumStart": {
         "library_item_id": 27,
-        "description_brief": "",
+        "description_brief": "The algorithm aims to detect whether there is optimum start happened",
         "description_index": [
             "Section 6.4.3.3.3 in 90.1-2016"
         ],
@@ -502,14 +502,14 @@
 			"s_AHU": "Status of HVAC operation"
         },
         "description_assertions": [
-            ""
+            "Check the correlation between length of time between occupied hours and HVAC system operation hours, zone air temperature, and heating/cooling setpoint temperatures"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
     },
 	"GuestRoomControlTemp": {
         "library_item_id": 28,
-        "description_brief": "",
+        "description_brief": "Verify whether there is guest room temperature control during operation hours",
         "description_index": [
             "Section 6.4.3.3.5 in 90.1-2016"
         ],
@@ -521,14 +521,14 @@
 			"tol_temp": "Tolerance for Temperature"
         },
         "description_assertions": [
-            ""
+            "Check the two different temperature control logics when the room is/isn't rented out"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
     },
 	"GuestRoomControlVent": {
         "library_item_id": 29,
-        "description_brief": "",
+        "description_brief": "Verify whether there is guest room outdoor airflow control during operation hours",
         "description_index": [
             "Section 6.4.3.3.5.2 in 90.1-2016"
         ],
@@ -544,7 +544,7 @@
 			"tol_m": "Tolerance for Outdoor Airflow"
         },
         "description_assertions": [
-            ""
+            "Check the two different airflow control logics when the room is/isn't rented out"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
