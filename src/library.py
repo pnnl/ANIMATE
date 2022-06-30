@@ -1112,23 +1112,20 @@ class GuestRoomControlTemp(CheckLibBase):
             elif year_info != day.index.year[0]: # remove the Jan 1st of next year reason: the pandas date for loop iterates one more loop is hour is 24:00:00
                 pass
             else:
-                if day["O_sch"].all() <= tol_occ: # confirmed this room is rented out
+                if day["O_sch"].all() <= tol_occ: # confirmed this room is NOT rented out
                     if day["T_z_hea_set"].all() < 15.6 + tol_temp and day["T_z_coo_set"].all() > 26.7 - tol_temp:
                         result_repo += [1 for _ in range(24)] # pass, confirmed zone temperature setpoint reset during the unrented period
                     else:
                         result_repo += [0 for _ in range(24)] # fail, zone temperature setpoint was not reset correctly
 
-                else: # room is  rented out
+                else: # room is rented out
                     T_z_hea_occ_set = day.query('O_sch > 0.0')["T_z_hea_set"].max()
                     T_z_coo_occ_set = day.query('O_sch > 0.0')["T_z_coo_set"].min()
 
-                    if day["T_z_hea_set"].all() < T_z_hea_occ_set - 2.22 + tol_temp or day[
-                        "T_z_coo_set"].all() > T_z_coo_occ_set + 2.22 - tol_temp:
-                        result_repo += [1 for _ in range(
-                            24)]  # pass, confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
+                    if day["T_z_hea_set"].all() < T_z_hea_occ_set - 2.22 + tol_temp or day["T_z_coo_set"].all() > T_z_coo_occ_set + 2.22 - tol_temp:
+                        result_repo += [1 for _ in range(24)]  # pass, confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
                     else:
                         result_repo += [0 for _ in range(24)]  # fail, reset does not meet the standard or no reset was observed.
-
                 year_info = day.index.year[0]
 
         self.result = pd.DataFrame(data=result_repo)
