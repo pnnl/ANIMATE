@@ -930,38 +930,6 @@ class DemandControlVentilation(CheckLibBase):
         "no_of_occ_core",
     ]
 
-    def cluster(self, data):
-        # Standardize the data to have a mean of 0 and standard deviation of 1 (feature scaling)
-        # reason: the algorithm may consider the greater values in data because some feature values are greater and have higher variability because of unit difference.
-        scaler = StandardScaler()
-        scaled_df = scaler.fit_transform(data)
-
-        kmeans_kwargs = {
-            "init": "random",
-            "n_init": 10,
-            "max_iter": 300,
-        }
-
-        # evaluate the appropriate no. clusters,
-        # use elbow method: run several K-means, increment k with each iteration and record the SSE
-        # sweet spot is where the SSE curve starts to bend (a.k.a elbow point)
-        # the silhouette coefficient isn't used because it requires to have at least 2 clusters. However, DCV data could have only 0 or 1 cluster
-        SSE = []
-        for k in range(1, 11):
-            kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
-            kmeans.fit(scaled_df)
-            SSE.append(kmeans.inertia_)
-            np.savetxt(f"kmeans_{k}_cluster.csv", kmeans.labels_,
-              delimiter = ",")
-
-
-        no_of_cluster = KneeLocator(
-            range(1, 11), SSE, curve="convex", direction="decreasing"
-        ).elbow
-        print(f"no_of_cluster: {no_of_cluster}")
-
-        return no_of_cluster
-
     def verify(self):
         df_filtered = self.df.loc[
             (self.df["s_eco"] == 0.0) & (self.df["s_ahu"] != 0.0)
@@ -975,16 +943,7 @@ class DemandControlVentilation(CheckLibBase):
             + df_filtered["no_of_occ_core"]
         )
         # Pearson’s correlation
-        corr, _ = pearsonr(df_filtered["no_of_occ"], df_filtered["v_oa"])
-
-        # Linear regression
-        reg = LinearRegression().fit(
-            df_filtered["no_of_occ"].values.reshape(-1, 1), df_filtered["v_oa"]
-        )
-
-        # clustering
-        # no_of_clus = self.cluster(df_filtered)
-        no_of_clus = self.cluster(df_filtered["v_oa"].values.reshape(-1, 1))
+        corr, p_value = pearsonr(df_filtered["no_of_occ"], df_filtered["v_oa"])
 
         if (
             len(df_filtered["no_of_occ"].unique()) == 1
@@ -992,12 +951,13 @@ class DemandControlVentilation(CheckLibBase):
         ):
             self.df["DCV_type"] = 0  # NO DCV is observed
             self.dcv_msg = "NO DCV"
-        elif no_of_clus == 2:
-            self.df["DCV_type"] = 1  # DCV with binary control is observed
-            self.dcv_msg = "DCV with binary control"
-        elif corr > 0:
-            self.df["DCV_type"] = 2  # DCV with occupant-counting based control
-            self.dcv_msg = "DCV with occupant-counting based control"
+        elif corr >= 0.3 and p_value <= 0.05:
+            self.df["DCV_type"] = 1  # DCV is observed
+            self.dcv_msg = "DCV is observed"
+        elif corr < 0.3 and p_value > 0.05:
+            self.df["DCV_type"] = 0  # NO DCV is observed
+            self.dcv_msg = "No DCV"
+
         self.result = self.df["DCV_type"]
 
     def check_bool(self) -> bool:

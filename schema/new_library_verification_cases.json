@@ -897,7 +897,7 @@
             "no": 27,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeMedium_STD2019_Atlanta_ventilation_revised.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeMedium_STD2019_Atlanta_ventilation_revised_dcv_no_vent_opt_no_econ_V900.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
                 "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
                 "output": "eplusout.csv",
