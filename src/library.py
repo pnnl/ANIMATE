@@ -503,11 +503,11 @@ class ERVTemperatureControl(CheckLibBase):
 
 
 class AutomaticOADamperControl(CheckLibBase):
-    points = ["no_of_occ", "m_oa", "eco_onoff", "tol"]
+    points = ["o", "m_oa", "eco_onoff", "tol"]
 
     def verify(self):
         self.result = ~(
-            (self.df["no_of_occ"] < self.df["tol"])
+            (self.df["o"] < self.df["tol"])
             & (self.df["m_oa"] > 0)
             & (self.df["eco_onoff"] == 0)
         )
@@ -951,6 +951,9 @@ class DemandControlVentilation(CheckLibBase):
             kmeans = KMeans(n_clusters=k, **kmeans_kwargs)
             kmeans.fit(scaled_df)
             SSE.append(kmeans.inertia_)
+            np.savetxt(f"kmeans_{k}_cluster.csv", kmeans.labels_,
+              delimiter = ",")
+
 
         no_of_cluster = KneeLocator(
             range(1, 11), SSE, curve="convex", direction="decreasing"
@@ -980,7 +983,8 @@ class DemandControlVentilation(CheckLibBase):
         )
 
         # clustering
-        no_of_clus = self.cluster(df_filtered)
+        # no_of_clus = self.cluster(df_filtered)
+        no_of_clus = self.cluster(df_filtered["v_oa"].values.reshape(-1, 1))
 
         if (
             len(df_filtered["no_of_occ"].unique()) == 1
@@ -1005,7 +1009,7 @@ class DemandControlVentilation(CheckLibBase):
     def check_detail(self):
         print("Verification results dict: ")
         output = {
-            "Sample #": 1,
+            "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == 1]),
             "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
@@ -1231,11 +1235,8 @@ class GuestRoomControlTemp(CheckLibBase):
 
 class GuestRoomControlVent(CheckLibBase):
     points = [
-        "damper_sch",
-        "m_z_oa_fraction",
+        "m_z_oa",
         "O_sch",
-        "m_z_oa_heat_design",
-        "m_z_oa_cool_design",
         "area_z",
         "height_z",
         "v_outdoor_per_zone",
@@ -1247,16 +1248,7 @@ class GuestRoomControlVent(CheckLibBase):
         tol_occ = self.df["tol_occ"][0]
         tol_m = self.df["tol_m"][0]
         zone_volume = self.df["area_z"][0] * self.df["height_z"][0]
-
-        self.df["m_z_oa_heat"] = (
-            self.df["m_z_oa_heat_design"] * self.df["m_z_oa_fraction"]
-        )
-        self.df["m_z_oa_cool"] = (
-            self.df["m_z_oa_cool_design"] * self.df["m_z_oa_fraction"]
-        )
-        self.df["m_z_oa_set"] = (
-            self.df["damper_sch"] * self.df["v_outdoor_per_zone"] * self.df["area_z"]
-        )
+        m_z_oa_set = self.df["v_outdoor_per_zone"][0] * self.df["area_z"][0]
 
         year_info = 2000
         result_repo = []
@@ -1269,16 +1261,14 @@ class GuestRoomControlVent(CheckLibBase):
                 if (
                     day["O_sch"] <= tol_occ
                 ).all():  # confirmed this room is NOT rented out
-                    if (day["m_z_oa_heat"] == 0).all() and (
-                        day["m_z_oa_cool"] == 0
-                    ).all():
+                    if (day["m_z_oa"] == 0).all():
                         result_repo.append(1)  # pass,
                     else:
                         result_repo.append(0)  # fail
                 else:  # room is rented out
-                    if (day["m_z_oa_heat"] > 0).all() or (day["m_z_oa_cool"] > 0).all():
+                    if (day["m_z_oa"] > 0).all():
                         if (
-                            day["m_z_oa"] == day["m_z_oa_set"]
+                            day["m_z_oa"] == m_z_oa_set # TODO
                             or day["m_z_oa"].sum(axis=1) == zone_volume
                         ):
                             result_repo.append(1)  # pass
