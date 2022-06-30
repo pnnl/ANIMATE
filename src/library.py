@@ -940,10 +940,10 @@ class DemandControlVentilation(CheckLibBase):
             kmeans.fit(scaled_df)
             SSE.append(kmeans.inertia_)
 
-            if k == 4:
-                print(kmeans.labels_)
-                label = kmeans.labels_
-                np.savetxt('label.csv', label, delimiter=",")
+            # if k == 4:
+            #     print(kmeans.labels_)
+            #     label = kmeans.labels_
+            #     np.savetxt('label.csv', label, delimiter=",")
 
         no_of_cluster = KneeLocator(
             range(1, 11), SSE, curve="convex", direction="decreasing"
@@ -952,11 +952,11 @@ class DemandControlVentilation(CheckLibBase):
         return no_of_cluster
 
     def verify(self):
-
         df_filtered = self.df.loc[
             (self.df["s_eco"] == 0.0) & (self.df["s_ahu"] != 0.0)
         ]  # filter out data when economizer isn't enabled
-        df_filtered.to_csv("filtered_df.csv")
+        # df_filtered.to_csv("filtered_df.csv")
+        df_filtered["no_of_occ"] = df_filtered["no_of_occ_per1"] + df_filtered["no_of_occ_per2"] + df_filtered["no_of_occ_per3"] + df_filtered["no_of_occ_per4"] + df_filtered["no_of_occ_core"]
         # Pearson’s correlation
         corr, _ = pearsonr(df_filtered["no_of_occ"], df_filtered["v_oa"])
 
@@ -1010,61 +1010,66 @@ class DemandControlVentilation(CheckLibBase):
 class OptimumStart(CheckLibBase):
     points = ["T_oa_dry", "T_z_measure", "T_z_hea_set", "T_z_coo_set", "s_AHU", "occ"]
 
+    def correlation(self, len_of_s_AHU, *cor_data): # cor_data: t_length, T_oa_dry, T_diff_heating, T_diff_cooling
+        if len_of_s_AHU > 1:
+            if pearsonr([cor_data[0] for _ in range(len(cor_data[1]))], cor_data[1])[0] > 0.5:
+                return 1  # Optimum start is observed and confirmed
+            elif pearsonr([cor_data[0] for _ in range(len(cor_data[2]))], cor_data[2])[0] > 0.5:
+                return 1
+            elif pearsonr([cor_data[0] for _ in range(len(cor_data[3]))], cor_data[3])[0] > 0.5:
+                return 1
+        else:
+            return 0 # Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well
+
     def verify(self):
         result_repo = []
-        for idx, day in self.df.groupby(self.df.index.date): # https://stackoverflow.com/questions/41893612/iterate-over-days-pandas
-            # print(f"idx: {idx}, day: {day}")
-            day_occ_queried = day.query('occ > 0')
-            day_s_AHU_queried = day.query('s_AHU > 0')
-
-            if len(day_occ_queried) > 0:
-                t_length_occ = day_occ_queried["occ"]
+        year_info = 2000
+        for idx, day in self.df.groupby(self.df.index.date):
+            if day.index.month[0] == 2 and day.index.day[0] == 29:  # skip leap year, although E+ doesn't have leap year the date for loop assumes so because 24:00 time step so, it's intentionally skipped here
+                pass
+            elif year_info != day.index.year[0]:  # remove the Jan 1st of next year reason: the pandas date for loop iterates one more loop is hour is 24:00:00
+                pass
             else:
-                t_length_occ = 0
-            if len(day_s_AHU_queried) > 0:
-                t_length_s_AHU = day_s_AHU_queried["s_AHU"]
-            else:
-                t_length_s_AHU = 0
+                T_heat_diff = day[day["T_z_hea_set"].diff() >= 0.01]
+                T_s_AHU_diff = day[day["s_AHU"].diff() >= 0.01]
 
-            t_length = t_length_occ - t_length_s_AHU # TODO verify with Jeremy
-
-            T_oa_dry_filtered = day_s_AHU_queried["T_oa_dry"]
-            T_z_measure_filtered = day_s_AHU_queried["T_z_measure"]
-
-            T_z_hea_set_occ = day_occ_queried["T_z_hea_set"]
-            T_z_hea_set_unocc = day.query('occ == 0')["T_z_hea_set"]
-
-            T_z_coo_set_occ = day_occ_queried["T_z_coo_set"]
-            T_z_coo_set_unocc = day.query('occ == 0')["T_z_coo_set"]
-
-            T_diff_heating = T_z_measure_filtered - T_z_hea_set_occ
-            T_diff_cooling = T_z_measure_filtered - T_z_coo_set_occ
-
-            if len(day["s_AHU"].unique()) == 1 and day["s_AHU"].unique() in [0, 1]:
-                if len(day["s_AHU"].unique()) == 0:
-                    result_repo.append(0) # No optimum start
+                if len(T_heat_diff["T_z_hea_set"]) != 0:
+                    t_length_s_hea = (T_heat_diff["T_z_hea_set"]).index[0]
                 else:
-                    t_length = 1 # t_length_occ - # TODO verify with Jeremy
-                    # if (np.cov(t_length, day["T_oa_dry"]) > 0.5 or np.cov(t_length, T_diff_heating) > 0.5 or np.cov(t_length, T_diff_cooling) > 0.5):
-                    corr_T_oa_dry, _ = pearsonr(t_length, day["T_oa_dry"])
-                    corr_T_diff_hea, _ = pearsonr(t_length, T_diff_heating)
-                    corr_T_diff_coo, _ = pearsonr(t_length, T_diff_cooling)
-                    if corr_T_oa_dry > 0.5 or corr_T_diff_hea > 0.5 or corr_T_diff_coo > 0.5:
-                        result_repo.append(1) # Optimum start is observed and confirmed
-                    else:
-                        result_repo.append(0) # Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well
-            else:
-                if len(t_length.unique()) == 1: # t_length is a constant @ all t
-                    result_repo.append(0) # No optimum start
+                    t_length_s_hea = 0
+
+                if len(T_s_AHU_diff["s_AHU"]) != 0:
+                    t_length_s_AHU = (day[day["s_AHU"].diff() >= 0.01]["s_AHU"]).index[0]
                 else:
-                    # if (np.cov(t_length, day["T_oa_dry"]) > 0.5 or np.cov(t_length, T_diff_heating) > 0.5 or np.cov(t_length, T_diff_cooling) > 0.5):
-                    corr_T_oa_dry, _ = pearsonr(t_length, day["T_oa_dry"])
-                    corr_T_diff_hea, _ = pearsonr(t_length, T_diff_heating)
-                    corr_T_diff_coo, _ = pearsonr(t_length, T_diff_cooling)
-                    if corr_T_oa_dry > 0.5 or corr_T_diff_hea > 0.5 or corr_T_diff_coo > 0.5:
-                        result_repo.append(1) # Optimum start is observed and confirmed
+                    t_length_s_AHU = 0
+
+                t_length_s_hea = pd.to_datetime(t_length_s_hea)
+                t_length_s_AHU = pd.to_datetime(t_length_s_AHU)
+                t_length = (pd.Timedelta(t_length_s_AHU - t_length_s_hea).seconds)/3600 # divide by 3660 to obtain t_length in hour
+
+                T_oa_dry = T_s_AHU_diff["T_oa_dry"]
+                T_z_measured = T_s_AHU_diff["T_z_measure"]
+
+                T_z_hea_set_occ = day.query('occ > 0')["T_z_hea_set"].max()
+                T_z_hea_set_unocc = day.query('occ == 0')["T_z_hea_set"].max()
+
+                T_z_coo_set_occ = day.query('occ > 0')["T_z_coo_set"].min()
+                T_z_coo_set_unocc = day.query('occ == 0')["T_z_coo_set"].min()
+
+                T_diff_heating = T_z_measured - T_z_hea_set_occ
+                T_diff_cooling = T_z_measured - T_z_coo_set_occ
+
+                if len(day["s_AHU"].unique()) == 1 and day["s_AHU"].unique() in [0, 1]:
+                    if len(day["s_AHU"].unique()) == 0:
+                        result_repo.append(0) # No optimum start
                     else:
-                        result_repo.append(0) # Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well
+                        result_repo.append(self.correlation(len(T_s_AHU_diff), T_oa_dry, T_diff_heating, T_diff_cooling))
+                else:
+                    if False: # len(t_length.unique()) == 1: # t_length is a constant @ all t # TODO ask Yan
+                        result_repo.append(0) # No optimum start
+                    else:
+                        result_repo.append(self.correlation(len(T_s_AHU_diff), T_oa_dry, T_diff_heating, T_diff_cooling))
+                year_info = day.index.year[0]
         self.result = result_repo
 
     def check_bool(self) -> bool:
