@@ -802,6 +802,8 @@ class AutomaticShutdown(RuleCheckBase):
         print("Verification results dict: ")
         output = {
             "Sample #": 1,
+            "Pass #": len(self.result[self.result == 1]),
+            "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
         }
         print(output)
@@ -898,6 +900,8 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
     def check_detail(self) -> Dict:
         output = {
             "Sample #": 1,
+            "Pass #": len(self.result[self.result == 1]),
+            "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
         }
 
@@ -951,6 +955,7 @@ class DemandControlVentilation(CheckLibBase):
         no_of_cluster = KneeLocator(
             range(1, 11), SSE, curve="convex", direction="decreasing"
         ).elbow
+        print(f"no_of_cluster: {no_of_cluster}")
 
         return no_of_cluster
 
@@ -992,7 +997,7 @@ class DemandControlVentilation(CheckLibBase):
         self.result = self.df["DCV_type"]
 
     def check_bool(self) -> bool:
-        if len(self.result[self.result != 0] > 0):
+        if len(self.result[self.result == 1] > 0):
             return True
         else:
             return False
@@ -1001,6 +1006,8 @@ class DemandControlVentilation(CheckLibBase):
         print("Verification results dict: ")
         output = {
             "Sample #": 1,
+            "Pass #": len(self.result[self.result == 1]),
+            "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
             "Type of Demand Control Ventilation": self.dcv_msg,
         }
@@ -1102,7 +1109,7 @@ class OptimumStart(CheckLibBase):
                 else:
                     if (
                         False
-                    ):  # len(t_length.unique()) == 1: # t_length is a constant @ all t # TODO ask Yan
+                    ):  # len(t_length.unique()) == 1: # t_length is a constant @ all t # TODO this is for 365 days
                         result_repo.append(0)  # No optimum start
                     else:
                         result_repo.append(
