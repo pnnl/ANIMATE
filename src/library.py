@@ -512,6 +512,7 @@ class AutomaticOADamperControl(RuleCheckBase):
             & (self.df["eco_onoff"] == 0)
         )
 
+
 class FanStaticPressureResetControl(RuleCheckBase):
     points = [
         "p_set",
@@ -593,6 +594,7 @@ class HeatRejectionFanVariableFlowControlsCells(RuleCheckBase):
             & (self.df["ct_op_cells"] < self.df["ct_cells_op_theo"])
             & (self.df["P_fan_ct"] > 0)
         )
+
 
 class ServiceWaterHeatingSystemControl(RuleCheckBase):
     points = ["T_wh_inlet"]
@@ -741,15 +743,9 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
     points = ["P_ct_fan", "m_ct_fan_ratio", "P_ct_fan_dsgn", "m_ct_fan_dsgn"]
 
     def verify(self):
-        self.df["m_ct_fan"] = (
-            self.df["m_ct_fan_ratio"] * self.df["m_ct_fan_dsgn"]
-        )
-        self.df["normalized_m_ct_fan"] = (
-            self.df["m_ct_fan"] / self.df["m_ct_fan_dsgn"]
-        )
-        self.df["normalized_P_ct_fan"] = (
-            self.df["P_ct_fan"] / self.df["P_ct_fan_dsgn"]
-        )
+        self.df["m_ct_fan"] = self.df["m_ct_fan_ratio"] * self.df["m_ct_fan_dsgn"]
+        self.df["normalized_m_ct_fan"] = self.df["m_ct_fan"] / self.df["m_ct_fan_dsgn"]
+        self.df["normalized_P_ct_fan"] = self.df["P_ct_fan"] / self.df["P_ct_fan_dsgn"]
 
         self.df = self.df.loc[
             self.df["normalized_P_ct_fan"] > 0.0
@@ -879,7 +875,9 @@ class OptimumStart(CheckLibBase):
         else:
             return 0  # Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well
 
-    def verify(self): # TODO YJJ I don't understand this. there are unused variabels in the code.
+    def verify(
+        self,
+    ):  # TODO YJJ I don't understand this. there are unused variabels in the code.
         year_info = 2000
         result_repo = []
         for idx, day in self.df.groupby(self.df.index.date):
@@ -930,7 +928,7 @@ class OptimumStart(CheckLibBase):
                         result_repo.append(0)  # No optimum start
                     else:
                         result_repo.append(
-                            self.correlation( # TODO YJJ move correlation checking outside of for loop
+                            self.correlation(  # TODO YJJ move correlation checking outside of for loop
                                 len(T_s_AHU_diff),
                                 T_oa_dry,
                                 T_diff_heating,
@@ -944,7 +942,7 @@ class OptimumStart(CheckLibBase):
                         result_repo.append(0)  # No optimum start
                     else:
                         result_repo.append(
-                            self.correlation( # TODO same here
+                            self.correlation(  # TODO same here
                                 len(T_s_AHU_diff),
                                 T_oa_dry,
                                 T_diff_heating,
@@ -1078,7 +1076,9 @@ class GuestRoomControlVent(CheckLibBase):
         m_z_oa_set = self.df["v_outdoor_per_zone"][0] * self.df["area_z"][0]
 
         year_info = 2000
-        result_repo = [] # TODO JXL this is probably going to be problematic if not appending date together with value
+        result_repo = (
+            []
+        )  # TODO JXL this is probably going to be problematic if not appending date together with value
         for idx, day in self.df.groupby(self.df.index.date):
             if day.index.month[0] == 2 and day.index.day[0] == 29:
                 pass
@@ -1095,7 +1095,7 @@ class GuestRoomControlVent(CheckLibBase):
                 else:  # room is rented out
                     if (day["m_z_oa"] > 0).all():
                         if (
-                            day["m_z_oa"] == m_z_oa_set # TODO
+                            day["m_z_oa"] == m_z_oa_set  # TODO
                             or day["m_z_oa"].sum(axis=1) == zone_volume
                         ):
                             result_repo.append(1)  # pass
