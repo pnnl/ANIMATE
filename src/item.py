@@ -2,6 +2,7 @@
 
 from datapoint import IdfOutputPoint, IdfInfoPoint, DevSettingPoint
 from epreader import CSVReader, IDFReader
+from datetimeep import DateTimeEP
 import pandas as pd
 from typing import Dict
 import datetime
@@ -168,7 +169,12 @@ class Item:
                 )
                 self.df[point.name] = point.value
 
-    def read_points_values(self, csv_path=None, idf_path=None, idd_path=None):
+    def read_points_values(
+        self,
+        csv_path=None,
+        idf_path=None,
+        idd_path=None,
+    ):
         """method for user to read all types of simulation i/o data
 
         Args:
@@ -182,8 +188,45 @@ class Item:
         """
         self.read_output_variables(csv_path)
         self.read_idf_obj_values(idf_path, idd_path)
+        self.df = DateTimeEP(self.df, self.DF_YEAR).transform()
+        fillna_opt = None
+        dropna_opt = True
+        if "data_processing" in self.item.keys():
+            dpdict = self.item["data_processing"]
+            if "fillna" in dpdict.keys():
+                fillna_opt = dpdict["fillna"]
+            if "drop_remaining_na" in dpdict.keys():
+                dropna_opt = dpdict["drop_remaining_na"]
+        self.data_processing(
+            fill_method=fillna_opt,
+            drop_remaining_na=dropna_opt,
+        )
 
         return self.df
+
+    def data_processing(self, fill_method=None, drop_remaining_na=True):
+        """data preprocessing step to fill/drop NaNs in original dataset
+
+        Args:
+            fill_method: valid NaN-filling options are
+                - "interpolate"
+                - "forwardfill"
+                - "backwardfill"
+                By default, and when given other values, NaNs are not filled.
+            drop_remaining_na: After NaN-filling step, whether to drop any NaN left. Defaults to True.
+        """
+
+        if fill_method == "interpolate":
+            self.df.interpolate(method="time", inplace=True)
+
+        if fill_method == "forwardfill":
+            self.df.interpolate(method="ffill", inplace=True)
+
+        if fill_method == "backwardfill":
+            self.df.interpolate(method="bfill", inplace=True)
+
+        if drop_remaining_na:
+            self.df.dropna(axis="index", how="any", inplace=True)
 
 
 class TimeSeriesFilterElement:

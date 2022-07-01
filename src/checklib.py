@@ -40,8 +40,11 @@ class CheckLibBase(ABC):
             print(f"Dataset is not sufficient for running {self.__class__.__name__}")
             print(set(col_list))
         self.df = full_df[self.points_list]
+        self.df.index = pd.to_datetime(self.df.index)
+        self.df = self.df.sort_index()
         self.results_folder = results_folder
         self.verify()
+        self.result.name = ""
 
     @property
     def points_list(self) -> List[str]:
@@ -151,15 +154,22 @@ class CheckLibBase(ABC):
         plt.figure(figsize=(6.4, 4.8))
 
         # flag
-        ax1 = plt.subplot(211)
+        ax1 = plt.subplot(2, 1, 1)
         sns.scatterplot(x=self.result.index, y=self.result, linewidth=0, s=1)
         plt.xlim([self.df.index[0], self.df.index[-1]])
         plt.ylim([-0.2, 1.2])
         plt.title(f"All samples Pass / Fail flag plot - {self.__class__.__name__}")
 
         # datapoints
-        ax2 = plt.subplot(212)
+        ax2 = plt.subplot(2, 1, 2)
         self.df[plt_pts].plot(ax=ax2)
+        pt_nan = self.df.isnull().any().to_dict()
+        for i, line in enumerate(ax2.get_lines()):
+            line_label = line.get_label()
+            if pt_nan[line_label]:
+                line.set_marker(".")
+        ax2.ticklabel_format(useOffset=False, axis="y")
+
         plt.title(f"All samples data points plot - {self.__class__.__name__}")
         plt.tight_layout()
         plt.savefig(f"{self.results_folder}/All_plot_aio.png")
@@ -171,20 +181,24 @@ class CheckLibBase(ABC):
         plt.figure(figsize=(6.4, 2.4 * num_plots))
 
         # flag
-        ax1 = plt.subplot(int(f"{num_plots}11"))
+        ax1 = plt.subplot(num_plots, 1, 1)
         sns.scatterplot(x=self.result.index, y=self.result, linewidth=0, s=1)
         plt.xlim([self.df.index[0], self.df.index[-1]])
         plt.ylim([-0.2, 1.2])
         plt.title(f"All samples Pass / Fail flag plot - {self.__class__.__name__}")
 
         # datapoints
+        pt_nan = self.df.isnull().any().to_dict()
         i = 2
         for pt in plt_pts:
-            subplot_int = int(f"{num_plots}1{i}")
-            axx = plt.subplot(subplot_int)
-            self.df[pt].plot(ax=axx)
+            axx = plt.subplot(num_plots, 1, i)
+            if pt_nan[pt]:
+                self.df[pt].plot(ax=axx, marker=".")
+            else:
+                self.df[pt].plot(ax=axx)
             plt.title(f"All samples - {pt} - {self.__class__.__name__}")
             i += 1
+            axx.ticklabel_format(useOffset=False, axis="y")
         plt.tight_layout()
         plt.savefig(f"{self.results_folder}/All_plot_obo.png")
         print()
@@ -242,15 +256,22 @@ class CheckLibBase(ABC):
         plotday, plotdaydf = self.calculate_plot_day()
 
         # flag
-        ax1 = plt.subplot(211)
+        ax1 = plt.subplot(2, 1, 1)
         sns.scatterplot(x=plotday.index, y=plotday)
         plt.xlim([plotday.index[0], plotday.index[-1]])
         plt.ylim([-0.2, 1.2])
         plt.title(f"Example day Pass / Fail flag - {self.__class__.__name__}")
 
         # datapoints
-        ax2 = plt.subplot(212)
+        ax2 = plt.subplot(2, 1, 2)
         plotdaydf[plt_pts].plot(ax=ax2)
+        pt_nan = plotdaydf.isnull().any().to_dict()
+        for i, line in enumerate(ax2.get_lines()):
+            line_label = line.get_label()
+            if pt_nan[line_label]:
+                line.set_marker(".")
+        ax2.ticklabel_format(useOffset=False, axis="y")
+
         plt.title(f"Example day data points plot - {self.__class__.__name__}")
         plt.tight_layout()
         plt.savefig(f"{self.results_folder}/Day_plot_aio.png")
@@ -264,20 +285,24 @@ class CheckLibBase(ABC):
         plotday, plotdaydf = self.calculate_plot_day()
 
         # flag
-        ax1 = plt.subplot(int(f"{num_plots}11"))
+        ax1 = plt.subplot(num_plots, 1, 1)
         sns.scatterplot(x=plotday.index, y=plotday)
         plt.xlim([plotday.index[0], plotday.index[-1]])
         plt.ylim([-0.2, 1.2])
         plt.title(f"Example day Pass / Fail flag plot - {self.__class__.__name__}")
 
         # datapoints
+        pt_nan = plotdaydf.isnull().any().to_dict()
         i = 2
         for pt in plt_pts:
-            subplot_int = int(f"{num_plots}1{i}")
-            axx = plt.subplot(subplot_int)
-            plotdaydf[pt].plot(ax=axx)
+            axx = plt.subplot(num_plots, 1, i)
+            if pt_nan[pt]:
+                plotdaydf[pt].plot(ax=axx, marker=".")
+            else:
+                plotdaydf[pt].plot(ax=axx)
             plt.title(f"Example day - {pt} - {self.__class__.__name__}")
             i += 1
+            axx.ticklabel_format(useOffset=False, axis="y")
         plt.tight_layout()
         plt.savefig(f"{self.results_folder}/Day_plot_obo.png")
         print()
@@ -529,3 +554,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# %%
+#
