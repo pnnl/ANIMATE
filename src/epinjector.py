@@ -25,7 +25,6 @@ class IDFInjector(Injector):
             idd_file: path to idd file for processing idf file with eppy
         """
         self.idf_file_in = idf_file_in
-        self.wth_file = wth_file
         IDF.setiddname(iddname=idd_file)
         self.appending_str = None
 
