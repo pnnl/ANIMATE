@@ -980,9 +980,7 @@ class GuestRoomControlVent(CheckLibBase):
         m_z_oa_set = self.df["v_outdoor_per_zone"][0] * self.df["area_z"][0]
 
         year_info = 2000
-        result_repo = (
-            []
-        )  # TODO JXL this is probably going to be problematic if not appending date together with value
+        result_repo = []
         for idx, day in self.df.groupby(self.df.index.date):
             if day.index.month[0] == 2 and day.index.day[0] == 29:
                 pass
@@ -999,7 +997,7 @@ class GuestRoomControlVent(CheckLibBase):
                 else:  # room is rented out
                     if (day["m_z_oa"] > 0).all():
                         if (
-                            day["m_z_oa"] == m_z_oa_set  # TODO
+                            day["m_z_oa"] == m_z_oa_set
                             or day["m_z_oa"].sum(axis=1) == zone_volume
                         ):
                             result_repo.append(1)  # pass
