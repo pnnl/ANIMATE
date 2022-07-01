@@ -503,7 +503,7 @@ class ERVTemperatureControl(CheckLibBase):
 
 
 class AutomaticOADamperControl(RuleCheckBase):
-    points = ["no_of_occ", "m_oa", "eco_onoff", "tol"]
+    points = ["o", "m_oa", "eco_onoff", "tol"]
 
     def verify(self):
         self.result = ~(
@@ -511,6 +511,7 @@ class AutomaticOADamperControl(RuleCheckBase):
             & (self.df["m_oa"] > 0)
             & (self.df["eco_onoff"] == 0)
         )
+
 
 class FanStaticPressureResetControl(RuleCheckBase):
     points = [
@@ -562,6 +563,20 @@ class FanStaticPressureResetControl(RuleCheckBase):
 
             return day, daydf
 
+    def all_plot_aio(self, plt_pts):
+        pass
+
+    def all_plot_obo(self, plt_pts):
+        pass
+
+    def day_plot_aio(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
+    def day_plot_obo(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
 
 class HeatRejectionFanVariableFlowControlsCells(RuleCheckBase):
     points = [
@@ -594,6 +609,7 @@ class HeatRejectionFanVariableFlowControlsCells(RuleCheckBase):
             & (self.df["P_fan_ct"] > 0)
         )
 
+
 class ServiceWaterHeatingSystemControl(RuleCheckBase):
     points = ["T_wh_inlet"]
 
@@ -606,6 +622,20 @@ class VAVStaticPressureSensorLocation(RuleCheckBase):
 
     def verify(self):
         self.result = self.df["p_fan_setpoint"] < 298.608 + self.df["tol"]
+
+    def calculate_plot_day(self):
+        """over write method to select day for day plot"""
+        for one_day in self.daterange(
+            date(self.df.index[0].year, self.df.index[0].month, self.df.index[0].day),
+            date(
+                self.df.index[-1].year, self.df.index[-1].month, self.df.index[-1].day
+            ),
+        ):
+            daystr = f"{str(one_day.year)}-{str(one_day.month)}-{str(one_day.day)}"
+            daydf = self.df[daystr]
+            day = self.result[daystr]
+
+            return day, daydf
 
 
 class VentilationFanControl(RuleCheckBase):
@@ -741,15 +771,9 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
     points = ["P_ct_fan", "m_ct_fan_ratio", "P_ct_fan_dsgn", "m_ct_fan_dsgn"]
 
     def verify(self):
-        self.df["m_ct_fan"] = (
-            self.df["m_ct_fan_ratio"] * self.df["m_ct_fan_dsgn"]
-        )
-        self.df["normalized_m_ct_fan"] = (
-            self.df["m_ct_fan"] / self.df["m_ct_fan_dsgn"]
-        )
-        self.df["normalized_P_ct_fan"] = (
-            self.df["P_ct_fan"] / self.df["P_ct_fan_dsgn"]
-        )
+        self.df["m_ct_fan"] = self.df["m_ct_fan_ratio"] * self.df["m_ct_fan_dsgn"]
+        self.df["normalized_m_ct_fan"] = self.df["m_ct_fan"] / self.df["m_ct_fan_dsgn"]
+        self.df["normalized_P_ct_fan"] = self.df["P_ct_fan"] / self.df["P_ct_fan_dsgn"]
 
         self.df = self.df.loc[
             self.df["normalized_P_ct_fan"] > 0.0
@@ -781,6 +805,12 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
         print("Verification results dict: ")
         print(output)
         return output
+
+    def all_plot_aio(self, plt_pts):
+        pass
+
+    def all_plot_obo(self, plt_pts):
+        pass
 
     def day_plot_aio(self, plt_pts):
         # This method is overwritten because day plot can't be plotted for this verification item
@@ -879,7 +909,9 @@ class OptimumStart(CheckLibBase):
         else:
             return 0  # Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well
 
-    def verify(self): # TODO YJJ I don't understand this. there are unused variabels in the code.
+    def verify(
+        self,
+    ):  # TODO YJJ I don't understand this. there are unused variabels in the code.
         year_info = 2000
         result_repo = []
         for idx, day in self.df.groupby(self.df.index.date):
@@ -930,7 +962,7 @@ class OptimumStart(CheckLibBase):
                         result_repo.append(0)  # No optimum start
                     else:
                         result_repo.append(
-                            self.correlation( # TODO YJJ move correlation checking outside of for loop
+                            self.correlation(  # TODO YJJ move correlation checking outside of for loop
                                 len(T_s_AHU_diff),
                                 T_oa_dry,
                                 T_diff_heating,
@@ -944,7 +976,7 @@ class OptimumStart(CheckLibBase):
                         result_repo.append(0)  # No optimum start
                     else:
                         result_repo.append(
-                            self.correlation( # TODO same here
+                            self.correlation(  # TODO same here
                                 len(T_s_AHU_diff),
                                 T_oa_dry,
                                 T_diff_heating,
@@ -1078,7 +1110,9 @@ class GuestRoomControlVent(CheckLibBase):
         m_z_oa_set = self.df["v_outdoor_per_zone"][0] * self.df["area_z"][0]
 
         year_info = 2000
-        result_repo = [] # TODO JXL this is probably going to be problematic if not appending date together with value
+        result_repo = (
+            []
+        )  # TODO JXL this is probably going to be problematic if not appending date together with value
         for idx, day in self.df.groupby(self.df.index.date):
             if day.index.month[0] == 2 and day.index.day[0] == 29:
                 pass
@@ -1095,7 +1129,7 @@ class GuestRoomControlVent(CheckLibBase):
                 else:  # room is rented out
                     if (day["m_z_oa"] > 0).all():
                         if (
-                            day["m_z_oa"] == m_z_oa_set # TODO
+                            day["m_z_oa"] == m_z_oa_set  # TODO
                             or day["m_z_oa"].sum(axis=1) == zone_volume
                         ):
                             result_repo.append(1)  # pass
