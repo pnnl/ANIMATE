@@ -503,7 +503,7 @@ class ERVTemperatureControl(CheckLibBase):
 
 
 class AutomaticOADamperControl(RuleCheckBase):
-    points = ["no_of_occ", "m_oa", "eco_onoff", "tol"]
+    points = ["o", "m_oa", "eco_onoff", "tol"]
 
     def verify(self):
         self.result = ~(
@@ -563,6 +563,20 @@ class FanStaticPressureResetControl(RuleCheckBase):
 
             return day, daydf
 
+    def all_plot_aio(self, plt_pts):
+        pass
+
+    def all_plot_obo(self, plt_pts):
+        pass
+
+    def day_plot_aio(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
+    def day_plot_obo(self, plt_pts):
+        # This method is overwritten because day plot can't be plotted for this verification item
+        pass
+
 
 class HeatRejectionFanVariableFlowControlsCells(RuleCheckBase):
     points = [
@@ -608,6 +622,20 @@ class VAVStaticPressureSensorLocation(RuleCheckBase):
 
     def verify(self):
         self.result = self.df["p_fan_setpoint"] < 298.608 + self.df["tol"]
+
+    def calculate_plot_day(self):
+        """over write method to select day for day plot"""
+        for one_day in self.daterange(
+            date(self.df.index[0].year, self.df.index[0].month, self.df.index[0].day),
+            date(
+                self.df.index[-1].year, self.df.index[-1].month, self.df.index[-1].day
+            ),
+        ):
+            daystr = f"{str(one_day.year)}-{str(one_day.month)}-{str(one_day.day)}"
+            daydf = self.df[daystr]
+            day = self.result[daystr]
+
+            return day, daydf
 
 
 class VentilationFanControl(RuleCheckBase):
@@ -777,6 +805,12 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
         print("Verification results dict: ")
         print(output)
         return output
+
+    def all_plot_aio(self, plt_pts):
+        pass
+
+    def all_plot_obo(self, plt_pts):
+        pass
 
     def day_plot_aio(self, plt_pts):
         # This method is overwritten because day plot can't be plotted for this verification item
