@@ -502,7 +502,7 @@ class ERVTemperatureControl(CheckLibBase):
         return output
 
 
-class AutomaticOADamperControl(CheckLibBase): #TODO JXL may need to change super class and delte check bool and check detail.
+class AutomaticOADamperControl(RuleCheckBase):
     points = ["no_of_occ", "m_oa", "eco_onoff", "tol"]
 
     def verify(self):
@@ -512,26 +512,7 @@ class AutomaticOADamperControl(CheckLibBase): #TODO JXL may need to change super
             & (self.df["eco_onoff"] == 0)
         )
 
-    def check_bool(self) -> bool:
-        # TODO JXL check binary flag
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
-            return False
-
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
-            "Verification Passed?": self.check_bool(),
-        }
-        print(output)
-        return output
-
-
-class FanStaticPressureResetControl(CheckLibBase):
+class FanStaticPressureResetControl(RuleCheckBase):
     points = [
         "p_set",
         "p_set_min",
@@ -545,44 +526,27 @@ class FanStaticPressureResetControl(CheckLibBase):
 
     def verify(self):
         d_vav_points = ["d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
-        d_vav_df = self.df[d_vav_points].copy() # TODO JXL modify this
-        self.df["result"] = 1  # 0: false 1: true
+        d_vav_df = self.df[d_vav_points]
+        self.df["result"] = True
 
         for row_num, (index, row) in enumerate(self.df.iterrows()):
             if row_num != 0:
                 if (d_vav_df.loc[index] > 0.9).any():
-                    self.df.at[index, "result"] = 1  # true TODO JXL use true and false when possible
+                    self.df.at[index, "result"] = True
                 else:
                     if self.df.at[index, "p_set"] > self.df.at[index, "p_set_min"]:
                         if (
                             self.df.at[index, "p_set"]
-                            < self.df.at[prev_index, "p_set"] + self.df["tol"] # TODO JXL this does not look right, df['tol'] is not a scalor
+                            < self.df.at[prev_index, "p_set"] + self.df.at[index, "tol"]
                         ):
-                            self.df.at[index, "result"] = 1
+                            self.df.at[index, "result"] = True
                         else:
-                            self.df.at[index, "result"] = 0  # false
+                            self.df.at[index, "result"] = False
                     else:
-                        self.df.at[index, "result"] = 1
+                        self.df.at[index, "result"] = True
             prev_index = index
 
-        self.result = self.df["result"].copy() # TODO JXL no copy
-
-    def check_bool(self) -> bool: # TODO we may use rule based
-        if len(self.result[self.result == 1] > 0): # TODO JXL check binary flag
-            return True
-        else:
-            return False
-
-    def check_detail(self): # TODO JXL this may not be necessary once changing flag to True / False
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == 1]),
-            "Fail #": len(self.result[self.result == 0]),
-            "Verification Passed?": self.check_bool(),
-        }
-        print(output)
-        return output
+        self.result = self.df["result"]
 
     def calculate_plot_day(self):
         """over write method to select day for day plot"""
@@ -591,7 +555,7 @@ class FanStaticPressureResetControl(CheckLibBase):
             date(
                 self.df.index[-1].year, self.df.index[-1].month, self.df.index[-1].day
             ),
-        ): # TODO JXL this is probably not necessary
+        ):
             daystr = f"{str(one_day.year)}-{str(one_day.month)}-{str(one_day.day)}"
             daydf = self.df[daystr]
             day = self.result[daystr]
@@ -599,7 +563,7 @@ class FanStaticPressureResetControl(CheckLibBase):
             return day, daydf
 
 
-class HeatRejectionFanVariableFlowControlsCells(CheckLibBase): # TODO JXL this is rule based, implementaion below shall be simplified.
+class HeatRejectionFanVariableFlowControlsCells(RuleCheckBase):
     points = [
         "ct_op_cells",
         "ct_cells",
@@ -630,73 +594,21 @@ class HeatRejectionFanVariableFlowControlsCells(CheckLibBase): # TODO JXL this i
             & (self.df["P_fan_ct"] > 0)
         )
 
-    def check_bool(self) -> bool: # TODO JXL not necessary?
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
-            return False
-
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
-            "Verification Passed?": self.check_bool(),
-        }
-        print(output)
-        return output
-
-
-class ServiceWaterHeatingSystemControl(CheckLibBase): # TODO JXL this is rule based, implementaion below shall be simplified.
+class ServiceWaterHeatingSystemControl(RuleCheckBase):
     points = ["T_wh_inlet"]
 
     def verify(self):
         self.result = self.df["T_wh_inlet"] < 43.33
 
-    def check_bool(self) -> bool: # TODO JXL seems wrong based on description of the verification
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
-            return False
 
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
-            "Verification Passed?": self.check_bool(),
-        }
-        print(output)
-
-
-class VAVStaticPressureSensorLocation(CheckLibBase): # TODO JXL this is rule based, implementaion below shall be simplified.
+class VAVStaticPressureSensorLocation(RuleCheckBase):
     points = ["p_fan_setpoint", "tol"]
 
     def verify(self):
         self.result = self.df["p_fan_setpoint"] < 298.608 + self.df["tol"]
 
-    def check_bool(self) -> bool: # TODO JXL check binary flag
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
-            return False
 
-    def check_detail(self) -> Dict:
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
-            "Verification Passed?": self.check_bool(),
-        }
-
-        print("Verification results dict: ")
-        print(output)
-        return output
-
-
-class VentilationFanControl(CheckLibBase): # TODO JXL this is rule based, implementaion below shall be simplified.
+class VentilationFanControl(RuleCheckBase):
     points = ["Q_load", "no_of_occ", "P_fan"]
 
     def verify(self):
@@ -705,23 +617,6 @@ class VentilationFanControl(CheckLibBase): # TODO JXL this is rule based, implem
             & (self.df["no_of_occ"] == 0)
             & (self.df["P_fan"] != 0)
         )
-
-    def check_bool(self) -> bool: # TODO JXL check binary flag
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
-            return False
-
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
-            "Verification Passed?": self.check_bool(),
-        }
-        print(output)
-        return output
 
     def calculate_plot_day(self):
         """over write method to select day for day plot"""
@@ -757,13 +652,13 @@ class WLHPLoopHeatRejectionControl(RuleCheckBase):
 class AutomaticShutdown(RuleCheckBase):
     points = ["hvac_set"]
 
-    def verify(self): # JXL TODO I don't understand this and page not in slides
+    def verify(self):
         copied_df = (
             self.df.copy()
-        )  # copied not to store unnecessary intermediate variables in self.df dataframe TODO JXL ?
+        )  # copied not to store unnecessary intermediate variables in self.df dataframe
         copied_df.reset_index(
             inplace=True
-        )  # convert index column back to normal column TODO JXL check why
+        )  # convert index column back to normal column
         copied_df = copied_df.rename(
             columns={"index": "Date"}
         )  # rename the index column to Date
@@ -794,7 +689,7 @@ class AutomaticShutdown(RuleCheckBase):
         )
 
     def check_bool(self) -> bool:
-        if len(self.result[self.result == 1]) > 0: # TODO JXL why 1 here?
+        if len(self.result[self.result == 1]) > 0:
             return True
         else:
             return False
@@ -819,20 +714,20 @@ class AutomaticShutdown(RuleCheckBase):
         pass
 
 
-class HeatPumpSupplementalHeatLockout(CheckLibBase): # TODO JXL maybe rule based to simplify?
+class HeatPumpSupplementalHeatLockout(RuleCheckBase):
     points = ["C_ref", "L_op", "P_supp_ht", "C_t_mod", "C_ff_mod", "L_defrost"]
 
     def heating_coil_verification(self, data):
         if data["P_supp_ht"] == 0:
-            data["result"] = 1  # True TODO JXL why 1 and 0
+            data["result"] = True
         else:
             if data["L_defrost"] > 0:
-                data["result"] = 1
+                data["result"] = True
             else:
                 if data["C_op"] > data["L_op"]:
-                    data["result"] = 0  # False
+                    data["result"] = False
                 else:
-                    data["result"] = 1
+                    data["result"] = True
         return data
 
     def verify(self):
@@ -841,39 +736,22 @@ class HeatPumpSupplementalHeatLockout(CheckLibBase): # TODO JXL maybe rule based
         self.df = self.df.apply(lambda r: self.heating_coil_verification(r), axis=1)
         self.result = self.df["result"]
 
-    def check_bool(self) -> bool:
-        if len(self.result[self.result == 1] > 0):
-            return True
-        else:
-            return False
-
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == 1]),
-            "Fail #": len(self.result[self.result == 0]),
-            "Verification Passed?": self.check_bool(),
-        }
-        print(output)
-        return output
-
 
 class HeatRejectionFanVariableFlowControl(RuleCheckBase):
     points = ["P_ct_fan", "m_ct_fan_ratio", "P_ct_fan_dsgn", "m_ct_fan_dsgn"]
 
-    def verify(self): # TODO JXL loc not necessary
-        self.df.loc[:, "m_ct_fan"] = (
-            self.df.loc[:, "m_ct_fan_ratio"] * self.df.loc[:, "m_ct_fan_dsgn"]
+    def verify(self):
+        self.df["m_ct_fan"] = (
+            self.df["m_ct_fan_ratio"] * self.df["m_ct_fan_dsgn"]
         )
-        self.df.loc[:, "normalized_m_ct_fan"] = (
-            self.df.loc[:, "m_ct_fan"] / self.df.loc[:, "m_ct_fan_dsgn"]
+        self.df["normalized_m_ct_fan"] = (
+            self.df["m_ct_fan"] / self.df["m_ct_fan_dsgn"]
         )
-        self.df.loc[:, "normalized_P_ct_fan"] = (
-            self.df.loc[:, "P_ct_fan"] / self.df.loc[:, "P_ct_fan_dsgn"]
+        self.df["normalized_P_ct_fan"] = (
+            self.df["P_ct_fan"] / self.df["P_ct_fan_dsgn"]
         )
 
-        self.df = self.df.loc[ # TODO JXL this would drop samples, maybe not something we want
+        self.df = self.df.loc[
             self.df["normalized_P_ct_fan"] > 0.0
         ]  # filter out 0 values
         self.df["normalized_m_ct_fan"] -= 1  # minus 1 to transform the data
@@ -886,23 +764,17 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
         )  # fit_intercept=False is for set the intercept to 0
 
         if reg.coef_[0] >= 1.4:
-            self.df["result"] = 1  # True
+            self.df["result"] = True
         else:
-            self.df["result"] = 0  # False
+            self.df["result"] = False
 
-        self.result = self.df["result"].copy(deep=True)
-
-    def check_bool(self) -> bool: # TODO JXL not necessary, same as superclass
-        if len(self.result[self.result == 0] > 0):
-            return False
-        else:
-            return True
+        self.result = self.df["result"]
 
     def check_detail(self) -> Dict:
         output = {
             "Sample #": 1,
-            "Pass #": len(self.result[self.result == 1]),
-            "Fail #": len(self.result[self.result == 0]),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
         }
 
@@ -934,7 +806,7 @@ class DemandControlVentilation(CheckLibBase):
     def verify(self):
         df_filtered = self.df.loc[
             (self.df["s_eco"] == 0.0) & (self.df["s_ahu"] != 0.0)
-        ]  # filter out data when economizer isn't enabled TODO JXL == float is probably not something we want to do. use a threshold
+        ]  # filter out data when economizer isn't enabled
 
         df_filtered["no_of_occ"] = (
             df_filtered["no_of_occ_per1"]
@@ -949,7 +821,7 @@ class DemandControlVentilation(CheckLibBase):
         if (
             len(df_filtered["no_of_occ"].unique()) == 1
             or len(df_filtered["v_oa"].unique()) == 1
-        ): # TODO JXL this does not allow noice in data, probably not practical
+        ):
             self.df["DCV_type"] = 0  # NO DCV is observed
             self.dcv_msg = "NO DCV"
         elif corr >= 0.3 and p_value <= 0.05:
@@ -960,12 +832,6 @@ class DemandControlVentilation(CheckLibBase):
             self.dcv_msg = "No DCV"
 
         self.result = self.df["DCV_type"]
-
-    def check_bool(self) -> bool: # TODO JXL confirm binary flag
-        if len(self.result[self.result == 1] > 0):
-            return True
-        else:
-            return False
 
     def check_detail(self):
         print("Verification results dict: ")
@@ -1013,7 +879,7 @@ class OptimumStart(CheckLibBase):
         else:
             return 0  # Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well
 
-    def verify(self): # TODO JXL I don't understand this. there are unused variabels in the code.
+    def verify(self): # TODO YJJ I don't understand this. there are unused variabels in the code.
         year_info = 2000
         result_repo = []
         for idx, day in self.df.groupby(self.df.index.date):
@@ -1064,7 +930,7 @@ class OptimumStart(CheckLibBase):
                         result_repo.append(0)  # No optimum start
                     else:
                         result_repo.append(
-                            self.correlation(
+                            self.correlation( # TODO YJJ move correlation checking outside of for loop
                                 len(T_s_AHU_diff),
                                 T_oa_dry,
                                 T_diff_heating,
@@ -1078,7 +944,7 @@ class OptimumStart(CheckLibBase):
                         result_repo.append(0)  # No optimum start
                     else:
                         result_repo.append(
-                            self.correlation(
+                            self.correlation( # TODO same here
                                 len(T_s_AHU_diff),
                                 T_oa_dry,
                                 T_diff_heating,
@@ -1090,7 +956,7 @@ class OptimumStart(CheckLibBase):
         dti = pd.date_range("2020-01-01", periods=365, freq="D")
         self.result = pd.Series(result_repo, index=dti)
 
-    def check_bool(self) -> bool: # TODO JXL check for binary flag
+    def check_bool(self) -> bool:
         if len(self.result[self.result == 1] > 0):
             return True
         else:
@@ -1116,7 +982,7 @@ class OptimumStart(CheckLibBase):
         pass
 
 
-class GuestRoomControlTemp(CheckLibBase): # TODO JXL check for this and other verification item's super class, use rule base when possible to simplify implementation.
+class GuestRoomControlTemp(RuleCheckBase):
     points = ["T_z_hea_set", "T_z_coo_set", "O_sch", "tol_occ", "tol_temp"]
 
     def verify(self):

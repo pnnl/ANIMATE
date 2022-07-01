@@ -326,7 +326,7 @@
             "p_set": "Static pressure setpoint",
             "d_VAV_x": "VAV Damper x Position (includes all VAV dampers served by the system under test",
             "tol": "Tolerance for VAV box damper position openings",
-            // add p_set_min here.
+            "p_set_min": ": Minimum static pressure setpoint threshold"
         },
         "description_assertions": [
             "if d_VAV(n) (n=1,2,...,N) < 0.9 and p_set(t) > p_set(t-1), then fail else pass"
@@ -446,7 +446,8 @@
             "L_op": "Heating Coil Runtime Fraction",
             "C_t_mod": "Heating Coil Heating Rate",
             "P_supp_ht": "Heating Coil Gas Rate",
-            // there are 6 points in the code
+            "C_ff_mod":  "Heating Capacity Function of Flow Fraction Curve",
+            "L_defrost": "Defrost load on the heating coil"
         },
         "description_assertions": [
             "If C_ref * C_t_mod >= L_op and P_supp_ht == 0 then pass else fail"
