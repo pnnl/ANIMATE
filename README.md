@@ -52,7 +52,7 @@ See the Publications section for more information and example of uses of the fra
 
 ## Publications
 
-- Chen Y., J. Lerond, X. Lei, and M.I. Rosenberg. 2021. "A Knowledge-based Framework for Building Energy Model Performance Verification." In Building Simulation 2021 Conference
+- [Chen Y., J. Lerond, X. Lei, and M.I. Rosenberg. 2021. "A Knowledge-based Framework for Building Energy Model Performance Verification." In Building Simulation 2021 Conference](https://publications.ibpsa.org/conference/paper/?id=bs2021_30725)
 
 ## Referencing
 
