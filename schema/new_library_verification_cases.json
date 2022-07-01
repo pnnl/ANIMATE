@@ -846,54 +846,6 @@
             "verification_class": "GuestRoomControlTemp"
         },
         {
-            "no": 26,
-            "run_simulation": true,
-            "simulation_IO": {
-                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeLarge_STD2016_Denver.idf",
-                "idd": "../resources/Energy+V9_0_1.idd",
-                "weather": "../weather/USA_CO_Denver-Aurora-Buckley.AFB.724695_TMY3.epw",
-                "output": "eplusout.csv",
-                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
-            },
-            "expected_result": "pass",
-            "datapoints_source": {
-                "idf_output_variables": {
-                    "T_oa_dry": {
-                        "subject": "Environment",
-                        "variable": "Site Outdoor Air Drybulb Temperature",
-                        "frequency": "TimeStep"
-                    },
-                    "T_z_measure": {
-                        "subject": "CORE_TOP",
-                        "variable": "Zone Air Temperature",
-                        "frequency": "TimeStep"
-                    },
-                    "T_z_hea_set": {
-                        "subject": "CORE_TOP",
-                        "variable": "Zone Thermostat Heating Setpoint Temperature",
-                        "frequency": "TimeStep"
-                    },
-                    "T_z_coo_set": {
-                        "subject": "CORE_TOP",
-                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
-                        "frequency": "TimeStep"
-                    },
-                    "s_AHU": {
-                        "subject": "HVACOperationSchd",
-                        "variable": "Schedule Value",
-                        "frequency": "TimeStep"
-                    },
-                    "occ": {
-                        "subject": "BLDG_OCC_SCH_wo_SB",
-                        "variable": "Schedule Value",
-                        "frequency": "TimeStep"
-                    }
-                },
-                "parameters": {}
-            },
-            "verification_class": "OptimumStart"
-        },
-        {
             "no": 27,
             "run_simulation": true,
             "simulation_IO": {
