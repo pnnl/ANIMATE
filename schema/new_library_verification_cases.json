@@ -1,52 +1,38 @@
 {
     "cases": [
-        {
-            "no": 26,
+		{
+            "no": 24,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeLarge_STD2016_Denver.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_HotelLarge_STD2016_Seattle.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
-                "weather": "../weather/USA_CO_Denver-Aurora-Buckley.AFB.724695_TMY3.epw",
+                "weather": "../weather/USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw",
                 "output": "eplusout.csv",
                 "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
-                    "T_oa_dry": {
-                        "subject": "Environment",
-                        "variable": "Site Outdoor Air Drybulb Temperature",
+                    "m_z_oa": {
+                        "subject": "ROOM_2_FLR_3",
+                        "variable": "Zone Mechanical Ventilation Standard Density Volume Flow Rate",
                         "frequency": "TimeStep"
                     },
-                    "T_z_measure": {
-                        "subject": "CORE_TOP",
-                        "variable": "Zone Air Temperature",
-                        "frequency": "TimeStep"
-                    },
-                    "T_z_hea_set": {
-                        "subject": "CORE_TOP",
-                        "variable": "Zone Thermostat Heating Setpoint Temperature",
-                        "frequency": "TimeStep"
-                    },
-                    "T_z_coo_set": {
-                        "subject": "CORE_TOP",
-                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
-                        "frequency": "TimeStep"
-                    },
-                    "s_AHU": {
-                        "subject": "HVACOperationSchd",
-                        "variable": "Schedule Value",
-                        "frequency": "TimeStep"
-                    },
-                    "occ": {
-                        "subject": "BLDG_OCC_SCH_wo_SB",
+                    "O_sch": {
+                        "subject": "GuestRoom_Occ_Sch",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
                     }
                 },
-                "parameters": {}
+                "parameters": {
+                    "area_z": 39.02,
+                    "height_z": 3.05,
+                    "m_z_oa_set": 0.000395372,
+                    "tol_occ": 0.05,
+                    "tol_m": 0.0003
+                }
             },
-            "verification_class": "OptimumStart"
+            "verification_class": "GuestRoomControlVent"
         }
     ]
 }
