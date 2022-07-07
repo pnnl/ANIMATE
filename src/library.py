@@ -1034,3 +1034,101 @@ class GuestRoomControlVent(CheckLibBase):
     def day_plot_obo(self, plt_pts):
         # This method is overwritten because day plot can't be plotted for this verification item
         pass
+
+
+class OptimumStart(CheckLibBase):
+    points = ["T_oa_dry", "T_z_measure", "T_z_hea_set", "T_z_coo_set", "s_AHU", "occ"]
+
+    def verify(self):
+        year_info = 2000
+        occ_repo = []
+        t_length = []
+        T_oa_dry_repo = []
+        T_diff_heating = []
+        T_diff_cooling = []
+
+        for idx, day in self.df.groupby(self.df.index.date):
+            if (
+                day.index.month[0] == 2 and day.index.day[0] == 29
+            ):  # skip leap year, although E+ doesn't have leap year the date for loop assumes so because 24:00 time step so, it's intentionally skipped here
+                pass
+            elif (
+                year_info != day.index.year[0]
+            ):  # remove the Jan 1st of next year reason: the pandas date for loop iterates one more loop is hour is 24:00:00
+                pass
+            else:
+                # unocc to occ
+                df_occ_diff = day[day["occ"].diff() != 0.0]["occ"]
+
+                if len(df_occ_diff) > 1: # Since first value of .diff() is nan, this means when values don't change
+                    t_unocc_to_occ = df_occ_diff.index.tolist()[1]
+                else:
+                    t_unocc_to_occ = day.index[0]
+
+                df_s_AHU_diff = day[day["s_AHU"].diff() != 0.0]["s_AHU"]
+
+                if len(df_s_AHU_diff) > 1:
+                    t_s_AHU_off_to_on = df_s_AHU_diff.index.tolist()[1]
+                else:
+                    t_s_AHU_off_to_on = day.index[0]
+
+                if pd.Timedelta(t_s_AHU_off_to_on - t_unocc_to_occ).seconds/3600 > 12:
+                    t_length.append(pd.Timedelta(t_unocc_to_occ - t_s_AHU_off_to_on).seconds)
+                else:
+                    t_length.append(pd.Timedelta(t_s_AHU_off_to_on - t_unocc_to_occ).seconds)
+
+                T_oa_dry_repo.append(day.loc[t_s_AHU_off_to_on]["T_oa_dry"]) # TODO must think when s_AHU doens't exist!!!!!!!!!!!
+                T_z_measure = day.loc[t_unocc_to_occ]["T_z_measure"]
+                T_diff_heating.append(T_z_measure - day.loc[t_unocc_to_occ]["T_z_hea_set"])
+                T_diff_cooling.append(T_z_measure - day.loc[t_unocc_to_occ]["T_z_coo_set"])
+            year_info = day.index.year[0]
+
+        if len(self.df["s_AHU"].unique()) == 1 and self.df["s_AHU"].unique() in [0, 1]:
+            if self.df["s_AHU"].unique() == 0:
+                self.df["result"] = False
+                self.msg = "NO optimum start"
+            else:
+                if pearsonr(t_length, T_oa_dry_repo)[0] > 0.5 or pearsonr(t_length, T_diff_heating)[0] > 0.5 or pearsonr(t_length, T_diff_cooling)[0] > 0.5:
+                    self.df["result"] = True
+                    self.msg = "Optimum start is observed and confirmed"
+                else:
+                    self.df["result"] = False
+                    self.msg = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
+        else:
+            if len(set(t_length)) == 1:
+                self.df["result"] = False
+                self.msg = "NO optimum start"
+            else:
+                if pearsonr(t_length, T_oa_dry_repo)[0] > 0.5 or pearsonr(t_length, T_diff_heating)[0] > 0.5 or pearsonr(t_length, T_diff_cooling)[0] > 0.5:
+                    self.df["result"] = True
+                    self.msg = "Optimum start is observed and confirmed"
+                else:
+                    self.df["result"] = False
+                    self.msg = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
+
+        self.result = self.df["result"]
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == True] > 0):
+            return True
+        else:
+            return False
+
+    def check_detail(self):
+        print("Verification results dict: ")
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
+        print(output)
+        return output
+
+    # def day_plot_aio(self, plt_pts):
+    #     # This method is overwritten because day plot can't be plotted for this verification item
+    #     pass
+    #
+    # def day_plot_obo(self, plt_pts):
+    #     # This method is overwritten because day plot can't be plotted for this verification item
+    #     pass
