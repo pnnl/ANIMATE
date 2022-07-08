@@ -1066,13 +1066,15 @@ class GuestRoomControlTemp(RuleCheckBase):
         print(output)
         return output
 
-    def day_plot_aio(self, plt_pts):
-        # This method is overwritten because day plot can't be plotted for this verification item
-        pass
-
-    def day_plot_obo(self, plt_pts):
-        # This method is overwritten because day plot can't be plotted for this verification item
-        pass
+    def calculate_plot_day(self):
+        return self.result, self.df
+    # def day_plot_aio(self, plt_pts):
+    #     # This method is overwritten because day plot can't be plotted for this verification item
+    #     pass
+    #
+    # def day_plot_obo(self, plt_pts):
+    #     # This method is overwritten because day plot can't be plotted for this verification item
+    #     pass
 
 
 class GuestRoomControlVent(CheckLibBase):
@@ -1178,7 +1180,7 @@ class GuestRoomControlVent(CheckLibBase):
                     else:
                         result_repo.append(0)
                 year_info = day.index.year[0]
-        palceholder= 1
+        self.df.to_csv("guestroom_vent.csv")
         dti = pd.date_range("2020-01-01", periods=365, freq="D")
         self.result = pd.Series(result_repo, index=dti)
 
