@@ -580,6 +580,8 @@
         "description_datapoints": {
             "T_z_hea_set": "Zone Thermostat Heating Setpoint Temperature",
             "T_z_coo_set": "Zone Thermostat Cooling Setpoint Temperature",
+			"T_z_hea_set_occ": "Zone Thermostat Occupied Heating Setpoint Temperature",
+			"T_z_coo_set_occ": "Zone Thermostat Occupied Cooling Setpoint Temperature",
             "O_sch": "Occupant Schedule",
             "tol_occ": "Tolerence for Occupant Schedule",
             "tol_temp": "Tolerance for Temperature"

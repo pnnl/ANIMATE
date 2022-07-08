@@ -1,12 +1,50 @@
 {
     "cases": [
+        {
+            "no": 25,
+            "run_simulation": true,
+            "simulation_IO": {
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_HotelSmall_STD2019_Atlanta_updated105.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_z_hea_set": {
+                        "subject": "GuestRoom105",
+                        "variable": "Zone Thermostat Heating Setpoint Temperature",
+                        "frequency": "TimeStep"
+                    },
+                    "T_z_coo_set": {
+                        "subject": "GuestRoom105",
+                        "variable": "Zone Thermostat Cooling Setpoint Temperature",
+                        "frequency": "TimeStep"
+                    },
+                    "O_sch": {
+                        "subject": "GuestRoom_Occ_Sch_Corrected",
+                        "variable": "Schedule Value",
+                        "frequency": "TimeStep"
+                    }
+                },
+                "parameters": {
+					"T_z_hea_set_occ": 21.1,
+					"T_z_coo_set_occ": 21.1,
+                    "tol_occ": 0.05,
+                    "tol_temp": 0.5
+                }
+            },
+            "verification_class": "GuestRoomControlTemp"
+        },
 		{
             "no": 24,
             "run_simulation": true,
             "simulation_IO": {
-                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_HotelLarge_STD2016_Seattle.idf",
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_HotelSmall_STD2019_Atlanta_updated105.idf",
                 "idd": "../resources/Energy+V9_0_1.idd",
-                "weather": "../weather/USA_WA_Seattle-Tacoma.Intl.AP.727930_TMY3.epw",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY.epw",
                 "output": "eplusout.csv",
                 "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
             },
@@ -14,22 +52,22 @@
             "datapoints_source": {
                 "idf_output_variables": {
                     "m_z_oa": {
-                        "subject": "ROOM_2_FLR_3",
-                        "variable": "Zone Mechanical Ventilation Standard Density Volume Flow Rate",
+                        "subject": "GuestRoom101",
+                        "variable": "Zone Mechanical Ventilation Current Density Volume Flow Rate",
                         "frequency": "TimeStep"
                     },
                     "O_sch": {
-                        "subject": "GuestRoom_Occ_Sch",
+                        "subject": "AlwaysOff",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
                     }
                 },
                 "parameters": {
-                    "area_z": 39.02,
-                    "height_z": 3.05,
-                    "m_z_oa_set": 0.000395372,
+                    "area_z": 32.61,
+                    "height_z": 3.35,
+                    "m_z_oa_set": 0.013473572,
                     "tol_occ": 0.05,
-                    "tol_m": 0.0003
+                    "tol_m": 0.000673679
                 }
             },
             "verification_class": "GuestRoomControlVent"
