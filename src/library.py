@@ -683,7 +683,9 @@ class AutomaticShutdown(RuleCheckBase):
     points = ["hvac_set"]
 
     def verify(self):
-        copied_df = self.df.copy()  # copied not to store unnecessary intermediate variables in self.df dataframe
+        copied_df = (
+            self.df.copy()
+        )  # copied not to store unnecessary intermediate variables in self.df dataframe
         copied_df.reset_index(
             inplace=True
         )  # convert index column back to normal column
@@ -707,10 +709,18 @@ class AutomaticShutdown(RuleCheckBase):
         copied_df["start_time"] = df2["hvac_set_diff"].iloc[::2]  # even number row
         copied_df["end_time"] = df2["hvac_set_diff"].iloc[1::2]  # odd number row
 
-        copied_df["min_start_time"] = copied_df.query("start_time == 1")["Date"].dt.hour.min()
-        copied_df["max_start_time"] = copied_df.query("start_time == 1")["Date"].dt.hour.max()
-        copied_df["min_end_time"] = copied_df.query("end_time == -1")["Date"].dt.hour.min()
-        copied_df["max_end_time"] = copied_df.query("end_time == -1")["Date"].dt.hour.max()
+        copied_df["min_start_time"] = copied_df.query("start_time == 1")[
+            "Date"
+        ].dt.hour.min()
+        copied_df["max_start_time"] = copied_df.query("start_time == 1")[
+            "Date"
+        ].dt.hour.max()
+        copied_df["min_end_time"] = copied_df.query("end_time == -1")[
+            "Date"
+        ].dt.hour.min()
+        copied_df["max_end_time"] = copied_df.query("end_time == -1")[
+            "Date"
+        ].dt.hour.max()
 
         self.result = (copied_df["min_start_time"] != copied_df["max_start_time"]) & (
             copied_df["min_end_time"] != copied_df["max_end_time"]
@@ -742,7 +752,7 @@ class AutomaticShutdown(RuleCheckBase):
         pass
 
 
-class HeatPumpSupplementalHeatLockout(CheckLibBase):
+class HeatPumpSupplementalHeatLockout(RuleCheckBase):
     points = ["C_ref", "L_op", "P_supp_ht", "C_t_mod", "C_ff_mod", "L_defrost", "tol"]
 
     def heating_coil_verification(self, data):
