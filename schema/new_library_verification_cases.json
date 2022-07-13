@@ -739,7 +739,8 @@
                     }
                 },
                 "parameters": {
-                    "C_ref": 5091.29
+                    "C_ref": 5091.29,
+					"tol": 0.01
                 }
             },
             "verification_class": "HeatPumpSupplementalHeatLockout"

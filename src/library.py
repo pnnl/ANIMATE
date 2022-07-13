@@ -683,9 +683,7 @@ class AutomaticShutdown(RuleCheckBase):
     points = ["hvac_set"]
 
     def verify(self):
-        copied_df = (
-            self.df.copy()
-        )  # copied not to store unnecessary intermediate variables in self.df dataframe
+        copied_df = self.df.copy()  # copied not to store unnecessary intermediate variables in self.df dataframe
         copied_df.reset_index(
             inplace=True
         )  # convert index column back to normal column
@@ -709,10 +707,10 @@ class AutomaticShutdown(RuleCheckBase):
         copied_df["start_time"] = df2["hvac_set_diff"].iloc[::2]  # even number row
         copied_df["end_time"] = df2["hvac_set_diff"].iloc[1::2]  # odd number row
 
-        copied_df["min_start_time"] = copied_df.query("start_time == 1")["Date"].min()
-        copied_df["max_start_time"] = copied_df.query("start_time == 1")["Date"].max()
-        copied_df["min_end_time"] = copied_df.query("end_time == -1")["Date"].min()
-        copied_df["max_end_time"] = copied_df.query("end_time == -1")["Date"].max()
+        copied_df["min_start_time"] = copied_df.query("start_time == 1")["Date"].dt.hour.min()
+        copied_df["max_start_time"] = copied_df.query("start_time == 1")["Date"].dt.hour.max()
+        copied_df["min_end_time"] = copied_df.query("end_time == -1")["Date"].dt.hour.min()
+        copied_df["max_end_time"] = copied_df.query("end_time == -1")["Date"].dt.hour.max()
 
         self.result = (copied_df["min_start_time"] != copied_df["max_start_time"]) & (
             copied_df["min_end_time"] != copied_df["max_end_time"]
@@ -744,20 +742,20 @@ class AutomaticShutdown(RuleCheckBase):
         pass
 
 
-class HeatPumpSupplementalHeatLockout(RuleCheckBase):
-    points = ["C_ref", "L_op", "P_supp_ht", "C_t_mod", "C_ff_mod", "L_defrost"]
+class HeatPumpSupplementalHeatLockout(CheckLibBase):
+    points = ["C_ref", "L_op", "P_supp_ht", "C_t_mod", "C_ff_mod", "L_defrost", "tol"]
 
     def heating_coil_verification(self, data):
         if data["P_supp_ht"] == 0:
-            data["result"] = True
+            data["result"] = 1  # True
         else:
             if data["L_defrost"] > 0:
-                data["result"] = True
+                data["result"] = 1
             else:
-                if data["C_op"] > data["L_op"]:
-                    data["result"] = False
+                if data["C_op"] > data["L_op"] + data["tol"]:
+                    data["result"] = 0  # False
                 else:
-                    data["result"] = True
+                    data["result"] = 1
         return data
 
     def verify(self):
