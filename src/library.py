@@ -993,6 +993,7 @@ class OptimumStart(RuleCheckBase):
             "Pass #": len(self.result[self.result == 1]),
             "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
+            "Optimum start type:": self.msg(),
         }
 
         print("Verification results dict: ")
