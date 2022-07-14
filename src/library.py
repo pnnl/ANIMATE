@@ -892,7 +892,7 @@ class DemandControlVentilation(CheckLibBase):
         pass
 
 
-class OptimumStart(CheckLibBase):
+class OptimumStart(RuleCheckBase):
     points = ["T_oa_dry", "T_z_measure", "T_z_hea_set", "T_z_coo_set", "s_AHU", "occ"]
 
     def verify(self):
@@ -917,80 +917,104 @@ class OptimumStart(CheckLibBase):
                     # unocc to occ
                     df_occ_diff = day[day["occ"].diff() != 0.0]["occ"]
 
-                    if len(df_occ_diff) > 1: # Since first value of .diff() is nan, this means when values don't change
+                    if (
+                        len(df_occ_diff) > 1
+                    ):  # Since first value of .diff() is nan, this means when values don't change
                         t_unocc_to_occ = df_occ_diff.index.tolist()[1]
                     else:
                         t_unocc_to_occ = day.index[0]
 
                     t_s_AHU_off_to_on = df_s_AHU_diff.index.tolist()[1]
 
-                    if pd.Timedelta(t_s_AHU_off_to_on - t_unocc_to_occ).seconds/3600 > 12:
-                        t_length.append(pd.Timedelta(t_unocc_to_occ - t_s_AHU_off_to_on).seconds)
+                    if (
+                        pd.Timedelta(t_s_AHU_off_to_on - t_unocc_to_occ).seconds / 3600
+                        > 12
+                    ):
+                        t_length.append(
+                            pd.Timedelta(t_unocc_to_occ - t_s_AHU_off_to_on).seconds
+                        )
                     else:
-                        t_length.append(pd.Timedelta(t_s_AHU_off_to_on - t_unocc_to_occ).seconds)
+                        t_length.append(
+                            pd.Timedelta(t_s_AHU_off_to_on - t_unocc_to_occ).seconds
+                        )
 
                     T_oa_dry_repo.append(day.loc[t_s_AHU_off_to_on]["T_oa_dry"])
                     T_z_measure = day.loc[t_unocc_to_occ]["T_z_measure"]
-                    T_diff_heating.append(T_z_measure - day.loc[t_unocc_to_occ]["T_z_hea_set"])
-                    T_diff_cooling.append(abs(T_z_measure - day.loc[t_unocc_to_occ]["T_z_coo_set"]))
+                    T_diff_heating.append(
+                        T_z_measure - day.loc[t_unocc_to_occ]["T_z_hea_set"]
+                    )
+                    T_diff_cooling.append(
+                        abs(T_z_measure - day.loc[t_unocc_to_occ]["T_z_coo_set"])
+                    )
             year_info = day.index.year[0]
-        tempo_dict = {"t_length":t_length,
-                      "T_oa_dry": T_oa_dry_repo,
-                      "T_diff_heating": T_diff_heating,
-                      "T_diff_cooling": T_diff_cooling}
-        tempo = pd.DataFrame(tempo_dict)
-        tempo.to_csv('optimum_control_data.csv')
 
         if len(self.df["s_AHU"].unique()) == 1 and self.df["s_AHU"].unique() in [0, 1]:
             if self.df["s_AHU"].unique() == 0:
-                self.df["result"] = False
+                self.df["result"] = 0
                 self.msg = "NO optimum start"
             else:
-                if pearsonr(t_length, T_oa_dry_repo)[0] > 0.5 or pearsonr(t_length, T_diff_heating)[0] > 0.5 or pearsonr(t_length, T_diff_cooling)[0] > 0.5:
-                    self.df["result"] = True
+                if (
+                    pearsonr(t_length, T_oa_dry_repo)[0] > 0.5
+                    or pearsonr(t_length, T_diff_heating)[0] > 0.5
+                    or pearsonr(t_length, T_diff_cooling)[0] > 0.5
+                ):
+                    self.df["result"] = 1
                     self.msg = "Optimum start is observed and confirmed"
                 else:
-                    self.df["result"] = False
+                    self.df["result"] = 0
                     self.msg = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
         else:
             if len(set(t_length)) == 1:
-                self.df["result"] = False
+                self.df["result"] = 0
                 self.msg = "NO optimum start"
             else:
-                if pearsonr(t_length, T_oa_dry_repo)[0] > 0.5 or pearsonr(t_length, T_diff_heating)[0] > 0.5 or pearsonr(t_length, T_diff_cooling)[0] > 0.5:
-                    self.df["result"] = True
+                if (
+                    pearsonr(t_length, T_oa_dry_repo)[0] > 0.5
+                    or pearsonr(t_length, T_diff_heating)[0] > 0.5
+                    or pearsonr(t_length, T_diff_cooling)[0] > 0.5
+                ):
+                    self.df["result"] = 1
                     self.msg = "Optimum start is observed and confirmed"
                 else:
-                    self.df["result"] = False
+                    self.df["result"] = 0
                     self.msg = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
 
         self.result = self.df["result"]
 
     def check_bool(self) -> bool:
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
+        if len(self.result[self.result == 0] > 0):
             return False
+        else:
+            return True
 
-    def check_detail(self):
-        print("Verification results dict: ")
+    def check_detail(self) -> Dict:
         output = {
             "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
+            "Pass #": len(self.result[self.result == 1]),
+            "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
         }
+
+        print("Verification results dict: ")
         print(output)
         return output
 
 
 class GuestRoomControlTemp(RuleCheckBase):
-    points = ["T_z_hea_set", "T_z_coo_set", "O_sch", "T_z_hea_set_occ", "T_z_coo_set_occ", "tol_occ", "tol_temp"]
+    points = [
+        "T_z_hea_set",
+        "T_z_coo_set",
+        "O_sch",
+        "T_z_hea_set_occ",
+        "T_z_coo_set_occ",
+        "tol_occ",
+        "tol_temp",
+    ]
 
     def determine_30_min_vacancy(self, occ_df, time_interval, tol=0.0):
-        if time_interval <= 30: # when time interval is less or equal to 30 mins
+        if time_interval <= 30:  # when time interval is less or equal to 30 mins
             no_of_consecutive_time_steps = round(30 / time_interval)
-        else: # when time interval is greater than 30 mins
+        else:  # when time interval is greater than 30 mins
             no_of_consecutive_time_steps = 1
 
         vacancy_count = 0
@@ -1005,7 +1029,9 @@ class GuestRoomControlTemp(RuleCheckBase):
         return False
 
     def verify(self):
-        time_step = (self.df.index[1] - self.df.index[0]).seconds/60 # time step in min
+        time_step = (
+            self.df.index[1] - self.df.index[0]
+        ).seconds / 60  # time step in min
         T_z_hea_set_occ = self.df["T_z_hea_set_occ"][0]
         T_z_coo_set_occ = self.df["T_z_coo_set_occ"][0]
         tol_occ = self.df["tol_occ"][0]
@@ -1023,69 +1049,44 @@ class GuestRoomControlTemp(RuleCheckBase):
                 pass
             else:
                 self.determine_30_min_vacancy(day["O_sch"], time_step)
-                if (
-                    day["O_sch"] > tol_occ
-                ).any():  # confirmed this room is rented out
-                    if ( # TODO  should be after 30 mins and when occuapnts scheulde == 0
+                if (day["O_sch"] > tol_occ).any():  # confirmed this room is rented out
+                    if (
                         day["T_z_hea_set"] < T_z_hea_set_occ - 2.22 + tol_temp
                     ).any() or (
                         day["T_z_coo_set"] > T_z_coo_set_occ + 2.22 - tol_temp
                     ).any():
-                        result_repo.append(True)  # confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
-                        print(f"1")
+                        result_repo.append(
+                            True
+                        )  # confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
                     else:
-                        result_repo.append(False) # reset does not meet the standard or no reset was observed.
-                        print(f"{idx} fail 1")
+                        result_repo.append(
+                            False
+                        )  # reset does not meet the standard or no reset was observed.
 
                 else:  # room is NOT rented out
                     if self.determine_30_min_vacancy(day["O_sch"], time_step):
                         if (day["T_z_hea_set"] < 15.6 + tol_temp).any() and (
                             day["T_z_coo_set"] > 26.7 - tol_temp
                         ).any():
-                            result_repo.append(True) # confirmed zone temperature setpoint reset during the unrented period
-                            print(f"3")
+                            result_repo.append(
+                                True
+                            )  # confirmed zone temperature setpoint reset during the unrented period
                         else:
-                            result_repo.append(False) # zone temperature setpoint was not reset correctly
-                            print(f"{idx} fail 2")
+                            result_repo.append(
+                                False
+                            )  # zone temperature setpoint was not reset correctly
                     else:
                         result_repo.append(True)
-                        print(f"{idx} 4")
-
                 year_info = day.index.year[0]
 
-        self.df.to_csv("Guestroom_Temp_df.csv")
         dti = pd.date_range("2020-01-01", periods=365, freq="D")
         self.result = pd.Series(result_repo, index=dti)
 
-    def check_bool(self) -> bool:
-        if len(self.result[self.result == True] > 0):
-            return True
-        else:
-            return False
-
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
-            "Verification Passed?": self.check_bool(),
-        }
-        print(output)
-        return output
-
     def calculate_plot_day(self):
         return self.result, self.df
-    # def day_plot_aio(self, plt_pts):
-    #     # This method is overwritten because day plot can't be plotted for this verification item
-    #     pass
-    #
-    # def day_plot_obo(self, plt_pts):
-    #     # This method is overwritten because day plot can't be plotted for this verification item
-    #     pass
 
 
-class GuestRoomControlVent(CheckLibBase):
+class GuestRoomControlVent(RuleCheckBase):
     points = [
         "m_z_oa",
         "O_sch",
@@ -1096,10 +1097,12 @@ class GuestRoomControlVent(CheckLibBase):
         "tol_m",
     ]
 
-    def check_airflow_equals_airflow_set_for_hour(self, m_z_df, m_z_set, time_interval, tol=0.0):
-        if time_interval <= 60: # when time interval is less or equal to 60 mins
+    def check_airflow_equals_airflow_set_for_hour(
+        self, m_z_df, m_z_set, time_interval, tol=0.0
+    ):
+        if time_interval <= 60:  # when time interval is less or equal to 60 mins
             no_of_consecutive_time_steps = round(60 / time_interval)
-        else: # when time interval is greater than 60 mins
+        else:  # when time interval is greater than 60 mins
             no_of_consecutive_time_steps = 1
 
         airflow_count = 0
@@ -1112,10 +1115,12 @@ class GuestRoomControlVent(CheckLibBase):
                 return True
         return False
 
-    def check_sum_airflow_equals_volume_per_hour(self, m_z_df, time_interval, area, height, tol=0.0):
-        if time_interval <= 60: # when time interval is less or equal to 60 mins
+    def check_sum_airflow_equals_volume_per_hour(
+        self, m_z_df, time_interval, area, height, tol=0.0
+    ):
+        if time_interval <= 60:  # when time interval is less or equal to 60 mins
             no_of_consecutive_time_steps = round(60 / time_interval)
-        else: # when time interval is greater than 60 mins
+        else:  # when time interval is greater than 60 mins
             no_of_consecutive_time_steps = 1
 
         airflow_count = 0
@@ -1135,9 +1140,9 @@ class GuestRoomControlVent(CheckLibBase):
         return True if all(airflow_sum_bool) else False
 
     def determine_30_min_vacancy(self, occ_df, time_interval, tol=0.0):
-        if time_interval <= 30: # when time interval is less or equal to 30 mins
+        if time_interval <= 30:  # when time interval is less or equal to 30 mins
             no_of_consecutive_time_steps = round(30 / time_interval)
-        else: # when time interval is greater than 30 mins
+        else:  # when time interval is greater than 30 mins
             no_of_consecutive_time_steps = 1
 
         vacancy_count = 0
@@ -1151,7 +1156,9 @@ class GuestRoomControlVent(CheckLibBase):
         return False
 
     def verify(self):
-        time_step = (self.df.index[1] - self.df.index[0]).seconds / 60  # time step in min
+        time_step = (
+            self.df.index[1] - self.df.index[0]
+        ).seconds / 60  # time step in min
 
         tol_occ = self.df["tol_occ"][0]
         tol_m = self.df["tol_m"][0]
@@ -1170,44 +1177,27 @@ class GuestRoomControlVent(CheckLibBase):
                     day["O_sch"] <= tol_occ
                 ).all():  # confirmed this room is NOT rented out
                     if self.determine_30_min_vacancy(day["O_sch"], time_step):
-                        if (day["m_z_oa"] == 0).any(): # TODO  should be after 30 mins and when occuapnts scheulde == 0
-                            result_repo.append(1) # pass
-                            print(f"{idx}, pass 1")
+                        if (day["m_z_oa"] == 0).any():
+                            result_repo.append(True)  # pass
                         else:
-                            result_repo.append(0)  # fail
+                            result_repo.append(False)  # fail
                 else:  # room is rented out
                     if (day["m_z_oa"] > 0).all():
-                        if (
-                            self.check_airflow_equals_airflow_set_for_hour(self.df["O_sch"], m_z_oa_set, time_step)
-                            or self.check_sum_airflow_equals_volume_per_hour(self.df["m_z_oa"], self.df["area_z"], self.df["height_z"])
+                        if self.check_airflow_equals_airflow_set_for_hour(
+                            self.df["O_sch"], m_z_oa_set, time_step
+                        ) or self.check_sum_airflow_equals_volume_per_hour(
+                            self.df["m_z_oa"], self.df["area_z"], self.df["height_z"]
                         ):
-                            result_repo.append(1)
-                            print(f"{idx}, pass 2")
+                            result_repo.append(True)
+
                         else:
-                            result_repo.append(0)
+                            result_repo.append(False)
                     else:
-                        result_repo.append(0)
+                        result_repo.append(True)
                 year_info = day.index.year[0]
-        self.df.to_csv("guestroom_vent.csv")
+
         dti = pd.date_range("2020-01-01", periods=365, freq="D")
         self.result = pd.Series(result_repo, index=dti)
-
-    def check_bool(self) -> bool:
-        if len(self.result[self.result == 1] > 0):
-            return True
-        else:
-            return False
-
-    def check_detail(self):
-        print("Verification results dict: ")
-        output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == 1]),
-            "Fail #": len(self.result[self.result == 0]),
-            "Verification Passed?": self.check_bool(),
-        }
-        print(output)
-        return output
 
     def day_plot_aio(self, plt_pts):
         # This method is overwritten because day plot can't be plotted for this verification item
