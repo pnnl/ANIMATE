@@ -775,43 +775,9 @@
                 }
             },
             "verification_class": "HeatRejectionFanVariableFlowControl"
-        },
-        {
-            "no": 24,
-            "run_simulation": true,
-            "simulation_IO": {
-                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_HotelSmall_STD2019_Atlanta_updated105.idf",
-                "idd": "../resources/Energy+V9_0_1.idd",
-                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY.epw",
-                "output": "eplusout.csv",
-                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
-            },
-            "expected_result": "pass",
-            "datapoints_source": {
-                "idf_output_variables": {
-                    "m_z_oa": {
-                        "subject": "GuestRoom101",
-                        "variable": "Zone Mechanical Ventilation Current Density Volume Flow Rate",
-                        "frequency": "TimeStep"
-                    },
-                    "O_sch": {
-                        "subject": "AlwaysOff",
-                        "variable": "Schedule Value",
-                        "frequency": "TimeStep"
-                    }
-                },
-                "parameters": {
-                    "area_z": 32.61,
-                    "height_z": 3.35,
-                    "m_z_oa_set": 0.013473572,
-                    "tol_occ": 0.05,
-                    "tol_m": 0.000673679
-                }
-            },
-            "verification_class": "GuestRoomControlVent"
-        },
+        }
 		{
-            "no": 25,
+            "no": 24,
             "run_simulation": true,
             "simulation_IO": {
                 "idf": "../test_cases/doe_prototype_cases/ASHRAE901_OfficeLarge_STD2016_Denver.idf",
@@ -823,12 +789,12 @@
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
-					"T_oa_dry": {
+                    "T_oa_dry": {
                         "subject": "Environment",
                         "variable": "Site Outdoor Air Drybulb Temperature",
                         "frequency": "TimeStep"
                     },
-					"T_z_measure": {
+                    "T_z_measure": {
                         "subject": "Core_mid",
                         "variable": "Zone Air Temperature",
                         "frequency": "TimeStep"
@@ -838,7 +804,7 @@
                         "variable": "Zone Thermostat Heating Setpoint Temperature",
                         "frequency": "TimeStep"
                     },
-					"T_z_coo_set": {
+                    "T_z_coo_set": {
                         "subject": "Core_mid",
                         "variable": "Zone Thermostat Cooling Setpoint Temperature",
                         "frequency": "TimeStep"
@@ -848,7 +814,7 @@
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
                     },
-					"occ": {
+                    "occ": {
                         "subject": "BLDG_OCC_SCH_wo_SB",
                         "variable": "Schedule Value",
                         "frequency": "TimeStep"
@@ -859,7 +825,7 @@
             "verification_class": "OptimumStart"
 		},
 		{
-            "no": 26,
+            "no": 25,
             "run_simulation": true,
             "simulation_IO": {
                 "idf": "../test_cases/doe_prototype_cases/ASHRAE901_HotelSmall_STD2019_Atlanta.idf",
@@ -876,7 +842,7 @@
                         "variable": "Zone Thermostat Heating Setpoint Temperature",
                         "frequency": "TimeStep"
                     },
-					"T_z_coo_set": {
+                    "T_z_coo_set": {
                         "subject": "GuestRoom104",
                         "variable": "Zone Thermostat Cooling Setpoint Temperature",
                         "frequency": "TimeStep"
@@ -897,7 +863,7 @@
             "verification_class": "GuestRoomControlTemp"
         },
         {
-            "no": 27,
+            "no": 26,
             "run_simulation": true,
             "simulation_IO": {
                 "idf": "../test_cases/doe_prototype_cases/ASHRAE901_HotelSmall_STD2019_Atlanta_updated105.idf",
