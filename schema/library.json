@@ -503,7 +503,7 @@
             "T_z_hea_set": "Zone Thermostat Heating Setpoint Temperature",
             "T_z_coo_set": "Zone Thermostat Cooling Setpoint Temperature",
             "s_AHU": "Status of HVAC operation",
-			"occ": "Occupant Schedule"
+            "occ": "Occupant Schedule"
         },
         "description_assertions": [
             "Check the correlation between length of time between occupied hours and HVAC system operation hours, zone air temperature, and heating/cooling setpoint temperatures"
@@ -520,9 +520,9 @@
         "description_datapoints": {
             "T_z_hea_set": "Zone Thermostat Heating Setpoint Temperature",
             "T_z_coo_set": "Zone Thermostat Cooling Setpoint Temperature",
-			"O_sch": "Occupant Schedule",
-			"T_z_hea_set_occ": "Zone Thermostat Occupied Heating Setpoint Temperature",
-			"T_z_coo_set_occ": "Zone Thermostat Occupied Cooling Setpoint Temperature",
+            "O_sch": "Occupant Schedule",
+            "T_z_hea_set_occ": "Zone Thermostat Occupied Heating Setpoint Temperature",
+            "T_z_coo_set_occ": "Zone Thermostat Occupied Cooling Setpoint Temperature",
             "tol_occ": "Tolerence for Occupant Schedule",
             "tol_temp": "Tolerance for Temperature"
         },
@@ -540,9 +540,9 @@
         ],
         "description_datapoints": {
             "m_z_oa": "Zone Mechanical Ventilation Standard Density Volume Flow Rate",
-			"m_z_oa_set": "Outdoor Air Flow per Zone Floor Area",
+            "m_z_oa_set": "Outdoor Air Flow per Zone Floor Area",
             "O_sch": "Occupant Schedule",
-			"area_z": "Area of the Zone",
+            "area_z": "Area of the Zone",
             "height_z": "Height of the Zone ",
             "tol_occ": "Tolerence for Occupant Schedule",
             "tol_m": "Tolerance for Outdoor Airflow"
