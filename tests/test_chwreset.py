@@ -11,8 +11,8 @@ class TestCHWReset(TestCase):
         # Initialize verification
         cpath = os.getcwd()
         items = assemble_verification_items(
-            cases_path=cpath + "./tests/test_chwreset.json",
-            lib_items_path=cpath + "./schema/library.json",
+            cases_path=cpath + "/tests/test_chwreset.json",
+            lib_items_path=cpath + "/schema/library.json",
         )
 
         # Run verification using a dataset with CHW reset
