@@ -5,3 +5,4 @@ pandas
 eppy
 fuzzywuzzy
 sklearn
+kneed
