@@ -1,0 +1,56 @@
+{
+  "cases": [
+    {
+      "no": "0",
+      "run_simulation": false,
+      "simulation_IO": {
+        "idf": "",
+        "idd": "",
+        "weather": "",
+        "output": "./resources/test_chwreset_reset.csv",
+        "ep_path": ""
+      },
+      "expected_result": "pass",
+      "verification_class": "CHWReset",
+      "datapoints_source": {
+        "dev_settings": {
+          "T_oa_db": "OAT [C]",
+          "T_chw": "CHWSP [C]",
+          "m_chw": "CHILLER_MASS_FLOW [kg/s]"
+        },
+        "parameters": {
+          "T_oa_max": 26.67,
+          "T_oa_min": 15.67,
+          "T_chw_max_st": 12.22,
+          "T_chw_min_st": 6.67
+        }
+      }
+    },
+    {
+      "no": "1",
+      "run_simulation": false,
+      "simulation_IO": {
+        "idf": "",
+        "idd": "",
+        "weather": "",
+        "output": "./resources/test_chwreset_noreset.csv",
+        "ep_path": ""
+      },
+      "expected_result": "pass",
+      "verification_class": "CHWReset",
+      "datapoints_source": {
+        "dev_settings": {
+          "T_oa_db": "OAT [C]",
+          "T_chw": "CHWSP [C]",
+          "m_chw": "CHILLER_MASS_FLOW [kg/s]"
+        },
+        "parameters": {
+          "T_oa_max": 26.67,
+          "T_oa_min": 15.67,
+          "T_chw_max_st": 12.22,
+          "T_chw_min_st": 6.67
+        }
+      }
+    }
+  ]
+}
