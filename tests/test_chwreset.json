@@ -7,7 +7,7 @@
         "idf": "",
         "idd": "",
         "weather": "",
-        "output": "/resources/test_chwreset_reset.csv",
+        "output": "resources/test_chwreset_reset.csv",
         "ep_path": ""
       },
       "expected_result": "pass",
