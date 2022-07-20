@@ -325,7 +325,7 @@
         "description_datapoints": {
             "p_set": "Static pressure setpoint",
             "d_VAV_x": "VAV Damper x Position (includes all VAV dampers served by the system under test",
-			"p_set_min": ": Minimum static pressure setpoint threshold",
+            "p_set_min": ": Minimum static pressure setpoint threshold",
             "tol": "Tolerance for VAV box damper position openings"
         },
         "description_assertions": [
@@ -443,12 +443,12 @@
         ],
         "description_datapoints": {
             "L_op": "Heating Coil Runtime Fraction",
-			"P_supp_ht": "Heating Coil Gas Rate",
+            "P_supp_ht": "Heating Coil Gas Rate",
             "C_t_mod": "Heating Coil Heating Rate",
             "C_ff_mod":  "Heating Capacity Function of Flow Fraction Curve",
             "L_defrost": "Defrost load on the heating coil",
-			"C_ref": "Heating Coil Reference Capacity",
-			"tol": "Tolerance for C_op and L_op comparison"
+            "C_ref": "Heating Coil Reference Capacity",
+            "tol": "Tolerance for C_op and L_op comparison"
         },
         "description_assertions": [
             "If C_ref * C_t_mod >= L_op and P_supp_ht == 0 then pass else fail"
@@ -520,7 +520,7 @@
         "description_datapoints": {
             "m_z_oa": "Zone mechanical ventilation volume flow rate",
             "O_sch": "Occupant schedule",
-			"area_z": "Zone area",
+            "area_z": "Zone area",
             "height_z": "Zone height",
             "m_z_oa_dsgn": "Zone mechanical ventilation volume design flow rate",
             "tol_occ": "Tolerence for occupant schedule",

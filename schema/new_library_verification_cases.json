@@ -803,7 +803,7 @@
                 "parameters": {
                     "area_z": 39.02,
                     "height_z": 3.05,
-					"m_z_oa_dsgn": 0.000395372,
+                    "m_z_oa_dsgn": 0.000395372,
                     "tol_occ": 0.05,
                     "tol_m": 0.0003
                 }
