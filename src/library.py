@@ -14,9 +14,7 @@ import seaborn as sns
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from scipy.stats import pearsonr
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
-from kneed import KneeLocator
+from sklearn.feature_selection import mutual_info_regression
 
 
 class IntegratedEconomizerControl(CheckLibBase):
@@ -948,15 +946,17 @@ class OptimumStart(RuleCheckBase):
                     )
             year_info = day.index.year[0]
 
+        t_length_array = np.array(t_length).reshape(-1, 1)
+
         if len(self.df["s_AHU"].unique()) == 1 and self.df["s_AHU"].unique() in [0, 1]:
             if self.df["s_AHU"].unique() == 0:
                 self.df["result"] = 0
                 self.msg = "NO optimum start"
             else:
                 if (
-                    pearsonr(t_length, T_oa_dry_repo)[0] > 0.5
-                    or pearsonr(t_length, T_diff_heating)[0] > 0.5
-                    or pearsonr(t_length, T_diff_cooling)[0] > 0.5
+                    mutual_info_regression(t_length_array, T_oa_dry_repo) > 0.5
+                    or mutual_info_regression(t_length_array, T_diff_heating) > 0.5
+                    or mutual_info_regression(t_length_array, T_diff_cooling) > 0.5
                 ):
                     self.df["result"] = 1
                     self.msg = "Optimum start is observed and confirmed"
@@ -969,9 +969,9 @@ class OptimumStart(RuleCheckBase):
                 self.msg = "NO optimum start"
             else:
                 if (
-                    pearsonr(t_length, T_oa_dry_repo)[0] > 0.5
-                    or pearsonr(t_length, T_diff_heating)[0] > 0.5
-                    or pearsonr(t_length, T_diff_cooling)[0] > 0.5
+                    mutual_info_regression(t_length_array, T_oa_dry_repo) > 0.5
+                    or mutual_info_regression(t_length_array, T_diff_heating) > 0.5
+                    or mutual_info_regression(t_length_array, T_diff_cooling) > 0.5
                 ):
                     self.df["result"] = 1
                     self.msg = "Optimum start is observed and confirmed"
@@ -993,7 +993,7 @@ class OptimumStart(RuleCheckBase):
             "Pass #": len(self.result[self.result == 1]),
             "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
-            "Optimum start type:": self.msg(),
+            "Optimum start type:": self.msg,
         }
 
         print("Verification results dict: ")
