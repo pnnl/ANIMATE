@@ -775,7 +775,7 @@
                 }
             },
             "verification_class": "HeatRejectionFanVariableFlowControl"
-        }
+        },
 		{
             "no": 24,
             "run_simulation": true,
