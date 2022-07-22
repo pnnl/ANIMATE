@@ -776,7 +776,7 @@
             },
             "verification_class": "HeatRejectionFanVariableFlowControl"
         },
-		{
+        {
             "no": 24,
             "run_simulation": true,
             "simulation_IO": {
@@ -823,8 +823,8 @@
                 "parameters": {}
             },
             "verification_class": "OptimumStart"
-		},
-		{
+        },
+        {
             "no": 25,
             "run_simulation": true,
             "simulation_IO": {

@@ -911,30 +911,29 @@ class OptimumStart(RuleCheckBase):
                 pass
             else:
                 df_s_AHU_diff = day[day["s_AHU"].diff() != 0.0]["s_AHU"]
-                if len(df_s_AHU_diff) > 1:
+                if (
+                    1.0 in df_s_AHU_diff.values
+                ):  # if 1.0 exists, this means AHU start operating
                     # unocc to occ
                     df_occ_diff = day[day["occ"].diff() != 0.0]["occ"]
 
                     if (
                         len(df_occ_diff) > 1
                     ):  # Since first value of .diff() is nan, this means when values don't change
-                        t_unocc_to_occ = df_occ_diff.index.tolist()[1]
+                        t_unocc_to_occ = df_occ_diff.index.tolist()[
+                            1
+                        ]  # select the timestamp when occ starts to enter the zone
                     else:
                         t_unocc_to_occ = day.index[0]
 
-                    t_s_AHU_off_to_on = df_s_AHU_diff.index.tolist()[1]
+                    t_s_AHU_off_to_on = df_s_AHU_diff.index.tolist()[
+                        1
+                    ]  # select the timestamp when AHU starts to operate
 
-                    if (
-                        pd.Timedelta(t_s_AHU_off_to_on - t_unocc_to_occ).seconds / 3600
-                        > 12
-                    ):
-                        t_length.append(
-                            pd.Timedelta(t_unocc_to_occ - t_s_AHU_off_to_on).seconds
-                        )
-                    else:
-                        t_length.append(
-                            pd.Timedelta(t_s_AHU_off_to_on - t_unocc_to_occ).seconds
-                        )
+                    t_length.append(
+                        pd.Timedelta(t_s_AHU_off_to_on - t_unocc_to_occ).delta
+                        / (3.6 * 10**12)
+                    )
 
                     T_oa_dry_repo.append(day.loc[t_s_AHU_off_to_on]["T_oa_dry"])
                     T_z_measure = day.loc[t_unocc_to_occ]["T_z_measure"]
@@ -942,36 +941,39 @@ class OptimumStart(RuleCheckBase):
                         T_z_measure - day.loc[t_unocc_to_occ]["T_z_hea_set"]
                     )
                     T_diff_cooling.append(
-                        abs(T_z_measure - day.loc[t_unocc_to_occ]["T_z_coo_set"])
+                        T_z_measure - day.loc[t_unocc_to_occ]["T_z_coo_set"]
                     )
             year_info = day.index.year[0]
 
         t_length_array = np.array(t_length).reshape(-1, 1)
 
-        if len(self.df["s_AHU"].unique()) == 1 and self.df["s_AHU"].unique() in [0, 1]:
-            if self.df["s_AHU"].unique() == 0:
-                self.df["result"] = 0
-                self.msg = "NO optimum start"
-            else:
-                if (
-                    mutual_info_regression(t_length_array, T_oa_dry_repo) > 0.5
-                    or mutual_info_regression(t_length_array, T_diff_heating) > 0.5
-                    or mutual_info_regression(t_length_array, T_diff_cooling) > 0.5
-                ):
-                    self.df["result"] = 1
-                    self.msg = "Optimum start is observed and confirmed"
-                else:
+        if len(self.df["s_AHU"].unique()) == 1:
+            if self.df["s_AHU"].unique() in [0, 1]:
+                if self.df["s_AHU"].unique() == 0:
                     self.df["result"] = 0
-                    self.msg = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
+                    self.msg = "NO optimum start"
+                else:
+                    if (
+                        mutual_info_regression(t_length_array, T_oa_dry_repo)[0] > 0.5
+                        or mutual_info_regression(t_length_array, T_diff_heating)[0]
+                        > 0.5
+                        or mutual_info_regression(t_length_array, T_diff_cooling)[0]
+                        > 0.5
+                    ):
+                        self.df["result"] = 1
+                        self.msg = "Optimum start is observed and confirmed"
+                    else:
+                        self.df["result"] = 0
+                        self.msg = "Optimum start is not correlated with outside temperature, zone temperature, etc. and may not work well"
         else:
             if len(set(t_length)) == 1:
                 self.df["result"] = 0
                 self.msg = "NO optimum start"
             else:
                 if (
-                    mutual_info_regression(t_length_array, T_oa_dry_repo) > 0.5
-                    or mutual_info_regression(t_length_array, T_diff_heating) > 0.5
-                    or mutual_info_regression(t_length_array, T_diff_cooling) > 0.5
+                    mutual_info_regression(t_length_array, T_oa_dry_repo)[0] > 0.5
+                    or mutual_info_regression(t_length_array, T_diff_heating)[0] > 0.5
+                    or mutual_info_regression(t_length_array, T_diff_cooling)[0] > 0.5
                 ):
                     self.df["result"] = 1
                     self.msg = "Optimum start is observed and confirmed"
@@ -1012,7 +1014,7 @@ class GuestRoomControlTemp(RuleCheckBase):
         "tol_temp",
     ]
 
-    def determine_30_min_vacancy(self, occ_df, time_interval, tol=0.0):
+    def check_30_min_vacancy(self, occ_df, time_interval, tol=0.0):
         if time_interval <= 30:  # when time interval is less or equal to 30 mins
             no_of_consecutive_time_steps = round(30 / time_interval)
         else:  # when time interval is greater than 30 mins
@@ -1038,7 +1040,7 @@ class GuestRoomControlTemp(RuleCheckBase):
         tol_occ = self.df["tol_occ"][0]
         tol_temp = self.df["tol_temp"][0]
         year_info = 2000
-        result_repo = []
+        result_repo = {}
         for idx, day in self.df.groupby(self.df.index.date):
             if (
                 day.index.month[0] == 2 and day.index.day[0] == 29
@@ -1049,39 +1051,38 @@ class GuestRoomControlTemp(RuleCheckBase):
             ):  # remove the Jan 1st of next year reason: the pandas date for loop iterates one more loop is hour is 24:00:00
                 pass
             else:
-                self.determine_30_min_vacancy(day["O_sch"], time_step)
                 if (day["O_sch"] > tol_occ).any():  # confirmed this room is rented out
                     if (
                         day["T_z_hea_set"] < T_z_hea_set_occ - 2.22 + tol_temp
                     ).any() or (
                         day["T_z_coo_set"] > T_z_coo_set_occ + 2.22 - tol_temp
                     ).any():
-                        result_repo.append(
-                            True
-                        )  # confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
+                        result_repo[
+                            idx
+                        ] = True  # confirm the HVAC setpoint control resets when guest room reset when occupants leave the room
                     else:
-                        result_repo.append(
-                            False
-                        )  # reset does not meet the standard or no reset was observed.
-
+                        result_repo[
+                            idx
+                        ] = False  # reset does not meet the standard or no reset was observed.
                 else:  # room is NOT rented out
-                    if self.determine_30_min_vacancy(day["O_sch"], time_step):
+                    if self.check_30_min_vacancy(day["O_sch"], time_step):
                         if (day["T_z_hea_set"] < 15.6 + tol_temp).any() and (
                             day["T_z_coo_set"] > 26.7 - tol_temp
                         ).any():
-                            result_repo.append(
-                                True
-                            )  # confirmed zone temperature setpoint reset during the unrented period
+                            result_repo[
+                                idx
+                            ] = True  # confirmed zone temperature setpoint reset during the unrented period
                         else:
-                            result_repo.append(
-                                False
-                            )  # zone temperature setpoint was not reset correctly
+
+                            result_repo[
+                                idx
+                            ] = False  # zone temperature setpoint was not reset correctly
                     else:
-                        result_repo.append(True)
+                        result_repo[idx] = True
                 year_info = day.index.year[0]
 
-        dti = pd.date_range("2020-01-01", periods=365, freq="D")
-        self.result = pd.Series(result_repo, index=dti)
+        result_repo = pd.DataFrame.from_dict(result_repo, orient="index")
+        self.result = result_repo.squeeze()
 
     def calculate_plot_day(self):
         return self.result, self.df
@@ -1140,7 +1141,7 @@ class GuestRoomControlVent(RuleCheckBase):
                 airflow_count += 1
         return True if all(airflow_sum_bool) else False
 
-    def determine_30_min_vacancy(self, occ_df, time_interval, tol=0.0):
+    def check_30_min_vacancy(self, occ_df, time_interval, tol=0.0):
         if time_interval <= 30:  # when time interval is less or equal to 30 mins
             no_of_consecutive_time_steps = round(30 / time_interval)
         else:  # when time interval is greater than 30 mins
@@ -1177,11 +1178,11 @@ class GuestRoomControlVent(RuleCheckBase):
                 if (
                     day["O_sch"] <= tol_occ
                 ).all():  # confirmed this room is NOT rented out
-                    if self.determine_30_min_vacancy(day["O_sch"], time_step):
+                    if self.check_30_min_vacancy(day["O_sch"], time_step):
                         if (day["m_z_oa"] == 0).any():
-                            result_repo.append(True)  # pass
+                            result_repo[idx] = True
                         else:
-                            result_repo.append(False)  # fail
+                            result_repo[idx] = False
                 else:  # room is rented out
                     if (day["m_z_oa"] > 0).all():
                         if self.check_airflow_equals_airflow_set_for_hour(
@@ -1189,16 +1190,16 @@ class GuestRoomControlVent(RuleCheckBase):
                         ) or self.check_sum_airflow_equals_volume_per_hour(
                             self.df["m_z_oa"], self.df["area_z"], self.df["height_z"]
                         ):
-                            result_repo.append(True)
+                            result_repo[idx] = True
 
                         else:
-                            result_repo.append(False)
+                            result_repo[idx] = False
                     else:
-                        result_repo.append(True)
+                        result_repo[idx] = True
                 year_info = day.index.year[0]
 
-        dti = pd.date_range("2020-01-01", periods=365, freq="D")
-        self.result = pd.Series(result_repo, index=dti)
+        result_repo = pd.DataFrame.from_dict(result_repo, orient="index")
+        self.result = result_repo.squeeze()
 
     def day_plot_aio(self, plt_pts):
         # This method is overwritten because day plot can't be plotted for this verification item
