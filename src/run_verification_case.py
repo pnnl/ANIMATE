@@ -38,6 +38,9 @@ def run_verification_case(item_dict, run_path_postfix=""):
         if ("parameters" in item.item["datapoints_source"])
         else None
     )
+    cls.points = list(
+        (item.item["datapoints_source"]["idf_output_variables"]).keys()
+    ) + list((item.item["datapoints_source"]["parameters"]).keys())
     verification_obj = cls(df, parameters, f"{run_path}")
     md_content = verification_obj.add_md(None, "../results/imgs", "./imgs", item_dict)
     return {int(item_dict["no"]): md_content}

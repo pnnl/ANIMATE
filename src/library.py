@@ -833,30 +833,22 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
         pass
 
 
-class DemandControlVentilation(CheckLibBase):
-    points = [
-        "v_oa",
-        "s_ahu",
-        "s_eco",
-        "no_of_occ_per1",
-        "no_of_occ_per2",
-        "no_of_occ_per3",
-        "no_of_occ_per4",
-        "no_of_occ_core",
-    ]
-
+class DemandControlVentilation(RuleCheckBase):
     def verify(self):
         df_filtered = self.df.loc[
             (self.df["s_eco"] == 0.0) & (self.df["s_ahu"] != 0.0)
         ]  # filter out data when economizer isn't enabled
 
-        df_filtered["no_of_occ"] = (
-            df_filtered["no_of_occ_per1"]
-            + df_filtered["no_of_occ_per2"]
-            + df_filtered["no_of_occ_per3"]
-            + df_filtered["no_of_occ_per4"]
-            + df_filtered["no_of_occ_core"]
-        )
+        df_filtered["no_of_occ"] = 0.0
+        for var_name in self.points:
+            if var_name not in [
+                "v_oa",
+                "s_ahu",
+                "s_eco",
+                "tol",
+            ]:  # tol is added just in case it is used by other users
+                df_filtered["no_of_occ"] += df_filtered[var_name]
+
         # Pearson’s correlation
         corr, p_value = pearsonr(df_filtered["no_of_occ"], df_filtered["v_oa"])
 
