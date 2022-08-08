@@ -514,19 +514,14 @@ class AutomaticOADamperControl(RuleCheckBase):
 
 
 class FanStaticPressureResetControl(RuleCheckBase):
-    points = [
-        "p_set",
-        "p_set_min",
-        "d_VAV_1",
-        "d_VAV_2",
-        "d_VAV_3",
-        "d_VAV_4",
-        "d_VAV_5",
-        "tol",
-    ]
+    points = ["p_set", "p_set_min", "d_VAV*", "tol"]
 
     def verify(self):
-        d_vav_points = ["d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
+        d_vav_points = [
+            vav_point
+            for vav_point in self.entire_point_list
+            if vav_point not in self.points_list
+        ]
         d_vav_df = self.df[d_vav_points]
         self.df["result"] = True
 
@@ -834,26 +829,30 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
 
 
 class DemandControlVentilation(RuleCheckBase):
+    points = [
+        "v_oa",
+        "s_ahu",
+        "s_eco",
+        "no_of_occ*",
+    ]  # * indicates it's a variable that can have a flexible number of data points
+
     def verify(self):
         df_filtered = self.df.loc[
             (self.df["s_eco"] == 0.0) & (self.df["s_ahu"] != 0.0)
         ]  # filter out data when economizer isn't enabled
 
-        df_filtered["no_of_occ"] = 0.0
+        df_filtered["sum_no_of_occ"] = 0.0
         for var_name in self.points:
-            if var_name not in [
-                "v_oa",
-                "s_ahu",
-                "s_eco",
-                "tol",
-            ]:  # tol is added just in case it is used by other users
-                df_filtered["no_of_occ"] += df_filtered[var_name]
+            if (
+                "*" not in var_name
+            ):  # tol is added just in case it is used by other users
+                df_filtered["sum_no_of_occ"] += df_filtered[var_name]
 
         # Pearson’s correlation
-        corr, p_value = pearsonr(df_filtered["no_of_occ"], df_filtered["v_oa"])
+        corr, p_value = pearsonr(df_filtered["sum_no_of_occ"], df_filtered["v_oa"])
 
         if (
-            len(df_filtered["no_of_occ"].unique()) == 1
+            len(df_filtered["sum_no_of_occ"].unique()) == 1
             or len(df_filtered["v_oa"].unique()) == 1
         ):
             self.df["DCV_type"] = 0  # NO DCV is observed

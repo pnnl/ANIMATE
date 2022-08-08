@@ -29,17 +29,45 @@ class CheckLibBase(ABC):
     points = None
     result = pd.DataFrame()
 
-    def __init__(self, df: pd.DataFrame, params=None, results_folder=None):
+    def __init__(
+        self,
+        df: pd.DataFrame,
+        params=None,
+        results_folder=None,
+        flexible_datapoint=False,
+    ):
         full_df = df.copy(deep=True)
         if params is not None:
             for k, v in params.items():
                 full_df[k] = v
 
         col_list = full_df.columns.values.tolist()
-        if not set(self.points_list).issubset(set(col_list)):
-            print(f"Dataset is not sufficient for running {self.__class__.__name__}")
-            print(set(col_list))
-        self.df = full_df[self.points_list]
+        if flexible_datapoint:
+            sub_points_list = []
+            for point_name in self.points_list:
+                if "*" not in point_name:
+                    sub_points_list.append(point_name)
+
+            if not set(sub_points_list).issubset(
+                set(col_list)
+            ):  # Check if data points other than "flexible data points" exist
+                print(
+                    f"Dataset other than flexible data points is not sufficient for running {self.__class__.__name__}"
+                )
+                print(set(col_list))
+
+            self.entire_point_list = [
+                point_name for point_name in col_list if point_name != "Date/Time"
+            ]
+            self.df = full_df[self.entire_point_list]
+
+        else:
+            if not set(self.points_list).issubset(set(col_list)):
+                print(
+                    f"Dataset is not sufficient for running {self.__class__.__name__}"
+                )
+                print(set(col_list))
+            self.df = full_df[self.points_list]
         self.df.index = pd.to_datetime(self.df.index)
         self.df = self.df.sort_index()
         self.results_folder = results_folder
