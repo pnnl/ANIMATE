@@ -6,9 +6,8 @@ from tqdm import tqdm
 
 def run_verification_case(item_dict, run_path_postfix=""):
     item = build_an_item(item_dict)
-    need_injection = True
-    run_sim = True
-    if need_injection and run_sim:
+    run_sim = item.item["run_simulation"]
+    if run_sim:
         original_idf_path = item.item["simulation_IO"]["idf"].strip()
         idd_path = item.item["simulation_IO"]["idd"].strip()
         if ".idf" in original_idf_path.lower():
@@ -18,19 +17,20 @@ def run_verification_case(item_dict, run_path_postfix=""):
         else:
             run_path = original_idf_path
 
-    if need_injection:
         run_path = f"{run_path}{run_path_postfix}_injected_BatchVerification"
 
-    if run_sim:
         df = item.read_points_values(
             csv_path=f"{run_path}/eplusout.csv",
             idf_path=f"{run_path}/in.idf",
             idd_path=idd_path,
         )
     else:
+        run_path = ""
+
         df = item.read_points_values(
             csv_path=f"../resources/{item.item['simulation_IO']['output']}"
         )
+
     verification_class = item.item["verification_class"]
     cls = globals()[verification_class]
     parameters = (

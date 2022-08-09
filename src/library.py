@@ -789,6 +789,10 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
         self.df["normalized_m_ct_fan"] -= 1  # minus 1 to transform the data
         self.df["normalized_P_ct_fan"] -= 1
 
+        self.df = self.df.loc[
+            self.df["normalized_m_ct_fan"] > -0.5
+        ]  # filter out airflow points > -0.5, since the code requirement is at this point
+
         # linear regression
         reg = LinearRegression(fit_intercept=False).fit(
             self.df["normalized_m_ct_fan"].values.reshape(-1, 1),
