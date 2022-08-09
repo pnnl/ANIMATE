@@ -833,7 +833,7 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
         pass
 
 
-class DemandControlVentilation(CheckLibBase):
+class DemandControlVentilation(RuleCheckBase):
     points = [
         "v_oa",
         "s_ahu",
