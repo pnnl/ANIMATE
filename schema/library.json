@@ -305,7 +305,7 @@
             "Section 6.4.3.4.2 in 90.1-2016"
         ],
         "description_datapoints": {
-            "no_of_occ": "Number of occupants",
+            "o": "Occupant Schedule",
             "m_oa": "Air terminal outdoor air volume flow rate",
             "eco_onoff": "Air System Outdoor Air Economizer Status",
             "tol": "Tolerance for the num of occupants"
@@ -325,8 +325,8 @@
         "description_datapoints": {
             "p_set": "Static pressure setpoint",
             "d_VAV_x": "VAV Damper x Position (includes all VAV dampers served by the system under test",
-            "tol": "Tolerance for VAV box damper position openings",
-            "p_set_min": ": Minimum static pressure setpoint threshold"
+            "p_set_min": ": Minimum static pressure setpoint threshold",
+            "tol": "Tolerance for VAV box damper position openings"
         },
         "description_assertions": [
             "if d_VAV(n) (n=1,2,...,N) < 0.9 and p_set(t) > p_set(t-1), then fail else pass"
@@ -392,9 +392,9 @@
             "Section 6.4.3.4.4 in 90.1-2016"
         ],
         "description_datapoints": {
-            "no_of_occ": "People Occupant Count",
-            "Q_load": "Zone Predicted Sensible Load to Setpoint Heat Transfer Rate",
-            "P_fan": "Fan Electric Power"
+            "no_of_occ": "People occupant count",
+            "Q_load": "Zone predicted sensible load to setpoint heat transfer rate",
+            "P_fan": "Fan electric power"
         },
         "description_assertions": [
             "if Q_load = 0 and no_of_occ = 0 and P_fan != 0 then fail else pass"
@@ -427,7 +427,7 @@
             null
         ],
         "description_datapoints": {
-            "hvac_set": "HVAC Operation Schedule"
+            "hvac_set": "HVAC operation schedule"
         },
         "description_assertions": [
             "if minimum start_time != maximum start_time and minimum end_time != maximum end_time then pass else fail"
@@ -442,12 +442,13 @@
             "Section 6.4.3.5 Heat Pump Auxiliary Heat Control and 6.3.2.h Criteria in 90.1-2016"
         ],
         "description_datapoints": {
-            "C_ref": "Heating Coil Reference Capacity",
             "L_op": "Heating Coil Runtime Fraction",
-            "C_t_mod": "Heating Coil Heating Rate",
             "P_supp_ht": "Heating Coil Gas Rate",
+            "C_t_mod": "Heating Coil Heating Rate",
             "C_ff_mod":  "Heating Capacity Function of Flow Fraction Curve",
-            "L_defrost": "Defrost load on the heating coil"
+            "L_defrost": "Defrost load on the heating coil",
+            "C_ref": "Heating Coil Reference Capacity",
+            "tol": "Tolerance for C_op and L_op comparison"
         },
         "description_assertions": [
             "If C_ref * C_t_mod >= L_op and P_supp_ht == 0 then pass else fail"
@@ -517,15 +518,13 @@
             "Section 6.4.3.3.5.2 in 90.1-2016"
         ],
         "description_datapoints": {
-            "damper_sch": "Damper Schdule",
-            "m_z_oa_fraction": "Air System Outdoor Air Flow Fraction",
+            "m_z_oa": "Zone mechanical ventilation volume flow rate",
             "O_sch": "Occupant schedule",
-            "m_z_oa_heat_design": "Design Heating Air Flow Rate",
-            "m_z_oa_cool_design": "Design Cooling Air Flow Rate",
-            "volume": "Zone Volume",
-            "v_outdoor_per_zone": "Outdoor Air Flow per Zone Floor Area",
-            "tol_occ": "Tolerence for occupant Schedule",
-            "tol_m": "Tolerance for Outdoor Airflow"
+            "area_z": "Zone area",
+            "height_z": "Zone height",
+            "m_z_oa_dsgn": "Zone mechanical ventilation volume design flow rate",
+            "tol_occ": "Tolerence for occupant schedule",
+            "tol_m": "Tolerance for Outdoor airflow"
         },
         "description_assertions": [
             "Check the two different airflow control logics when the room is/isn't rented out"

@@ -833,7 +833,7 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
         pass
 
 
-class DemandControlVentilation(CheckLibBase):
+class DemandControlVentilation(RuleCheckBase):
     points = [
         "v_oa",
         "s_ahu",
@@ -980,7 +980,7 @@ class GuestRoomControlVent(CheckLibBase):
         "O_sch",
         "area_z",
         "height_z",
-        "v_outdoor_per_zone",
+        "m_z_oa_dsgn",
         "tol_occ",
         "tol_m",
     ]
@@ -989,7 +989,7 @@ class GuestRoomControlVent(CheckLibBase):
         tol_occ = self.df["tol_occ"][0]
         tol_m = self.df["tol_m"][0]
         zone_volume = self.df["area_z"][0] * self.df["height_z"][0]
-        m_z_oa_set = self.df["v_outdoor_per_zone"][0] * self.df["area_z"][0]
+        m_z_oa_set = self.df["m_z_oa_dsgn"][0] * self.df["area_z"][0]
 
         year_info = 2000
         result_repo = []
