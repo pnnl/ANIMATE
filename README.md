@@ -8,17 +8,17 @@ Building energy modeling (BEM) has been widely used to quantify the energy impac
 
 # What is _ANIMATE_?
 
-ANIMATE is a framework that conducts automated output-based verification of building operations requirements for Building Energy Modeling. The figure below shows an overview of ANIMATE and how it can be used. ANIMATE was born out of the need of automating the verification of time-series data describing the behavior of building components, especially the control performance.
+ANIMATE is a framework that conducts automated output-based verification of building operations requirements. The figure below shows an overview of ANIMATE and how it can be used. ANIMATE was born out of the need of automating the verification of time-series data describing the behavior of building components, especially the control performance.
 
 ANIMATE is designed around three key features: building control knowledge integration, analytics, and automation. The framework includes three major components: a control performance verification algorithm library (rule-based, procedure-based, and AI-based), an automated preparation process and verification case generation, a standardized performance evaluation and reporting process.
 
-While the framework has been designed for BEM, it can be used for other applications such as the performance verification of real building.
+While the development of ANIMATE was motivated by use cases with building energy modeling (BEM), it can be used for other applications such as the performance verification of real buildings.
 
 ![Overview of ANIMATE](animate_overview.png)
 
 # Current Version of _ANIMATE_?
 
-The current version of ANIMATE includes the framework implementation, a preliminary development and implementation of the verification library (based on ASHRAE 90.1-2016 and GPC36 requirement with a focus on control), and the test cases of verification algorithms using prototype building models. The current list of implemented verification algorithms includes supply air temperature control, economizer high limit, integrated economizer control, zone temperature control (dead band), zone temperature control (setback), hot water temperature reset, and chilled water temperature reset.
+The current version of ANIMATE includes the framework implementation, a preliminary development and implementation of the verification library (based on ASHRAE 90.1-2016 and GPC36 requirement with a focus on control), and the test cases of verification algorithms using prototype building models. The current list of implemented verification algorithms includes supply air temperature control, economizer high limit, integrated economizer control, zone temperature control (dead band), zone temperature control (setback), hot water temperature reset, chilled water temperature reset, etc.
 
 See the Publications section for more information and example of uses of the framework.
 
