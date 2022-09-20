@@ -168,6 +168,7 @@ class CheckLibBase(ABC):
             line_label = line.get_label()
             if pt_nan[line_label]:
                 line.set_marker(".")
+        ax2.ticklabel_format(useOffset=False, axis="y")
 
         plt.title(f"All samples data points plot - {self.__class__.__name__}")
         plt.tight_layout()
@@ -197,6 +198,7 @@ class CheckLibBase(ABC):
                 self.df[pt].plot(ax=axx)
             plt.title(f"All samples - {pt} - {self.__class__.__name__}")
             i += 1
+            axx.ticklabel_format(useOffset=False, axis="y")
         plt.tight_layout()
         plt.savefig(f"{self.results_folder}/All_plot_obo.png")
         print()
@@ -268,6 +270,7 @@ class CheckLibBase(ABC):
             line_label = line.get_label()
             if pt_nan[line_label]:
                 line.set_marker(".")
+        ax2.ticklabel_format(useOffset=False, axis="y")
 
         plt.title(f"Example day data points plot - {self.__class__.__name__}")
         plt.tight_layout()
@@ -300,6 +303,7 @@ class CheckLibBase(ABC):
             plt.title(f"Example day - {pt} - {self.__class__.__name__}")
             i += 1
             axx.ticklabel_format(useOffset=False, axis='y')
+            axx.ticklabel_format(useOffset=False, axis="y")
         plt.tight_layout()
         plt.savefig(f"{self.results_folder}/Day_plot_obo.png")
         print()
