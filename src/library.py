@@ -422,6 +422,17 @@ class NightCycleOperation(CheckLibBase):
         return output
 
 
+class DualMaxDamperControl(RuleCheckBase):
+    points = ["MinDP", "MaxDP", "DAMPER_POS", "REHEAT_COIL_OUTPUT"]
+
+    def verify(self):
+        self.result = (
+            (self.df["REHEAT_COIL_OUTPUT"] > 0)
+            & (self.df["MaxDP"] >= self.df["DAMPER_POS"])
+            & (self.df["DAMPER_POS"] > self.df["MinDP"])
+        ) | (self.df["REHEAT_COIL_OUTPUT"] == 0)
+
+
 class ERVTemperatureControl(CheckLibBase):
     points = [
         "MIN_OA_FLOW",

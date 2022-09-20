@@ -532,5 +532,23 @@
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
+    },
+    "DualMaxDamperControl": {
+        "library_item_id": 30,
+        "description_brief": "TSPR tool software development",
+        "description_index": [
+            null
+        ],
+        "description_datapoints": {
+            "MinDP": "Minimum damper position during reheat operation",
+            "MaxHTG": "Maximum damper position during reheat operation",
+            "DAMPER_POS": "Actual damper position",
+            "REHEAT_COIL_OUTPUT": "Reheat coil output"
+        },
+        "description_assertions": [
+            "Check that during reheat operation REHEAT_COIL_OUTPUT > 0 the damper position is MaxHTG >= DAMPER_POS >= MinDP"
+        ],
+        "description_verification_type": "rule-based",
+        "assertions_type": "pass"
     }
 }
