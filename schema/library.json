@@ -548,6 +548,7 @@
         },
         "description_assertions": [
             "Check the two different airflow control logics when the room is/isn't rented out"
+        ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
     },
