@@ -551,7 +551,6 @@
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
     },
-    },
     "DualMaxDamperControl": {
         "library_item_id": 30,
         "description_brief": "TSPR tool software development",
