@@ -299,6 +299,7 @@ class CheckLibBase(ABC):
                 plotdaydf[pt].plot(ax=axx)
             plt.title(f"Example day - {pt} - {self.__class__.__name__}")
             i += 1
+            axx.ticklabel_format(useOffset=False, axis='y')
         plt.tight_layout()
         plt.savefig(f"{self.results_folder}/Day_plot_obo.png")
         print()
