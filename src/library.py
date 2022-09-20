@@ -234,7 +234,7 @@ class CHWReset(RuleCheckBase):
         )
         sns.scatterplot(x="T_oa_db", y="T_chw", data=self.df)
         plt.title("Scatter plot between T_oa_db and T_chw")
-        plt.show()
+        plt.show(block=False)
 
         super().plot(plot_option, plt_pts)
 

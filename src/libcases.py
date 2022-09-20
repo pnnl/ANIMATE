@@ -76,10 +76,9 @@ def run_libcase(item_dict, plot_option="all-compact"):
         ).transform()
     else:
         df = DateTimeEP(
-            item.read_points_values(
-                csv_path=f"../resources/{item.item['simulation_IO']['output']}"
-            )
+            item.read_points_values(csv_path=f"{item.item['simulation_IO']['output']}")
         ).transform()
+        run_path = ""
     verification_class = item.item["verification_class"]
     cls = globals()[verification_class]
     parameters = (
