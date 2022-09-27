@@ -320,15 +320,73 @@ class RuleCheckBase(CheckLibBase):
             return True
 
     def check_detail(self) -> Dict:
+        failure_ratio = round(
+            len(self.result[self.result == False])
+            / (
+                len(self.result[self.result == True])
+                + len(self.result[self.result == False])
+            ),
+            3,
+        )
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
             "Fail #": len(self.result[self.result == False]),
+            "Untest #": len(self.result[self.result == "untest"]),
             "Verification Passed?": self.check_bool(),
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": float(
+                round(failure_ratio * failure_severity, 3)
+            )
+            if failure_severity != "N/A"
+            else "N/A",
         }
+        for i in range(self.no_of_severity_condition):
+            if i == 0:
+                try:
+                    output["Max Actual Control1"] = round(
+                        self.actual_control_value1.max(), 3
+                    )
+                except AttributeError:
+                    output["Max Actual Control1"] = round(self.actual_control_value1, 3)
+                try:
+                    output["Max Control Setpoint1"] = round(
+                        self.control_setpoint1.max(), 3
+                    )
+                except AttributeError:
+                    output["Max Control Setpoint1"] = round(self.control_setpoint1, 3)
+            elif i == 1:
+                try:
+                    output["Max Actual Control2"] = round(
+                        self.actual_control_value2.max(), 3
+                    )
+                except AttributeError:
+                    output["Max Actual Control2"] = round(self.actual_control_value2, 3)
+                try:
+                    output["Max Control Setpoint2"] = round(
+                        self.control_setpoint2.max(), 3
+                    )
+                except AttributeError:
+                    output["Max Control Setpoint2"] = round(self.control_setpoint2, 3)
+            elif i == 2:
+                try:
+                    output["Max Actual Control3"] = round(
+                        self.actual_control_value3.max(), 3
+                    )
+                except AttributeError:
+                    output["Max Actual Control3"] = round(self.actual_control_value3, 3)
+                try:
+                    output["Max Control Setpoint3"] = round(
+                        self.control_setpoint3.max(), 3
+                    )
+                except AttributeError:
+                    output["Max Control Setpoint3"] = round(self.control_setpoint3, 3)
 
-        print("Verification results dict: ")
-        print(output)
+        print(f"Verification results dict:\n{output}")
         return output
 
 
