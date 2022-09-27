@@ -14,9 +14,7 @@ import seaborn as sns
 import numpy as np
 from sklearn.linear_model import LinearRegression
 from scipy.stats import pearsonr
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
-from kneed import KneeLocator
+from constant_value_utils import FAILURE_SEVERITY_DENOMINATOR, PRIORITY_RANKING
 
 
 class IntegratedEconomizerControl(CheckLibBase):
@@ -33,49 +31,88 @@ class IntegratedEconomizerControl(CheckLibBase):
         else:
             return False
 
-    def check_detail(self):
-        print("Verification results dict: ")
+    def check_detail(self) -> Dict:
+        failure_ratio = round(
+            len(self.result[self.result == False])
+            / (
+                len(self.result[self.result == True])
+                + len(self.result[self.result == False])
+            ),
+            3,
+        )
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
             "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": round(failure_ratio * failure_severity, 3),
+            "Max Actual Control": round(self.actual_control_value.max(), 3),
+            "Max Control Setpoint": round(self.control_setpoint.max(), 3),
         }
-        print(output)
+
+        print(f"Verification results dict:\n{output}")
         return output
+
+    def failure_severity(self) -> float:
+        self.actual_control_value = self.df["oa_flow"]
+        self.control_setpoint = self.df["oa_min_flow"]
+
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value - self.control_setpoint)
+                    / FAILURE_SEVERITY_DENOMINATOR.VOLUME_FLOW.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> str:
+        return "N/A"
 
 
 class SupplyAirTempReset(RuleCheckBase):
     points = ["T_sa_set", "T_z_coo"]
 
     def verify(self):
+        self.t_sa_set_max = max(self.df["T_sa_set"])
+        self.t_sa_set_min = min(self.df["T_sa_set"])
 
-        t_sa_set_max = max(self.df["T_sa_set"])
-        t_sa_set_min = min(self.df["T_sa_set"])
-
-        self.result = (t_sa_set_max - t_sa_set_min) >= (
-            self.df["T_z_coo"] - t_sa_set_min
+        self.result = (self.t_sa_set_max - self.t_sa_set_min) >= (
+            self.df["T_z_coo"] - self.t_sa_set_min
         ) * 0.25 * 0.99  # 0.99 being the numeric threshold
-
-    def plot(self, plot_option, plt_pts=None):
-        print(
-            "Specific plot method implemented, additional distribution plot is being added!"
+        self.result2 = (
+            (self.t_sa_set_max - self.t_sa_set_min)
+            / (self.df["T_z_coo"] - self.t_sa_set_min)
+            * 0.25
+            * 0.99
         )
-        sns.distplot(self.df["T_sa_set"])
-        plt.title("All samples distribution of T_sa_set")
-        plt.savefig(f"{self.results_folder}/All_samples_distribution_of_T_sa_set.png")
 
-        super().plot(plot_option, plt_pts)
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 1
 
-    def calculate_plot_day(self):
-        """over write method to select day for day plot"""
-        for one_day in self.daterange(date(2000, 1, 1), date(2001, 1, 1)):
-            daystr = f"{str(one_day.year)}-{str(one_day.month)}-{str(one_day.day)}"
-            daydf = self.df[daystr]
-            day = self.result[daystr]
-            if daydf["T_sa_set"].max() - daydf["T_sa_set"].min() > 0:
-                return day, daydf
-            return day, daydf
+        self.actual_control_value1 = self.t_sa_set_max - self.t_sa_set_min
+        self.control_setpoint1 = (self.df["T_z_coo"] - self.t_sa_set_min) * 0.25
+
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value1 - self.control_setpoint1)
+                    / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.SupplyAirTempReset.value
 
 
 class EconomizerHighLimitA(RuleCheckBase):
@@ -87,6 +124,34 @@ class EconomizerHighLimitA(RuleCheckBase):
             & (self.df["oa_db"] > self.df["oa_threshold"])
         )
 
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 2
+
+        self.actual_control_value1 = self.df["oa_flow"]
+        self.control_setpoint1 = self.df["oa_min_flow"]
+        failure_severity1 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value1 - self.control_setpoint1)
+                / FAILURE_SEVERITY_DENOMINATOR.VOLUME_FLOW.value
+            ).mean()
+        )
+
+        self.actual_control_value2 = self.df["oa_db"]
+        self.control_setpoint2 = self.df["oa_threshold"]
+        failure_severity2 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value2 - self.control_setpoint2)
+                / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+            ).mean()
+        )
+
+        return round(max(failure_severity1, failure_severity2), 3)
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.EconomizerHighLimit.value
+
 
 class EconomizerHighLimitB(RuleCheckBase):
     points = ["oa_flow", "oa_db", "ret_a_temp", "oa_min_flow"]
@@ -96,6 +161,34 @@ class EconomizerHighLimitB(RuleCheckBase):
             (self.df["oa_flow"] > self.df["oa_min_flow"])
             & (self.df["ret_a_temp"] < self.df["oa_db"])
         )
+
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 2
+
+        self.actual_control_value1 = self.df["oa_flow"]
+        self.control_setpoint1 = self.df["oa_min_flow"]
+        failure_severity1 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value1 - self.control_setpoint1)
+                / FAILURE_SEVERITY_DENOMINATOR.VOLUME_FLOW.value
+            )
+        ).mean()
+
+        self.actual_control_value2 = self.df["ret_a_temp"]
+        self.control_setpoint2 = self.df["oa_db"]
+        failure_severity2 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value2 - self.control_setpoint2)
+                / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+            )
+        ).mean()
+
+        return round(max(failure_severity1, failure_severity2), 3)
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.EconomizerHighLimit.value
 
 
 class EconomizerHighLimitC(RuleCheckBase):
@@ -117,6 +210,44 @@ class EconomizerHighLimitC(RuleCheckBase):
             )
         )
 
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 3
+
+        self.actual_control_value1 = self.df["oa_flow"]
+        self.control_setpoint1 = self.df["oa_min_flow"]
+        failure_severity1 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value1 - self.control_setpoint1)
+                / FAILURE_SEVERITY_DENOMINATOR.VOLUME_FLOW.value
+            )
+        ).mean()
+
+        self.actual_control_value2 = self.df["oa_db"]
+        self.control_setpoint2 = self.df["oa_threshold"]
+        failure_severity2 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value2 - self.control_setpoint2)
+                / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+            )
+        ).mean()
+
+        self.actual_control_value3 = self.df["oa_enth"]
+        self.control_setpoint3 = self.df["oa_enth_threshold"]
+        failure_severity3 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value3 - self.control_setpoint3)
+                / FAILURE_SEVERITY_DENOMINATOR.NONE_DIMENSION.value
+            )
+        ).mean()
+
+        return round(max(failure_severity1, failure_severity2, failure_severity3), 3)
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.EconomizerHighLimit.value
+
 
 class EconomizerHighLimitD(RuleCheckBase):
     points = [
@@ -137,12 +268,72 @@ class EconomizerHighLimitD(RuleCheckBase):
             )
         )
 
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 2
+
+        self.actual_control_value1 = self.df["oa_flow"]
+        self.control_setpoint1 = self.df["oa_min_flow"]
+        failure_severity1 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value1 - self.control_setpoint1)
+                / FAILURE_SEVERITY_DENOMINATOR.VOLUME_FLOW.value
+            )
+        ).mean()
+
+        self.actual_control_value2 = self.df["ret_a_enth"]
+        self.control_setpoint2 = self.df["oa_enth"]
+        failure_severity2 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value2 - self.control_setpoint2)
+                / FAILURE_SEVERITY_DENOMINATOR.ENTHALPY.value
+            )
+        ).mean()
+
+        actual_control_value3 = self.df["oa_db"]
+        control_setpoint3 = self.df["oa_threshold"]
+        failure_severity3 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(actual_control_value3 - control_setpoint3)
+                / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+            )
+        ).mean()
+
+        return round(
+            max(failure_severity1, min(failure_severity2, failure_severity3)), 3
+        )
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.EconomizerHighLimit.value
+
 
 class ZoneTempControl(RuleCheckBase):
     points = ["T_z_set_cool", "T_z_set_heat"]
 
     def verify(self):
         self.result = (self.df["T_z_set_cool"] - self.df["T_z_set_heat"]) > 2.77
+
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 1
+
+        self.actual_control_value1 = self.df["T_z_set_cool"] - self.df["T_z_set_heat"]
+        self.control_setpoint1 = 2.77
+
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value1 - self.control_setpoint1)
+                    / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.ZoneTempControl.value
 
 
 class HWReset(RuleCheckBase):
@@ -192,6 +383,30 @@ class HWReset(RuleCheckBase):
 
         super().plot(plot_option, plt_pts)
 
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 2
+
+        self.actual_control_value1 = self.df["T_hw"]
+        self.control_setpoint1 = self.df["T_hw_max_st"]
+        failure_severity1 = (
+            self.result.replace({True: 0, False: 1})
+            * abs(self.actual_control_value1 - self.control_setpoint1)
+            / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+        ).mean()
+
+        self.actual_control_value2 = self.df["T_hw"]
+        self.control_setpoint2 = self.df["T_hw_min_st"]
+        failure_severity2 = (
+            self.result.replace({True: 0, False: 1})
+            * abs(self.actual_control_value2 - self.control_setpoint2)
+            / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+        ).mean()
+
+        return round(max(failure_severity1, failure_severity2), 3)
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.HWReset.value
+
 
 class CHWReset(RuleCheckBase):
     points = [
@@ -238,6 +453,30 @@ class CHWReset(RuleCheckBase):
 
         super().plot(plot_option, plt_pts)
 
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 2
+
+        self.actual_control_value1 = self.df["T_chw"]
+        self.control_setpoint1 = self.df["T_chw_max_st"]
+        failure_severity1 = (
+            self.result.replace({True: 0, False: 1})
+            * abs(self.actual_control_value1 - self.control_setpoint1)
+            / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+        ).mean()
+
+        self.actual_control_value2 = self.df["T_chw"]
+        self.control_setpoint2 = self.df["T_chw_min_st"]
+        failure_severity2 = (
+            self.result.replace({True: 0, False: 1})
+            * abs(self.actual_control_value2 - self.control_setpoint2)
+            / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+        ).mean()
+
+        return round(max(failure_severity1, failure_severity2), 3)
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.CHWReset.value
+
 
 class ZoneHeatSetpointMinimum(CheckLibBase):
     points = ["T_heat_set"]
@@ -252,16 +491,50 @@ class ZoneHeatSetpointMinimum(CheckLibBase):
             return False
 
     def check_detail(self) -> Dict:
+        failure_ratio = round(
+            len(self.result[self.result == False])
+            / (
+                len(self.result[self.result == True])
+                + len(self.result[self.result == False])
+            ),
+            3,
+        )
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
             "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": round(failure_ratio * failure_severity, 3),
+            "Max Actual Control1": round(self.actual_control_value1.max(), 3),
+            "Max Control Setpoint1": round(self.control_setpoint1, 3),
         }
 
-        print("Verification results dict: ")
-        print(output)
+        print(f"Verification results dict:\n{output}")
         return output
+
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 1
+
+        self.actual_control_value1 = self.df["T_heat_set"]
+        self.control_setpoint1 = 12.78
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value1 - self.control_setpoint1)
+                    / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> str:
+        return "N/A"
 
 
 class ZoneCoolingSetpointMaximum(CheckLibBase):
@@ -277,16 +550,49 @@ class ZoneCoolingSetpointMaximum(CheckLibBase):
             return False
 
     def check_detail(self) -> Dict:
+        failure_ratio = round(
+            len(self.result[self.result == False])
+            / (
+                len(self.result[self.result == True])
+                + len(self.result[self.result == False])
+            ),
+            3,
+        )
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
             "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": round(failure_ratio * failure_severity, 3),
+            "Max Actual Control1": round(self.actual_control_value.max()),
+            "Max Control Setpoint1": round(self.control_setpoint.max()),
         }
 
-        print("Verification results dict: ")
-        print(output)
+        print(f"Verification results dict:\n{output}")
         return output
+
+    def failure_severity(self) -> float:
+        self.actual_control_value = self.df["T_cool_set"]
+        self.control_setpoint = 32.22
+
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value - self.control_setpoint)
+                    / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> str:
+        return "N/A"
 
 
 class ZoneHeatingResetDepth(CheckLibBase):
@@ -305,6 +611,9 @@ class ZoneHeatingResetDepth(CheckLibBase):
             return False
 
     def check_detail(self) -> Dict:
+        failure_ratio = 0.0 if self.result[0] else 1.0
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
@@ -312,11 +621,36 @@ class ZoneHeatingResetDepth(CheckLibBase):
             "Verification Passed?": self.check_bool(),
             "max(T_heat_set)": self.df["t_heat_set_max"][0],
             "min(T_heat_set)": self.df["t_heat_set_min"][0],
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": round(failure_ratio * failure_severity, 3),
+            "Max Actual Control1": round(self.actual_control_value.max()),
+            "Max Control Setpoint1": round(self.control_setpoint),
         }
 
-        print("Verification results dict: ")
-        print(output)
+        print(f"Verification results dict:\n{output}")
         return output
+
+    def failure_severity(self) -> float:
+        self.actual_control_value = (
+            self.df["t_heat_set_max"] - self.df["t_heat_set_min"]
+        )
+        self.control_setpoint = 5.55
+
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value - self.control_setpoint)
+                    / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> str:
+        return "N/A"
 
 
 class ZoneCoolingResetDepth(CheckLibBase):
@@ -335,6 +669,9 @@ class ZoneCoolingResetDepth(CheckLibBase):
             return False
 
     def check_detail(self) -> Dict:
+        failure_ratio = 0.0 if self.result[0] else 1.0
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == True]),
@@ -342,11 +679,36 @@ class ZoneCoolingResetDepth(CheckLibBase):
             "Verification Passed?": self.check_bool(),
             "max(T_cool_set)": self.df["t_cool_set_max"][0],
             "min(T_cool_set)": self.df["t_cool_set_min"][0],
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": round(failure_ratio * failure_severity, 3),
+            "Max Actual Control1": round(self.actual_control_value.max(), 3),
+            "Max Control Setpoint1": round(self.control_setpoint, 3),
         }
 
-        print("Verification results dict: ")
-        print(output)
+        print(f"Verification results dict:\n{output}")
         return output
+
+    def failure_severity(self) -> float:
+        self.actual_control_value = (
+            self.df["t_cool_set_max"] - self.df["t_cool_set_min"]
+        )
+        self.control_setpoint = 2.77
+
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value - self.control_setpoint)
+                    / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> str:
+        return "N/A"
 
 
 class NightCycleOperation(CheckLibBase):
@@ -367,9 +729,9 @@ class NightCycleOperation(CheckLibBase):
                 ):
                     data["night_cycle_observed"] = -1  # Fail, NC should be running
                 else:
-                    data["night_cycle_observed"] = 0
+                    data["night_cycle_observed"] = 0  # not observed
             elif data["Fan_elec_rate"] > 0:
-                data["night_cycle_observed"] = 1
+                data["night_cycle_observed"] = 1  # pass
         return data
 
     def verify(self):
@@ -395,6 +757,24 @@ class NightCycleOperation(CheckLibBase):
         return res
 
     def check_detail(self) -> Dict:
+        failure_ratio = round(
+            len(self.df["night_cycle_observed"][self.df["night_cycle_observed"] == -1])
+            / (
+                len(
+                    self.df["night_cycle_observed"][
+                        self.df["night_cycle_observed"] == 1
+                    ]
+                )
+                + len(
+                    self.df["night_cycle_observed"][
+                        self.df["night_cycle_observed"] == -1
+                    ]
+                )
+            ),
+            3,
+        )
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": len(self.df["night_cycle_observed"]),
             "night cycle 'on' observed #": len(
@@ -415,11 +795,44 @@ class NightCycleOperation(CheckLibBase):
                 self.df["night_cycle_observed"][self.df["night_cycle_observed"] == 1]
             ),
             "Verification Passed?": self.check_bool(),
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": round(failure_ratio * failure_severity, 3),
+            "Max Actual Control1": round(self.actual_control_value1.max()),
+            "Max Control Setpoint1": round(self.control_setpoint1.max()),
+            "Max Actual Contro2": round(self.actual_control_value2.max()),
+            "Max Control Setpoint2": round(self.control_setpoint2.max()),
         }
 
-        print("Verification results dict: ")
-        print(output)
+        print(f"Verification results dict:\n{output}")
         return output
+
+    def failure_severity(self) -> float:
+        self.actual_control_value1 = self.df["T_heat_set"]
+        self.control_setpoint1 = self.df["T_zone"]
+        failure_severity1 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value1 - self.control_setpoint1)
+                / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+            )
+        ).mean()
+
+        self.actual_control_value2 = self.df["T_zone"]
+        self.control_setpoint2 = self.df["T_cool_set"]
+        failure_severity2 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value2 - self.control_setpoint2)
+                / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+            )
+        ).mean()
+
+        return round(max(failure_severity1, failure_severity2), 3)
+
+    def priority_ranking(self) -> str:
+        return "N/A"
 
 
 class ERVTemperatureControl(CheckLibBase):
@@ -457,7 +870,7 @@ class ERVTemperatureControl(CheckLibBase):
         if not economizer and data["OA_FLOW"] > 0:  # non-economizer operation
             if data["T_SO"] > data["T_SO_SP"] + 0.5:
                 if data["T_OA"] < data["T_EI"] and hx_running:  # deadband
-                    data["erv_temperature_control"] = 1
+                    data["erv_temperature_control"] = 1  # fail
                 elif data["T_OA"] > data["T_EI"] and not (
                     hx_running
                     and hx_sens_eff_dsn_clg * 0.95
@@ -490,16 +903,35 @@ class ERVTemperatureControl(CheckLibBase):
             return True
 
     def check_detail(self) -> Dict:
+        failure_ratio = round(
+            len(self.result[self.result == False])
+            / (
+                len(self.result[self.result == True])
+                + len(self.result[self.result == False])
+            ),
+            3,
+        )
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == 0]),
             "Fail #": len(self.result[self.result == 1]),
             "Verification Passed?": self.check_bool(),
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": round(failure_ratio * failure_severity, 3),
         }
 
-        print("Verification results dict: ")
-        print(output)
+        print(f"Verification results dict:\n{output}")
         return output
+
+    def failure_severity(self) -> float:
+        return 0.0 if self.check_bool() else 1.0
+
+    def priority_ranking(self) -> str:
+        return "N/A"
 
 
 class AutomaticOADamperControl(RuleCheckBase):
@@ -511,6 +943,25 @@ class AutomaticOADamperControl(RuleCheckBase):
             & (self.df["m_oa"] > 0)
             & (self.df["eco_onoff"] == 0)
         )
+
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 1
+
+        self.actual_control_value1 = self.df["m_oa"]
+        self.control_setpoint1 = 0.0
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value1 - self.control_setpoint1)
+                    / FAILURE_SEVERITY_DENOMINATOR.VOLUME_FLOW.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.EconomizerHighLimit.value
 
 
 class FanStaticPressureResetControl(RuleCheckBase):
@@ -529,11 +980,15 @@ class FanStaticPressureResetControl(RuleCheckBase):
         d_vav_points = ["d_VAV_1", "d_VAV_2", "d_VAV_3", "d_VAV_4", "d_VAV_5"]
         d_vav_df = self.df[d_vav_points]
         self.df["result"] = True
+        self.df["actual_control_value1"] = 0.0
+        self.df["control_setpoint1"] = 0.0
 
+        self.failure_severity1 = []
         for row_num, (index, row) in enumerate(self.df.iterrows()):
             if row_num != 0:
                 if (d_vav_df.loc[index] > 0.9).any():
                     self.df.at[index, "result"] = True
+                    self.failure_severity1.append(0)
                 else:
                     if self.df.at[index, "p_set"] > self.df.at[index, "p_set_min"]:
                         if (
@@ -541,13 +996,32 @@ class FanStaticPressureResetControl(RuleCheckBase):
                             < self.df.at[prev_index, "p_set"] + self.df.at[index, "tol"]
                         ):
                             self.df.at[index, "result"] = True
+                            self.failure_severity1.append(0)
                         else:
                             self.df.at[index, "result"] = False
+                            self.df.at[index, "actual_control_value1"] = self.df.at[
+                                index, "p_set"
+                            ]
+                            self.df.at[index, "control_setpoint1"] = self.df.at[
+                                prev_index, "p_set"
+                            ]
+                            self.failure_severity1.append(
+                                (
+                                    self.df.at[index, "p_set"]
+                                    - self.df.at[prev_index, "p_set"]
+                                )
+                                / FAILURE_SEVERITY_DENOMINATOR.PRESSURE.value
+                            )
                     else:
                         self.df.at[index, "result"] = True
+                        self.failure_severity1.append(0)
+            else:
+                self.df.at[index, "result"] = True
             prev_index = index
 
         self.result = self.df["result"]
+        self.actual_control_value1 = self.df["actual_control_value1"]
+        self.control_setpoint1 = self.df["control_setpoint1"]
 
     def calculate_plot_day(self):
         """over write method to select day for day plot"""
@@ -576,6 +1050,28 @@ class FanStaticPressureResetControl(RuleCheckBase):
     def day_plot_obo(self, plt_pts):
         # This method is overwritten because day plot can't be plotted for this verification item
         pass
+
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 2
+
+        self.failure_severity1 = sum(self.failure_severity1) / len(
+            self.failure_severity1
+        )  # calculate mean
+
+        self.actual_control_value2 = self.df["p_set"]
+        self.control_setpoint2 = self.df["p_set_min"]
+        failure_severity2 = (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value2 - self.control_setpoint2)
+                / FAILURE_SEVERITY_DENOMINATOR.PRESSURE.value
+            )
+        ).mean()
+
+        return round(max(self.failure_severity1, failure_severity2), 3)
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.FanStaticPressureResetControl.value
 
 
 class HeatRejectionFanVariableFlowControlsCells(RuleCheckBase):
@@ -609,12 +1105,54 @@ class HeatRejectionFanVariableFlowControlsCells(RuleCheckBase):
             & (self.df["P_fan_ct"] > 0)
         )
 
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 1
+
+        self.actual_control_value1 = self.df["ct_op_cells"].astype(
+            "float"
+        )  # int64 can't be serialized
+        self.control_setpoint1 = self.df["ct_cells_op_theo"].astype("float")
+
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value1 - self.control_setpoint1)
+                    / FAILURE_SEVERITY_DENOMINATOR.NONE_DIMENSION.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.HeatRejectionFanVariableFlowControlsCells.value
+
 
 class ServiceWaterHeatingSystemControl(RuleCheckBase):
     points = ["T_wh_inlet"]
 
     def verify(self):
         self.result = self.df["T_wh_inlet"] < 43.33
+
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 1
+
+        self.actual_control_value1 = self.df["T_wh_inlet"]
+        self.control_setpoint1 = 43.33
+
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value1 - self.control_setpoint1)
+                    / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.ServiceWaterHeatingSystemControl.value
 
 
 class VAVStaticPressureSensorLocation(RuleCheckBase):
@@ -636,6 +1174,26 @@ class VAVStaticPressureSensorLocation(RuleCheckBase):
             day = self.result[daystr]
 
             return day, daydf
+
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 1
+
+        self.actual_control_value1 = self.df["p_fan_setpoint"]
+        self.control_setpoint1 = 298.608
+
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value1 - self.control_setpoint1)
+                    / FAILURE_SEVERITY_DENOMINATOR.PRESSURE.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> str:
+        return "N/A"
 
 
 class VentilationFanControl(RuleCheckBase):
@@ -662,6 +1220,26 @@ class VentilationFanControl(RuleCheckBase):
 
             return day, daydf
 
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 1
+
+        self.actual_control_value1 = self.df["P_fan"]
+        self.control_setpoint1 = 0.0
+
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value1 - self.control_setpoint1)
+                    / FAILURE_SEVERITY_DENOMINATOR.ELEC_POWER.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> str:
+        return "N/A"
+
 
 class WLHPLoopHeatRejectionControl(RuleCheckBase):
     points = ["T_max_heating_loop", "T_min_cooling_loop", "m_pump", "tol"]
@@ -677,6 +1255,25 @@ class WLHPLoopHeatRejectionControl(RuleCheckBase):
         self.result = (
             self.df["T_max_heating_loop_max"] - self.df["T_min_cooling_loop_min"]
         ) > 11.11 + self.df["tol"]
+
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 1
+
+        self.actual_control_value1 = (
+            self.df["T_max_heating_loop_max"] - self.df["T_min_cooling_loop_min"]
+        )
+        self.control_setpoint1 = 11.11
+
+        return (
+            self.result.replace({True: 0, False: 1})
+            * (
+                abs(self.actual_control_value1 - self.control_setpoint1)
+                / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+            )
+        ).mean()
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.WLHPLoopHeatRejectionControl.value
 
 
 class AutomaticShutdown(RuleCheckBase):
@@ -733,14 +1330,21 @@ class AutomaticShutdown(RuleCheckBase):
             return False
 
     def check_detail(self) -> Dict:
-        print("Verification results dict: ")
+        failure_ratio = 0 if self.result.iloc[0] else 1
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": 1,
             "Pass #": len(self.result[self.result == 1]),
             "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": "N/A",
         }
-        print(output)
+
+        print(f"Verification results dict:\n{output}")
         return output
 
     def day_plot_aio(self, plt_pts):
@@ -750,6 +1354,12 @@ class AutomaticShutdown(RuleCheckBase):
     def day_plot_obo(self, plt_pts):
         # This method is overwritten because day plot can't be plotted for this verification item
         pass
+
+    def failure_severity(self) -> str:
+        return "N/A"
+
+    def priority_ranking(self) -> str:
+        return "N/A"
 
 
 class HeatPumpSupplementalHeatLockout(RuleCheckBase):
@@ -774,6 +1384,26 @@ class HeatPumpSupplementalHeatLockout(RuleCheckBase):
         self.df = self.df.apply(lambda r: self.heating_coil_verification(r), axis=1)
         self.result = self.df["result"]
 
+    def failure_severity(self):
+        self.no_of_severity_condition = 1
+
+        self.actual_control_value1 = self.df["C_op"]
+        self.control_setpoint1 = self.df["L_op"]
+
+        return round(
+            (
+                self.result.replace({1.0: 0, 0.0: 1})
+                * (
+                    abs(self.actual_control_value1 - self.control_setpoint1)
+                    / FAILURE_SEVERITY_DENOMINATOR.NONE_DIMENSION.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.HeatPumpSupplementalHeatLockout.value
+
 
 class HeatRejectionFanVariableFlowControl(RuleCheckBase):
     points = ["P_ct_fan", "m_ct_fan_ratio", "P_ct_fan_dsgn", "m_ct_fan_dsgn"]
@@ -794,12 +1424,12 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
         ]  # filter out airflow points > -0.5, since the code requirement is at this point
 
         # linear regression
-        reg = LinearRegression(fit_intercept=False).fit(
+        self.reg = LinearRegression(fit_intercept=False).fit(
             self.df["normalized_m_ct_fan"].values.reshape(-1, 1),
             self.df["normalized_P_ct_fan"],
         )  # fit_intercept=False is for set the intercept to 0
 
-        if reg.coef_[0] >= 1.4:
+        if self.reg.coef_[0] >= 1.4:
             self.df["result"] = True
         else:
             self.df["result"] = False
@@ -807,15 +1437,21 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
         self.result = self.df["result"]
 
     def check_detail(self) -> Dict:
+        failure_ratio = 0 if self.df["result"][0] else 1
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": 1,
             "Pass #": len(self.result[self.result == True]),
             "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": round(failure_ratio * failure_severity, 3),
         }
 
-        print("Verification results dict: ")
-        print(output)
+        print(f"Verification results dict:\n{output}")
         return output
 
     def all_plot_aio(self, plt_pts):
@@ -831,6 +1467,26 @@ class HeatRejectionFanVariableFlowControl(RuleCheckBase):
     def day_plot_obo(self, plt_pts):
         # This method is overwritten because day plot can't be plotted for this verification item
         pass
+
+    def failure_severity(self) -> float:
+        self.no_of_severity_condition = 1
+
+        self.actual_control_value1 = self.reg.coef_[0]
+        self.control_setpoint1 = 1.4
+
+        return round(
+            (
+                self.result.replace({True: 0, False: 1})
+                * (
+                    abs(self.actual_control_value1 - self.control_setpoint1)
+                    / FAILURE_SEVERITY_DENOMINATOR.NONE_DIMENSION.value
+                )
+            ).mean(),
+            3,
+        )
+
+    def priority_ranking(self) -> str:
+        return "N/A"
 
 
 class DemandControlVentilation(CheckLibBase):
@@ -858,7 +1514,7 @@ class DemandControlVentilation(CheckLibBase):
             + df_filtered["no_of_occ_core"]
         )
         # Pearson’s correlation
-        corr, p_value = pearsonr(df_filtered["no_of_occ"], df_filtered["v_oa"])
+        self.corr, p_value = pearsonr(df_filtered["no_of_occ"], df_filtered["v_oa"])
 
         if (
             len(df_filtered["no_of_occ"].unique()) == 1
@@ -866,25 +1522,40 @@ class DemandControlVentilation(CheckLibBase):
         ):
             self.df["DCV_type"] = 0  # NO DCV is observed
             self.dcv_msg = "NO DCV"
-        elif corr >= 0.3 and p_value <= 0.05:
+        elif self.corr >= 0.3 and p_value <= 0.05:
             self.df["DCV_type"] = 1  # DCV is observed
             self.dcv_msg = "DCV is observed"
-        elif corr < 0.3 and p_value > 0.05:
+        elif self.corr < 0.3 and p_value > 0.05:
             self.df["DCV_type"] = 0  # NO DCV is observed
             self.dcv_msg = "No DCV"
 
         self.result = self.df["DCV_type"]
 
+    def check_bool(self) -> bool:
+        if self.result[0] == 1:
+            return True
+        else:
+            return False
+
     def check_detail(self):
-        print("Verification results dict: ")
+        failure_ratio = 0 if self.result[0] == 1 else 1
+        failure_severity = self.failure_seveity()
+
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == 1]),
             "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
             "Type of Demand Control Ventilation": self.dcv_msg,
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": round(failure_ratio * failure_severity, 3),
+            "Max Actual Control1": round(self.actual_control_value1, 3),
+            "Max Control Setpoint1": round(self.control_setpoint1, 3),
         }
-        print(output)
+
+        print(f"Verification results dict:\n{output}")
         return output
 
     def day_plot_aio(self, plt_pts):
@@ -894,6 +1565,23 @@ class DemandControlVentilation(CheckLibBase):
     def day_plot_obo(self, plt_pts):
         # This method is overwritten because day plot can't be plotted for this verification item
         pass
+
+    def failure_seveity(self) -> float:
+        self.no_of_severity_condition = 1
+
+        self.actual_control_value1 = self.corr
+        self.control_setpoint1 = 0.3
+        multiplier = 0.0 if self.result[0] == 1 else 1.0
+
+        return round(
+            multiplier
+            * abs(self.actual_control_value1 - self.control_setpoint1)
+            / FAILURE_SEVERITY_DENOMINATOR.NONE_DIMENSION.value,
+            3,
+        )
+
+    def priority_ranking(self) -> int:
+        return PRIORITY_RANKING.DemandControlVentilation.value
 
 
 class GuestRoomControlTemp(RuleCheckBase):
@@ -945,7 +1633,8 @@ class GuestRoomControlTemp(RuleCheckBase):
                         )  # fail, reset does not meet the standard or no reset was observed.
                 year_info = day.index.year[0]
 
-        dti = pd.date_range("2020-01-01", periods=365, freq="D")
+        dti = pd.date_range("2000-01-01", periods=len(result_repo) + 1, freq="D")
+        dti = dti.drop(pd.to_datetime("2000-02-29"))
         self.result = pd.Series(result_repo, index=dti)
 
     def check_bool(self) -> bool:
@@ -955,14 +1644,33 @@ class GuestRoomControlTemp(RuleCheckBase):
             return False
 
     def check_detail(self):
-        print("Verification results dict: ")
+        failure_ratio = round(
+            len(self.result[self.result == 0])
+            / (len(self.result[self.result == 1]) + len(self.result[self.result == 0])),
+            3,
+        )
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == 1]),
             "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": round(failure_ratio * failure_severity, 3),
+            "Max Actual Control1": round(self.actual_control_value1.max(), 3),
+            "Max Control Setpoint1": round(self.control_setpoint1, 3),
+            "Max Actual Control2": round(self.actual_control_value2.max(), 3),
+            "Max Control Setpoint2": round(self.control_setpoint2, 3),
+            "Max Actual Control3": round(self.actual_control_value3.max(), 3),
+            "Max Control Setpoint3": round(self.control_setpoint3, 3),
+            "Max Actual Control4": round(self.actual_control_value4.max(), 3),
+            "Max Control Setpoint4": round(self.control_setpoint4, 3),
         }
-        print(output)
+
+        print(f"Verification results dict:\n{output}")
         return output
 
     def day_plot_aio(self, plt_pts):
@@ -972,6 +1680,61 @@ class GuestRoomControlTemp(RuleCheckBase):
     def day_plot_obo(self, plt_pts):
         # This method is overwritten because day plot can't be plotted for this verification item
         pass
+
+    def failure_severity(self) -> float:
+        daily_avg_df = self.df.groupby(
+            pd.Grouper(freq="1D")
+        ).mean()  # calculate the mean b/c pass/fail decision is made daily
+        daily_avg_df = daily_avg_df.drop(pd.to_datetime("2000-02-29"))
+        daily_avg_df = daily_avg_df.drop(pd.to_datetime("2001-01-01"))
+
+        T_z_hea_occ_set = self.df.query("O_sch > 0.0")["T_z_hea_set"].max()
+        T_z_coo_occ_set = self.df.query("O_sch > 0.0")["T_z_coo_set"].min()
+
+        self.actual_control_value1 = daily_avg_df["T_z_hea_set"]
+        self.control_setpoint1 = 15.6
+        failure_severity1 = (
+            self.result.replace({0: 1, 1: 0})
+            * abs(self.actual_control_value1 - self.control_setpoint1)
+            / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+        ).mean()
+
+        self.actual_control_value2 = daily_avg_df["T_z_coo_set"]
+        self.control_setpoint2 = 26.7
+        failure_severity2 = (
+            self.result.replace({0: 1, 1: 0})
+            * abs(self.actual_control_value2 - self.control_setpoint2)
+            / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+        ).mean()
+
+        self.actual_control_value3 = daily_avg_df["T_z_hea_set"]
+        self.control_setpoint3 = T_z_hea_occ_set - 2.22
+        failure_severity3 = (
+            self.result.replace({0: 1, 1: 0})
+            * abs(self.actual_control_value3 - self.control_setpoint3)
+            / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+        ).mean()
+
+        self.actual_control_value4 = daily_avg_df["T_z_coo_set"]
+        self.control_setpoint4 = T_z_coo_occ_set + 2.22
+        failure_severity4 = (
+            self.result.replace({0: 1, 1: 0})
+            * abs(self.actual_control_value4 - self.control_setpoint4)
+            / FAILURE_SEVERITY_DENOMINATOR.TEMPERATURE.value
+        ).mean()
+
+        return round(
+            max(
+                failure_severity1,
+                failure_severity2,
+                failure_severity3,
+                failure_severity4,
+            ),
+            3,
+        )
+
+    def priority_ranking(self) -> str:
+        return "N/A"
 
 
 class GuestRoomControlVent(CheckLibBase):
@@ -988,8 +1751,8 @@ class GuestRoomControlVent(CheckLibBase):
     def verify(self):
         tol_occ = self.df["tol_occ"][0]
         tol_m = self.df["tol_m"][0]
-        zone_volume = self.df["area_z"][0] * self.df["height_z"][0]
-        m_z_oa_set = self.df["v_outdoor_per_zone"][0] * self.df["area_z"][0]
+        self.zone_volume = self.df["area_z"][0] * self.df["height_z"][0]
+        self.m_z_oa_set = self.df["v_outdoor_per_zone"][0] * self.df["area_z"][0]
 
         year_info = 2000
         result_repo = []
@@ -1009,8 +1772,8 @@ class GuestRoomControlVent(CheckLibBase):
                 else:  # room is rented out
                     if (day["m_z_oa"] > 0).all():
                         if (
-                            day["m_z_oa"] == m_z_oa_set
-                            or day["m_z_oa"].sum(axis=1) == zone_volume
+                            day["m_z_oa"] == self.m_z_oa_set
+                            or day["m_z_oa"].sum(axis=1) == self.zone_volume
                         ):
                             result_repo.append(1)  # pass
                         else:
@@ -1019,7 +1782,8 @@ class GuestRoomControlVent(CheckLibBase):
                         result_repo.append(0)
                 year_info = day.index.year[0]
 
-        dti = pd.date_range("2020-01-01", periods=365, freq="D")
+        dti = pd.date_range("2000-01-01", periods=len(result_repo) + 1, freq="D")
+        dti = dti.drop(pd.to_datetime("2000-02-29"))
         self.result = pd.Series(result_repo, index=dti)
 
     def check_bool(self) -> bool:
@@ -1029,14 +1793,31 @@ class GuestRoomControlVent(CheckLibBase):
             return False
 
     def check_detail(self):
-        print("Verification results dict: ")
+        failure_ratio = round(
+            len(self.result[self.result == 0])
+            / (len(self.result[self.result == 1]) + len(self.result[self.result == 0])),
+            3,
+        )
+        failure_severity = self.failure_severity()
+
         output = {
             "Sample #": len(self.result),
             "Pass #": len(self.result[self.result == 1]),
             "Fail #": len(self.result[self.result == 0]),
             "Verification Passed?": self.check_bool(),
+            "Failure Ratio": failure_ratio,
+            "Failure Severity": failure_severity,
+            "Priority Ranking": self.priority_ranking(),
+            "Calculated Priority Ranking": round(failure_ratio * failure_severity, 3),
+            "Max Actual Control1": round(self.actual_control_value1.max(), 3),
+            "Max Control Setpoint1": round(self.control_setpoint1, 3),
+            "Max Actual Control2": round(self.actual_control_value2.max(), 3),
+            "Max Control Setpoint2": round(self.control_setpoint2, 3),
+            "Max Actual Control3": round(self.actual_control_value3.max(), 3),
+            "Max Control Setpoint3": round(self.control_setpoint3, 3),
         }
-        print(output)
+
+        print(f"Verification results dict:\n{output}")
         return output
 
     def day_plot_aio(self, plt_pts):
@@ -1046,3 +1827,50 @@ class GuestRoomControlVent(CheckLibBase):
     def day_plot_obo(self, plt_pts):
         # This method is overwritten because day plot can't be plotted for this verification item
         pass
+
+    def failure_severity(self) -> float:
+        daily_avg_df = self.df.groupby(
+            pd.Grouper(freq="1D")
+        ).mean()  # calculate the mean b/c pass/fail decision is made daily
+        daily_avg_df = daily_avg_df.drop(pd.to_datetime("2000-02-29"))
+        daily_avg_df = daily_avg_df.drop(pd.to_datetime("2001-01-01"))
+
+        self.actual_control_value1 = daily_avg_df["m_z_oa"]
+        self.control_setpoint1 = self.m_z_oa_set * 0.05  # 0.05: threshold
+        FAILURE_SEVERITY_DENOMINATOR1 = (
+            self.result.replace({0: 1, 1: 0})
+            * (
+                abs(self.actual_control_value1 - self.control_setpoint1)
+                / FAILURE_SEVERITY_DENOMINATOR.VOLUME_FLOW.value
+            )
+        ).mean()
+
+        self.actual_control_value2 = daily_avg_df["m_z_oa"]
+        self.control_setpoint2 = self.m_z_oa_set
+        FAILURE_SEVERITY_DENOMINATOR2 = (
+            self.result.replace({0: 1, 1: 0})
+            * (
+                abs(self.actual_control_value2 - self.control_setpoint2)
+                / FAILURE_SEVERITY_DENOMINATOR.VOLUME_FLOW.value
+            )
+        ).mean()
+
+        self.actual_control_value3 = (
+            self.df["m_z_oa"].groupby(pd.Grouper(freq="1D")).sum()
+        )
+        self.control_setpoint3 = self.zone_volume
+        FAILURE_SEVERITY_DENOMINATOR3 = (
+            self.result.replace({0: 1, 1: 0})
+            * (
+                abs(self.actual_control_value2 - self.control_setpoint2)
+                / FAILURE_SEVERITY_DENOMINATOR.VOLUME_FLOW.value
+            )
+        ).mean()
+
+        return max(
+            FAILURE_SEVERITY_DENOMINATOR1,
+            min(FAILURE_SEVERITY_DENOMINATOR2, FAILURE_SEVERITY_DENOMINATOR3),
+        )  # select min of FAILURE_SEVERITY_DENOMINATOR2 and FAILURE_SEVERITY_DENOMINATOR3 because this is OR condition
+
+    def priority_ranking(self) -> str:
+        return "N/A"
