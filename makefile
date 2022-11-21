@@ -2,7 +2,7 @@ PROJECT_DIR 	:= $(PWD)
 RESULTS_DIR 	:= $(PROJECT_DIR)/results
 INPUT_DIR		:= $(PROJECT_DIR)/../buildings
 SINGULARITY 	:= /share/apps/singularity/3.6.3/bin/singularity
-IN_FILES    	:= $(notdir $(wildcard $(INPUT_DIR)/base*.json))
+IN_FILES    	:= $(notdir $(wildcard $(INPUT_DIR)/*.json))
 OUT_FILES   	:= $(subst .json,_md.json,$(IN_FILES))
 
 $(RESULTS_DIR)/%_md.json: $(INPUT_DIR)/%.json
