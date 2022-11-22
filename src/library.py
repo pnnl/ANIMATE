@@ -16,7 +16,7 @@ from sklearn.linear_model import LinearRegression
 from scipy.stats import pearsonr
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
-from kneed import KneeLocator
+# from kneed import KneeLocator
 
 
 class IntegratedEconomizerControl(CheckLibBase):
@@ -431,6 +431,74 @@ class DualMaxDamperControl(RuleCheckBase):
             & (self.df["MaxDP"] >= self.df["DAMPER_POS"])
             & (self.df["DAMPER_POS"] > self.df["MinDP"])
         ) | (self.df["REHEAT_COIL_OUTPUT"] == 0)
+
+
+class PlantEquipmentUndersized(CheckLibBase):
+    points = [
+        "EQUIPMENT_PART_LOAD_RATIO",
+        "UNMET_DEMAND"
+    ]
+
+    def check_plant_equipment_undersizing(self, data):
+        if data["UNMET_DEMAND"] > 0 and data["EQUIPMENT_PART_LOAD_RATIO"] > 0.95:
+            data["plant_equipment_undersized"] = False
+        else:
+            data["plant_equipment_undersized"] = True
+        return data
+
+    def verify(self):
+        self.df["plant_equipment_undersized"] = np.nan
+        self.df = self.df.apply(lambda r: self.check_plant_equipment_undersizing(r), axis=1)
+        self.result = self.df["plant_equipment_undersized"]
+        self.df.drop(columns="plant_equipment_undersized", inplace=True)
+
+    def check_bool(self) -> bool:
+        if len(self.result[self.result == False]) > 0:
+            return False
+        else:
+            return True
+
+    def check_detail(self) -> Dict:
+        output = {
+            "Sample #": len(self.result),
+            "Pass #": len(self.result[self.result == True]),
+            "Fail #": len(self.result[self.result == False]),
+            "Verification Passed?": self.check_bool(),
+        }
+
+        print("Verification results dict: ")
+        print(output)
+        return output
+
+
+class PlantEquipmentOversized(RuleCheckBase):
+    points = [
+        "EQUIPMENT_PART_LOAD_RATIO"
+    ]
+
+    def verify(self):
+
+        plr_mean = self.df.loc[self.df["EQUIPMENT_PART_LOAD_RATIO"] > 0, "EQUIPMENT_PART_LOAD_RATIO"].mean()
+        plr_std_dev = self.df.loc[self.df["EQUIPMENT_PART_LOAD_RATIO"] > 0, "EQUIPMENT_PART_LOAD_RATIO"].std()
+
+        if plr_mean < 0.5 and plr_std_dev > 0.5:
+            self.df["results"] = 0
+        else:
+            self.df["results"] = 1
+        
+        self.df["mean_plr"] = plr_mean
+        self.df["stdev_plr"] = plr_std_dev
+        self.result = self.df["results"]
+
+    def plot(self, plot_option, plt_pts=None):
+        print(
+            "Specific plot method implemented, additional distribution plot is being added!"
+        )
+        sns.distplot(self.df["EQUIPMENT_PART_LOAD_RATIO"])
+        plt.title("All samples distribution of EQUIPMENT_PART_LOAD_RATIO")
+        plt.savefig(f"{self.results_folder}/All_samples_distribution_of_EQUIPMENT_PART_LOAD_RATIO.png")
+
+        super().plot(plot_option, plt_pts)
 
 
 class ERVTemperatureControl(CheckLibBase):
