@@ -569,5 +569,36 @@
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
+    },
+    "PlantEquipmentUndersized": {
+        "library_item_id": 31,
+        "description_brief": "TSPR tool software development",
+        "description_index": [
+            null
+        ],
+        "description_datapoints": {
+            "EQUIPMENT_PART_LOAD_RATIO": "Plant equipment part load ratio",
+            "UNMET_DEMAND": "Plant unmet demand"
+        },
+        "description_assertions": [
+            "Check that if plant unmet demand is identified, the plant equipment runs at or almost at full load."
+        ],
+        "description_verification_type": "rule-based",
+        "assertions_type": "pass"
+    },
+    "PlantEquipmentOversized": {
+        "library_item_id": 32,
+        "description_brief": "TSPR tool software development",
+        "description_index": [
+            null
+        ],
+        "description_datapoints": {
+            "EQUIPMENT_PART_LOAD_RATIO": "Plant equipment part load ratio"
+        },
+        "description_assertions": [
+            "Check that the average part load ratio is not lower than 50% and it plus the part load standard deviation are not lower than 75%."
+        ],
+        "description_verification_type": "rule-based",
+        "assertions_type": "pass"
     }
 }
