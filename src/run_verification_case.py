@@ -38,7 +38,16 @@ def run_verification_case(item_dict, run_path_postfix=""):
         if ("parameters" in item.item["datapoints_source"])
         else None
     )
-    verification_obj = cls(df, parameters, f"{run_path}")
+
+    flexible_datapoint_item = False
+    for point_name in cls.points:
+        if (
+            "*" in point_name
+        ):  # * indicates it's a variable that can have a flexible number of data points
+            flexible_datapoint_item = True
+            break
+
+    verification_obj = cls(df, parameters, f"{run_path}", flexible_datapoint_item)
     md_content = verification_obj.add_md(None, "../results/imgs", "./imgs", item_dict)
     return {int(item_dict["no"]): md_content}
 
