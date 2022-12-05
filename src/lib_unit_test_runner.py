@@ -1,5 +1,5 @@
 from workflowsteps import *
-from library_test import *
+from library import *
 import sys, os, json
 import pandas as pd
 from tqdm import tqdm
@@ -50,7 +50,7 @@ def main():
     }
     """
     case = json.loads(case_str)
-    results = run_test_verification_with_data(case, df)
+    results = run_test_verification_with_data("AutomaticOADamperControl", df)
     print(results)
 
 
