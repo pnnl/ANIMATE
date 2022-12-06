@@ -26,7 +26,7 @@ jobs:
         sudo pip install black
     - name: Run Black
       run: |
-        black -l 88 copper tests --check
+        black -l 88 src tests --check
     - name: Test with pytest
       run: |
         pip install pytest
