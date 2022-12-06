@@ -4,3 +4,4 @@ seaborn
 pandas
 eppy
 fuzzywuzzy
+scipy
