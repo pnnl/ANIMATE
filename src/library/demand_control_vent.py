@@ -22,24 +22,26 @@ class DemandControlVentilation(CheckLibBase):
 
         if len(df_filtered) == 0:
             self.bool_result = np.nan
-            self.msg = 'There is no samples with economizer off and AHU on, result: untested'
+            self.msg = (
+                "There is no samples with economizer off and AHU on, result: untested"
+            )
         else:
             corr, p_value = pearsonr(df_filtered["no_of_occ"], df_filtered["v_oa"])
             if p_value > 0.05:
                 self.bool_result = np.nan
-                self.msg = 'correlation p value too large, result: untested'
+                self.msg = "correlation p value too large, result: untested"
             else:
                 if corr >= 0.3:
                     self.bool_result = True
-                    self.msg = 'positive correlation between v_oa and no_of_occ observed, result: pass'
+                    self.msg = "positive correlation between v_oa and no_of_occ observed, result: pass"
                 elif corr < 0.3 and corr > 0:
                     self.bool_result = False
-                    self.msg = 'positive correlation between v_oa and no_of_occ is too small, result: fail'
+                    self.msg = "positive correlation between v_oa and no_of_occ is too small, result: fail"
                 else:
                     self.bool_result = False
-                    self.msg = 'negative correlation between v_oa and no_of_occ observed, result: fail'
+                    self.msg = "negative correlation between v_oa and no_of_occ observed, result: fail"
 
-        self.result = pd.Series(data=self.bool_result, index = self.df.index)
+        self.result = pd.Series(data=self.bool_result, index=self.df.index)
 
     def check_detail(self):
         print("Verification results dict: ")
