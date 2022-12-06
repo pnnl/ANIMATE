@@ -6,3 +6,4 @@ eppy
 fuzzywuzzy
 scikit-learn
 scipy
+tqdm
