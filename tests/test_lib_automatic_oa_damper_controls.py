@@ -1,6 +1,6 @@
 import unittest, sys
 
-sys.path.append("../src")
+sys.path.append("./src")
 from lib_unit_test_runner import *
 from library import *
 

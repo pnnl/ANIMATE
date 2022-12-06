@@ -4,4 +4,6 @@ seaborn
 pandas
 eppy
 fuzzywuzzy
+scikit-learn
 scipy
+tqdm
