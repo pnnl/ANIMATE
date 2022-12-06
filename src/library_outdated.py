@@ -16,7 +16,8 @@ from sklearn.linear_model import LinearRegression
 from scipy.stats import pearsonr
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
-from kneed import KneeLocator
+
+# from kneed import KneeLocator
 
 
 class IntegratedEconomizerControl(CheckLibBase):
