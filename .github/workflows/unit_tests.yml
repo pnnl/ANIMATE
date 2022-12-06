@@ -35,8 +35,7 @@ jobs:
     - name: Run Black
       run: |
         black -l 88 src --check
-    - name: Test with Nose
+    - name: Test with pytest
       run: |
-        export PYTHONUNBUFFERED=1
-        . ./.venv/bin/activate
+        pip install pytest
         pytest
