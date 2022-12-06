@@ -24,7 +24,7 @@ class TestAutomaticOADamperControl(unittest.TestCase):
         ]
         df = pd.DataFrame(data, columns=points)
 
-        results = run_test_verification_with_data("AutomaticOADamperControl", df).result
+        results = list(run_test_verification_with_data("AutomaticOADamperControl", df).result)
         expected_results = [np.nan, True, False, False, False, np.nan, np.nan, np.nan]
 
         # Perform verification
