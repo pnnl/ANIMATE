@@ -4,5 +4,5 @@ seaborn
 pandas
 eppy
 fuzzywuzzy
-sklearn
+scikit-learn
 scipy
