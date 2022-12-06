@@ -27,7 +27,7 @@ class CheckLibBase(ABC):
     """Abstract class defining interfaces for item-specific verification classes"""
 
     points = None
-    result = pd.DataFrame()
+    bool_result = pd.DataFrame()
 
     def __init__(self, df: pd.DataFrame, params=None, results_folder=None):
         full_df = df.copy(deep=True)
@@ -44,7 +44,7 @@ class CheckLibBase(ABC):
         self.df = self.df.sort_index()
         self.results_folder = results_folder
         self.verify()
-        self.result.name = ""
+        self.bool_result.name = ""
 
     @property
     def points_list(self) -> List[str]:
@@ -155,7 +155,7 @@ class CheckLibBase(ABC):
 
         # flag
         ax1 = plt.subplot(2, 1, 1)
-        sns.scatterplot(x=self.result.index, y=self.result, linewidth=0, s=1)
+        sns.scatterplot(x=self.bool_result.index, y=self.bool_result, linewidth=0, s=1)
         plt.xlim([self.df.index[0], self.df.index[-1]])
         plt.ylim([-0.2, 1.2])
         plt.title(f"All samples Pass / Fail flag plot - {self.__class__.__name__}")
@@ -182,7 +182,7 @@ class CheckLibBase(ABC):
 
         # flag
         ax1 = plt.subplot(num_plots, 1, 1)
-        sns.scatterplot(x=self.result.index, y=self.result, linewidth=0, s=1)
+        sns.scatterplot(x=self.bool_result.index, y=self.bool_result, linewidth=0, s=1)
         plt.xlim([self.df.index[0], self.df.index[-1]])
         plt.ylim([-0.2, 1.2])
         plt.title(f"All samples Pass / Fail flag plot - {self.__class__.__name__}")
@@ -218,7 +218,7 @@ class CheckLibBase(ABC):
         for one_day in self.daterange(date(2000, 1, 1), date(2001, 1, 1)):
             daystr = f"{str(one_day.year)}-{str(one_day.month)}-{str(one_day.day)}"
             daydf = self.df[daystr]
-            day = self.result[daystr]
+            day = self.bool_result[daystr]
             if (trueday is None) and len(day[day == True]) > 0:
                 trueday = day
                 truedaydf = daydf
@@ -314,16 +314,16 @@ class CheckLibBase(ABC):
 
 class RuleCheckBase(CheckLibBase):
     def check_bool(self) -> bool:
-        if len(self.result[self.result == False] > 0):
+        if len(self.bool_result[self.bool_result == False] > 0):
             return False
         else:
             return True
 
     def check_detail(self) -> Dict:
         output = {
-            "Sample #": len(self.result),
-            "Pass #": len(self.result[self.result == True]),
-            "Fail #": len(self.result[self.result == False]),
+            "Sample #": len(self.bool_result),
+            "Pass #": len(self.bool_result[self.bool_result == True]),
+            "Fail #": len(self.bool_result[self.bool_result == False]),
             "Verification Passed?": self.check_bool(),
         }
 
