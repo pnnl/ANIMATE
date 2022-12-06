@@ -31,3 +31,9 @@ jobs:
       run: |
         pip install pytest
         pytest
+    - name: Archive artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-outputs
+        path: tests/outputs/*csv
+        retention-days: 5
