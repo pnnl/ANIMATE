@@ -50,7 +50,7 @@ class DemandControlVentilation(CheckLibBase):
             "Pass #": len(self.result[self.result == True]),
             "Fail #": len(self.result[self.result == False]),
             "Verification Passed?": self.check_bool(),
-            "Type of Demand Control Ventilation": self.msg,
+            "Message": self.msg,
         }
         print(output)
         return output
