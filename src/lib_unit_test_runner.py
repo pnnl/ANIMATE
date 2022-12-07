@@ -25,7 +25,7 @@ def run_test_verification_with_data(verification_class, df):
     # )
     verification_obj = cls(df, None)
     # verification_obj = cls(df, parameters)
-    return verification_obj.get_checks
+    return verification_obj
 
 
 def main():
