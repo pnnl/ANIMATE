@@ -18,7 +18,4 @@ class AutomaticOADamperControl(RuleCheckBase):
             return np.nan
 
     def verify(self):
-        self.df["result"] = self.df.apply(
-            lambda d: self.automatic_oa_damper_check(d), axis=1
-        )
-        self.result = self.df["result"]
+        self.result = self.df.apply(lambda d: self.automatic_oa_damper_check(d), axis=1)
