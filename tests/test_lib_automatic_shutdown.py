@@ -1,6 +1,6 @@
 import unittest, sys
 
-sys.path.append("./src")
+sys.path.append("../src")
 from lib_unit_test_runner import *
 from library import *
 
@@ -10,41 +10,47 @@ import numpy as np
 
 
 class TestAutomaticShutdown(unittest.TestCase):
-    def test_automatic_shutdown(self):
-        points = ["hvac_set"]
+    def perform_automatic_shutdown_unit_test(self, interval, *data_input):
+        point = ["hvac_set"]
+        result = []
+        for data in data_input:
+            df = pd.DataFrame(
+                data,
+                columns=point,
+                index=pd.date_range("2020", periods=len(data), freq=interval),
+            )
+
+            result.append(
+                run_test_verification_with_data("AutomaticShutdown", df).get_checks[0]
+            )
+
+        return result
+
+    def test_automatic_shutdown_hourly_interval(self):
         # data generation
         data_pass = np.zeros((48, 1))
         data_pass[5:17] = 1
-        data_pass[32:45] = 1
+        data_pass[32:45] = 1  # fine granular data min level (e.g., 5 min level)
 
         data_fail = np.zeros((48, 1))
         data_fail[5:17] = 1
         data_fail[29:41] = 1
 
-        df_pass = pd.DataFrame(
-            data_pass,
-            columns=points,
-            index=pd.date_range("2020", periods=len(data_pass), freq="H"),
+        hourly_interval_results = self.perform_automatic_shutdown_unit_test(
+            "H", data_pass, data_fail
         )
-
-        df_fail = pd.DataFrame(
-            data_fail,
-            columns=points,
-            index=pd.date_range("2020", periods=len(data_fail), freq="H"),
+        five_min_interval_results = self.perform_automatic_shutdown_unit_test(
+            "5T", data_pass, data_fail
         )
-
-        results = [
-            run_test_verification_with_data("AutomaticShutdown", df_pass).get_checks[0],
-            run_test_verification_with_data("AutomaticShutdown", df_fail).get_checks[0],
-        ]
-        expected_results = [True, False]
+        results = [*hourly_interval_results, *five_min_interval_results]
+        expected_results = [True, False, True, False]
 
         # Perform verification
         for i in range(len(results)):
             self.assertTrue(results[i] is expected_results[i])
 
         # Print out results
-        data = np.concatenate((df_pass, df_fail), axis=1)
+        data = np.concatenate((data_pass, data_fail, data_pass, data_fail), axis=1)
         df = pd.DataFrame(data, columns=results)
         df.to_csv("./tests/outputs/TestAutomaticShutdown_test_automatic_shutdown.csv")
 
