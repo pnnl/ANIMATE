@@ -30,7 +30,9 @@ class TestDemandControlVentilation(unittest.TestCase):
         verification_obj = run_test_verification_with_data(
             "DemandControlVentilation", df
         )
-        self.assertTrue(verification_obj.check_bool(), verification_obj.check_detail()['Message'])
+        self.assertTrue(
+            verification_obj.check_bool(), verification_obj.check_detail()["Message"]
+        )
 
     def test_dcv_no_eco_good_time(self):
         points = [
@@ -53,7 +55,10 @@ class TestDemandControlVentilation(unittest.TestCase):
         verification_obj = run_test_verification_with_data(
             "DemandControlVentilation", df
         )
-        self.assertTrue(verification_obj.check_bool() is np.nan, verification_obj.check_detail()['Message'])
+        self.assertTrue(
+            verification_obj.check_bool() is np.nan,
+            verification_obj.check_detail()["Message"],
+        )
 
     def test_dcv_no_ahu_good_time(self):
         points = [
@@ -76,7 +81,10 @@ class TestDemandControlVentilation(unittest.TestCase):
         verification_obj = run_test_verification_with_data(
             "DemandControlVentilation", df
         )
-        self.assertTrue(verification_obj.check_bool() is np.nan, verification_obj.check_detail()['Message'])
+        self.assertTrue(
+            verification_obj.check_bool() is np.nan,
+            verification_obj.check_detail()["Message"],
+        )
 
     def test_dcv_no_good_time(self):
         points = [
@@ -99,7 +107,10 @@ class TestDemandControlVentilation(unittest.TestCase):
         verification_obj = run_test_verification_with_data(
             "DemandControlVentilation", df
         )
-        self.assertTrue(verification_obj.check_bool() is np.nan, verification_obj.check_detail()['Message'])
+        self.assertTrue(
+            verification_obj.check_bool() is np.nan,
+            verification_obj.check_detail()["Message"],
+        )
 
     def test_dcv_high_p(self):
         points = [
@@ -122,7 +133,10 @@ class TestDemandControlVentilation(unittest.TestCase):
         verification_obj = run_test_verification_with_data(
             "DemandControlVentilation", df
         )
-        self.assertTrue(verification_obj.check_bool() is np.nan, verification_obj.check_detail()['Message'])
+        self.assertTrue(
+            verification_obj.check_bool() is np.nan,
+            verification_obj.check_detail()["Message"],
+        )
 
     def test_dcv_low_corr(self):
         points = [
@@ -145,7 +159,9 @@ class TestDemandControlVentilation(unittest.TestCase):
         verification_obj = run_test_verification_with_data(
             "DemandControlVentilation", df
         )
-        self.assertFalse(verification_obj.check_bool(), verification_obj.check_detail()['Message'])
+        self.assertFalse(
+            verification_obj.check_bool(), verification_obj.check_detail()["Message"]
+        )
 
     def test_dcv_negative_corr(self):
         points = [
@@ -168,7 +184,9 @@ class TestDemandControlVentilation(unittest.TestCase):
         verification_obj = run_test_verification_with_data(
             "DemandControlVentilation", df
         )
-        self.assertFalse(verification_obj.check_bool(), verification_obj.check_detail()['Message'])
+        self.assertFalse(
+            verification_obj.check_bool(), verification_obj.check_detail()["Message"]
+        )
 
     def generate_correlated_data(self, num_sample, cov):
         cov = np.array([[6, cov], [cov, 6]])
