@@ -579,7 +579,9 @@
                         "frequency": "detailed"
                     }
                 },
-                "parameters": {}
+                "parameters": {
+                    "tol_temp": 0.5
+				}
             },
             "verification_class": "ServiceWaterHeatingSystemControl"
         },

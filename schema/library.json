@@ -354,7 +354,7 @@
         "description_verification_type": "procedure-based",
         "assertions_type": "pass"
     },
-    "ServiceWaterHeatingSystemControl": {
+    "SWHRestroomOutletMaximumTemperatureControls": {
         "library_item_id": 20,
         "description_brief": "Service water heating system control",
         "description_index": [
