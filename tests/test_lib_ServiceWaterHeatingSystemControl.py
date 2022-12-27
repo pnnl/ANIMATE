@@ -8,7 +8,7 @@ import pandas as pd
 
 
 class TestServiceWaterHeatingSystemControl(unittest.TestCase):
-    def test_automatic_oa_damper_control(self):
+    def test_service_water_heating_system_control(self):
         points = ["T_wh_inlet", "tol_temp"]
         data = [[30, 0.5], [50, 0.5]]
         df = pd.DataFrame(data, columns=points)
