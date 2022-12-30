@@ -11,9 +11,9 @@ class TestVentilationFanControls(unittest.TestCase):
     def test_ventilation_fan_controls(self):
         points = ["Q_load", "no_of_occ", "P_fan"]
         data = [
-            [1, 0, 0],
-            [0, 1, 0],
-            [0, 0, 1000],
+            [0, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 0, 0, 0],
         ]
         df = pd.DataFrame(data, columns=points)
 

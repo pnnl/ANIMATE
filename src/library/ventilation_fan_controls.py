@@ -3,12 +3,13 @@ from datetime import date
 
 
 class VentilationFanControl(RuleCheckBase):
-    points = ["Q_load", "no_of_occ", "P_fan"]
+    points = ["Q_heat_req", "Q_cool_req", "fan_onoff", "P_fan"]
 
     def verify(self):
         self.result = ~(
-            (self.df["Q_load"] == 0)
-            & (self.df["no_of_occ"] == 0)
+            (self.df["Q_heat_req"] > 0)
+            & (self.df["Q_heat_req"] > 0)
+            & (self.df["fan_onoff"] == 0)
             & (self.df["P_fan"] != 0)
         )
 
