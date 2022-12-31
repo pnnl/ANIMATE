@@ -21,8 +21,8 @@ class FanStaticPressureResetControl(RuleCheckBase):
 
         for row_num, (index, row) in enumerate(self.df.iterrows()):
             if row_num != 0:
-                if (d_vav_df.loc[index] > 0.9).any():  # must be ALL
-                    self.df.at[index, "result"] = True  # must be untested
+                if (d_vav_df.loc[index] > 0.9).any():
+                    self.df.at[index, "result"] = True
                 else:
                     if self.df.at[index, "p_set"] > self.df.at[index, "p_set_min"]:
                         if (
@@ -33,7 +33,7 @@ class FanStaticPressureResetControl(RuleCheckBase):
                         else:
                             self.df.at[index, "result"] = False
                     else:
-                        self.df.at[index, "result"] = True  # must be ""untested
+                        self.df.at[index, "result"] = True
             prev_index = index
 
         self.result = self.df["result"]
