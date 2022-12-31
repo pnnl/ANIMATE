@@ -48,7 +48,11 @@ class TestAutomaticShutdown(unittest.TestCase):
         data_fail_5_min[369:552] = 1
 
         hourly_interval_results = self.perform_automatic_shutdown_unit_test(
-            "H", data_pass_hourly, data_fail_hourly, data_fail_all_ones, data_fail_all_zeros
+            "H",
+            data_pass_hourly,
+            data_fail_hourly,
+            data_fail_all_ones,
+            data_fail_all_zeros,
         )
 
         five_min_interval_results = self.perform_automatic_shutdown_unit_test(
