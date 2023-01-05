@@ -52,7 +52,7 @@ class TestWaterSideEconomizer(unittest.TestCase):
         ]
 
         # Perform verification
-        for i in range(len(data[0])):
+        for i in range(len(data)):
             self.assertTrue(results[i] is expected_results[i])
 
         # Print out results
