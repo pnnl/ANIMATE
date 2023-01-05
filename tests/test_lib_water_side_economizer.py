@@ -48,7 +48,7 @@ class TestWaterSideEconomizer(unittest.TestCase):
             np.nan,
             np.nan,
             np.nan,
-            False
+            False,
         ]
 
         # Perform verification
