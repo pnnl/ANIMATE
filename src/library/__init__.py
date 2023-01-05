@@ -1,6 +1,7 @@
 from .automatic_oa_damper_controls import *
 from .automatic_shutdown import *
 from .demand_control_vent import *
+from .water_side_economizer import *
 from .fan_static_pressure_reset_control import *
 from .guest_room_control_temp import *
 from .guest_room_control_vent import *
@@ -15,7 +16,7 @@ __all__ = [
     "AutomaticOADamperControl",
     "AutomaticShutdown",
     "DemandControlVentilation",
-    # "economizer_humidification_system_impact", # missing
+    "WaterSideEconomizer",
     "FanStaticPressureResetControl",
     "GuestRoomControlTemp",
     "GuestRoomControlVent",
