@@ -18,15 +18,14 @@ class TestWLHPLoopHeatRejectionControl(unittest.TestCase):
             [[25, 1, 1], [20, 1, 1]],
         ]
         results = []
+        df_agg = pd.DataFrame()
         for d in range(len(data)):
             df = pd.DataFrame(data[d], columns=points)
-
+            df_agg = pd.concat([df_agg, df])
             results.append(
-                bool(
-                    run_test_verification_with_data(
-                        "WLHPLoopHeatRejectionControl", df
-                    ).result.values[0]
-                )
+                run_test_verification_with_data(
+                    "WLHPLoopHeatRejectionControl", df
+                ).result.values[0]
             )
 
         expected_results = [
@@ -35,13 +34,13 @@ class TestWLHPLoopHeatRejectionControl(unittest.TestCase):
         ]
 
         # Perform verification
-        for i in range(len(data[d])):
-            self.assertTrue(results[i] is expected_results[i])
+        for i in range(len(results)):
+            self.assertTrue(bool(results[i]) is expected_results[i])
 
         # Print out results
-        df["results"] = results
-        df["expected_results"] = expected_results
-        df.to_csv(
+        df_agg["results"] = results
+        df_agg["expected_results"] = expected_results
+        df_agg.to_csv(
             "./tests/outputs/TestWLHPLoopHeatRejectionControl_test_wlhp_loop_heat_rejection_controls.csv"
         )
 
