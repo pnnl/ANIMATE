@@ -27,7 +27,7 @@ class VerificationLibrary:
 
         if not isinstance(lib_path, str):
             logging.error(
-                f"lib_path needs to be str of library file or foler path. It cannot be a {type(isinstance())}"
+                f"lib_path needs to be str of library file or foler path. It cannot be a {type(lib_path)}"
             )
             return None
 
@@ -48,7 +48,6 @@ class VerificationLibrary:
 
         for lib_items_file_path in lib_items_files:
             with open(lib_items_file_path) as lib_items_file:
-                print(lib_items_file_path)
                 lib_files_json_dict[lib_items_file_path] = json.load(lib_items_file)
 
         # store items
