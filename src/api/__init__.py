@@ -1,5 +1,3 @@
 from .verification_library import *
 
-__all__ = [
-    "VerificationLibrary"
-]
+__all__ = ["VerificationLibrary"]

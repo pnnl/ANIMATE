@@ -18,16 +18,15 @@ Use this API to manage the verification items library
 
 ---
 
-- `__init__(`_lib_path: str_`)`
+- ==Implemented== `__init__(`_lib_path: str_`)`
   Instantiate a verification library class object and load specified library items as `self.lib_items`.
 
   - **Parameters**
     - **lib_path**: path to the verification library file or folder. If the path ends with `*.json`, then library items defined in the json file are loaded. If the path points to a directory, then library items in all jsons in this directory and its subdirectories are loaded. Library item need to have unique name defined in the json files and python files.
-  - **Returns**: Verification Library class object with specified library items loaded in `self.lib_items`
 
 ---
 
-- `get_library_item(`_item_`)`
+- ==Implemented== `get_library_item(`_item_`)`
   Get the json definition and meta information of a specific library item.
 
   - **Parameters**
