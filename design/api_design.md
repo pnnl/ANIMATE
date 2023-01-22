@@ -18,7 +18,7 @@ Use this API to manage the verification items library
 
 ---
 
-- ==Implemented== `__init__(`_lib_path: str_`)`
+- [x] `__init__(`_lib_path: str_`)`
   Instantiate a verification library class object and load specified library items as `self.lib_items`.
 
   - **Parameters**
@@ -26,7 +26,7 @@ Use this API to manage the verification items library
 
 ---
 
-- ==Implemented== `get_library_item(`_item_`)`
+- [x] `get_library_item(`_item_`)`
   Get the json definition and meta information of a specific library item.
 
   - **Parameters**
