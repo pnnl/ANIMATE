@@ -8,7 +8,7 @@ lib_path = "./schema/library.json"
 
 class TestVerificationLibrary(unittest.TestCase):
     def test_constructor_empty(self):
-        with self.assertLogs("root", level="ERROR") as logobs:
+        with self.assertLogs() as logobs:
             vl_obj = VerificationLibrary()
             self.assertEqual(
                 "ERROR:root:'lib_path' was not provided when instantiating the Verificationlibrary class object!",
@@ -16,7 +16,7 @@ class TestVerificationLibrary(unittest.TestCase):
             )
 
     def test_constructor_nonstr(self):
-        with self.assertLogs("root", level="ERROR") as logobs:
+        with self.assertLogs() as logobs:
             vl_obj = VerificationLibrary(123)
             self.assertEqual(
                 f"ERROR:root:lib_path needs to be str of library file or foler path. It cannot be a {type(123)}",
@@ -46,7 +46,7 @@ class TestVerificationLibrary(unittest.TestCase):
     def test_get_library_item_invalid(self):
         vl_obj = VerificationLibrary(lib_path)
 
-        with self.assertLogs("root", level="ERROR") as logobs:
+        with self.assertLogs() as logobs:
             item = vl_obj.get_library_item("NonExistLibItem")
             self.assertEqual(
                 "ERROR:root:NonExistLibItem is not in loaded library items.",
