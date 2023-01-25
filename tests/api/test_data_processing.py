@@ -43,7 +43,9 @@ class TestDataProcessing(unittest.TestCase):
     def test_datafile_error_parsing(self):
         with self.assertLogs() as logobs:
             filep = "./tests/api/data/data_err_parse.csv"
-            dp = DataProcessing(data_path=filep, data_source="Other", timestamp_column_name= "Date/Time")
+            dp = DataProcessing(
+                data_path=filep, data_source="Other", timestamp_column_name="Date/Time"
+            )
             self.assertEqual(
                 f"ERROR:root:The data in Date/Time could not be converted to Python datetime object. Make sure that the data is consistent defined as a set of date strings.",
                 logobs.output[0],
