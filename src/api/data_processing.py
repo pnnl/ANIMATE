@@ -53,11 +53,11 @@ class DataProcessing:
                     self.data = data
             except:
                 logging.error(
-                    f"An error occured when opening {data_path}. Please make sure that the file exists and that it can be opened."
+                    f"An error occured when opening {data_path}. Please make sure that the file can be opened, and/or that it contains the correct headers."
                 )
                 return None
         else:
-            logging.error(f"The file {data_path} does not exists")
+            logging.error(f"The file {data_path} does not exists.")
             return None
 
     def slice(self, start_time: datetime, end_time: datetime, inplace=False):
