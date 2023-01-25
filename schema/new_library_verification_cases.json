@@ -621,14 +621,14 @@
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
-                    "no_of_occ": {
-                        "subject": "Core_ZN",
-                        "variable": "People Occupant Count",
-                        "frequency": "Timestep"
-                    },
-                    "Q_load": {
+                    "Q_load_req": {
                         "subject": "Core_ZN",
                         "variable": "Zone Predicted Sensible Load to Setpoint Heat Transfer Rate",
+                        "frequency": "Timestep"
+                    },
+                    "fan_onoff": {
+                        "subject": "HVACOperationSchd",
+                        "variable": "Schedule Value",
                         "frequency": "Timestep"
                     },
                     "P_fan": {
