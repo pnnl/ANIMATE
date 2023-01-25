@@ -121,7 +121,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - **timestamp_column_name**: Name of the column header that contains the time series timestamps.
   - **Returns**: class object with `self.data` loaded with a `pandas.DataFrame`.
 
-- `slice(`_start_time: datetime object, end_time: datetime object_, inplace=False`)`
+- [x] `slice(`_start_time: datetime object, end_time: datetime object_, inplace=False`)`
 
   Discard any data in `self.data` before or after _start_time_ and _end_time_
 

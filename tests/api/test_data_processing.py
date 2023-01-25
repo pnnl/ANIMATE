@@ -1,4 +1,4 @@
-import unittest, sys, logging, json, os
+import unittest, sys, datetime
 
 sys.path.append("./src")
 
@@ -50,3 +50,28 @@ class TestDataProcessing(unittest.TestCase):
                 f"ERROR:root:The data in Date/Time could not be converted to Python datetime object. Make sure that the data is consistent defined as a set of date strings.",
                 logobs.output[0],
             )
+
+    def test_slice_args_check(self):
+        with self.assertLogs() as logobs:
+            filep = "./tests/api/data/data_complete.csv"
+            dp = DataProcessing(data_path=filep, data_source="EnergyPlus")
+            dp.slice("2000-01-01 11:00", "2000-01-01 11:00")
+            self.assertEqual(
+                f"ERROR:root:The start_time argument is not a Python datetime object.",
+                logobs.output[0],
+            )
+            dp.slice(datetime.datetime(2000, 1, 1, 11), "2000-01-01 11:00")
+            self.assertEqual(
+                f"ERROR:root:The end_time argument is not a Python datetime object.",
+                logobs.output[1],
+            )
+        s = dp.slice(
+            datetime.datetime(2000, 1, 1, 11), datetime.datetime(2000, 1, 1, 13)
+        )
+        assert len(s) == 3
+        dp.slice(
+            datetime.datetime(2000, 1, 1, 12),
+            datetime.datetime(2000, 1, 1, 13),
+            inplace=True,
+        )
+        assert len(dp.data) == 2

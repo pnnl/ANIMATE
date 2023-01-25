@@ -64,8 +64,23 @@ class DataProcessing:
         """Discard any data before `start_time` and after `end_time`.
 
         Args:
-            start_time (datetime): Python datetime object used
-            end_time (datetime): _description_
+            start_time (datetime): Python datetime object used as the slice start date of the data
+            end_time (datetime): Python datetime object used as the slice end date of the data
             inplace (bool, optional): Modify the object directly. Defaults to False.
         """
-        pass
+        if isinstance(start_time, datetime.datetime):
+            if isinstance(end_time, datetime.datetime):
+                if start_time > end_time:
+                    logging.error(
+                        f"The end_time cannot be an earlier data than start_time."
+                    )
+                else:
+                    if inplace:
+                        self.data = self.data[start_time:end_time]
+                    else:
+                        return self.data[start_time:end_time]
+            else:
+                logging.error(f"The end_time argument is not a Python datetime object.")
+        else:
+            logging.error(f"The start_time argument is not a Python datetime object.")
+        return None
