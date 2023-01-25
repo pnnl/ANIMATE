@@ -5,8 +5,14 @@ sys.path.append("..")
 from epreader import *
 from datetimeep import *
 
+
 class DataProcessing:
-    def __init__(self, data_path: str = None, data_source: str = None, timestamp_column_name: str=None):
+    def __init__(
+        self,
+        data_path: str = None,
+        data_source: str = None,
+        timestamp_column_name: str = None,
+    ):
         """Instantiate a data processing object to load datasets and manipulate data before feeding it to the verification process.
 
         Args:
@@ -26,14 +32,18 @@ class DataProcessing:
                 if data_source != "EnergyPlus":
                     self.data = pd.read_csv(data_path)
                     if not timestamp_column_name in self.data.columns:
-                        logging.error(f"The data does not contain a column header named {data_path}.")
+                        logging.error(
+                            f"The data does not contain a column header named {data_path}."
+                        )
                         return None
                     else:
                         self.data.set_index(timestamp_column_name, inplace=True)
                     try:
                         self.data = pd.to_datetime(self.data.index)
                     except:
-                        logging.error(f"The data in {timestamp_column_name} could not be converted to Python datetime object. Make sure that the data is consistent defined as a set of date strings.")        
+                        logging.error(
+                            f"The data in {timestamp_column_name} could not be converted to Python datetime object. Make sure that the data is consistent defined as a set of date strings."
+                        )
                         return None
                 else:
                     # Use CSVReader to parse EnergyPlus timestamps
@@ -42,17 +52,19 @@ class DataProcessing:
                     data.drop("Date/Time", inplace=True, axis=1)
                     self.data = data
             except:
-                logging.error(f"An error occured when opening {data_path}. Please make sure that the file exists and that it can be opened.")
+                logging.error(
+                    f"An error occured when opening {data_path}. Please make sure that the file exists and that it can be opened."
+                )
                 return None
         else:
             logging.error(f"The file {data_path} does not exists")
             return None
-    
+
     def slice(self, start_time: datetime, end_time: datetime, inplace=False):
         """Discard any data before `start_time` and after `end_time`.
 
         Args:
-            start_time (datetime): Python datetime object used 
+            start_time (datetime): Python datetime object used
             end_time (datetime): _description_
             inplace (bool, optional): Modify the object directly. Defaults to False.
         """
