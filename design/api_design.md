@@ -8,7 +8,7 @@ Date Modified: 01/21/2023
 
 ## Intro
 
-The ANIMATE application programming iterfaces (APIs) are a collection of functions for performing common tasks with ANIMATE. These APIs are Python methods implementations with stable and well-documented interface. These methods are organized into different API categories (as Python classes) based on their functionalities and subjects.
+The ANIMATE application programming interfaces (APIs) are a collection of functions for performing common tasks with ANIMATE. These APIs are Python methods implementations with stable and well-documented interface. These methods are organized into different API categories (as Python classes) based on their functionalities and subjects.
 
 ## Verification Library API
 
@@ -111,15 +111,17 @@ This API loads datasets and manipulate data before feeding it to the verificatio
 
 `class DataProcessing`
 
-- `__init__(`_data: str_`)`
+- [x] `__init__(`_data_path: str_, data_source: str, timestamp_column_name: str`)`
 
   Class object initialization.
 
   - **parameters**:
-    - **data**: Path to the data (CSV format) to be loaded for processing. Data will be stored in a `pandas.DataFrame()` object.
+    - **data_path**: Path to the data (CSV format) to be loaded for processing. Data will be stored in a `pandas.DataFrame()` object.
+    - **data_source**: Data source name. Use `EnergyPlus` or `Other`.
+    - **timestamp_column_name**: Name of the column header that contains the time series timestamps.
   - **Returns**: class object with `self.data` loaded with a `pandas.DataFrame`.
 
-- `slice(`_start_time: datetime, end_time: datetime object_, inplace=False`)`
+- `slice(`_start_time: datetime object, end_time: datetime object_, inplace=False`)`
 
   Discard any data in `self.data` before or after _start_time_ and _end_time_
 
