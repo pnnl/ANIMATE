@@ -13,6 +13,8 @@ class TestDataProcessing(unittest.TestCase):
                 "ERROR:root:A `data_path` argument should be provided.",
                 logobs.output[0],
             )
+            filep = "./tests/api/data/data_complete.csv"
+            dp = DataProcessing(data_path=filep)
             self.assertEqual(
                 "ERROR:root:A `data_source` argument should be provided.",
                 logobs.output[1],

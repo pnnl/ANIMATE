@@ -22,8 +22,10 @@ class DataProcessing:
         """
         if data_path == None:
             logging.error("A `data_path` argument should be provided.")
-            if data_source == None:
-                logging.error("A `data_source` argument should be provided.")
+            return None
+
+        if data_source == None:
+            logging.error("A `data_source` argument should be provided.")
             return None
 
         # check if data file exists
