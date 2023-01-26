@@ -144,7 +144,6 @@ class DataProcessing:
                         )
                         return None
         else:
-            print("yo!")
             logging.error(
                 f"A list of variable names should be passed as an argument not a {type(variable_names)}."
             )
