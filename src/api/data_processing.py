@@ -63,7 +63,9 @@ class DataProcessing:
             logging.error(f"The file {data_path} does not exists.")
             return None
 
-    def slice(self, start_time: datetime, end_time: datetime, inplace=False):
+    def slice(
+        self, start_time: datetime, end_time: datetime, inplace: bool = False
+    ) -> None | pd.DataFrame:
         """Discard any data before `start_time` and after `end_time`.
 
         Args:
@@ -91,7 +93,9 @@ class DataProcessing:
             logging.error("The start_time argument is not a Python datetime object.")
         return None
 
-    def add_parameter(self, name: str = None, value: float = None, inplace=False):
+    def add_parameter(
+        self, name: str = None, value: float = None, inplace: bool = False
+    ) -> None | pd.DataFrame:
         """Add a parameter to `data`. The parameter will be added as a constant value for all index of `data`
 
         Args:
@@ -122,8 +126,8 @@ class DataProcessing:
         variable_names: list = None,
         new_variable_name: str = None,
         function_to_apply: str = None,
-        inplace=False,
-    ):
+        inplace: bool = False,
+    ) -> None | pd.DataFrame:
         """Apply an aggregation function to a list of variables from the dataset
 
         Args:
@@ -182,7 +186,7 @@ class DataProcessing:
             d[new_variable_name] = agg
             return d
 
-    def summary(self):
+    def summary(self) -> dict:
         """Provide a summary of the dataset
 
         Returns:
