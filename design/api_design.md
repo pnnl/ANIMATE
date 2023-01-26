@@ -6,6 +6,14 @@ Date Modified: 01/21/2023
 
 ---
 
+## Marks used in this document
+
+- :one: to be implemented in the first release of the API documentation
+- :arrow_down: intentionally de-prioritized items
+- :heavy_check_mark: completely implemented and tested
+- [x] one version of it has been implemented and tested
+- :star: more involved implementation efforts expected
+
 ## Intro
 
 The ANIMATE application programming iterfaces (APIs) are a collection of functions for performing common tasks with ANIMATE. These APIs are Python methods implementations with stable and well-documented interface. These methods are organized into different API categories (as Python classes) based on their functionalities and subjects.
@@ -18,7 +26,7 @@ Use this API to manage the verification items library
 
 ---
 
-- `__init__(`_lib_path: str_`)`
+- `__init__(`_lib_path: str_`)` :one:
   Instantiate a verification library class object and load specified library items as `self.lib_items`.
 
   - **Parameters**
@@ -27,7 +35,7 @@ Use this API to manage the verification items library
 
 ---
 
-- `get_library_item(`_item_`)`
+- `get_library_item(`_item_`)` :one:
   Get the json definition and meta information of a specific library item.
 
   - **Parameters**
@@ -40,7 +48,7 @@ Use this API to manage the verification items library
 
 ---
 
-- `get_library_items(`_items=[]_`)`
+- `get_library_items(`_items=[]_`)` :one:
   Get the json definition and meta information of a list of specific library items.
 
   - **Parameters**
@@ -69,7 +77,7 @@ Generate a dictionary with predefined keys so that a library item
 - `update_existing_library_items()`
 - probably should not allow update / add new library python definition during runtime, this is risky and hard to quality control -->
 
-- `validate_library(`_items=[]_`)`
+- `validate_library(`_items=[]_`)` :one:
   Check the validity of library items definition. This validity check includes checking the completeness of json specification (against library json schema) and Python verification class definition (against library class interface) and the match between the json and python implementation.
 
   - **Parameters**
@@ -78,7 +86,7 @@ Generate a dictionary with predefined keys so that a library item
 
 ---
 
-- `get_applicable_library_items_by_datapoints(`_datapoints_`)`
+- `get_applicable_library_items_by_datapoints(`_datapoints_`)` :one: :star:
   Based on provided datapoints lists, identify potentially applicable library items from all loaded items. Use this function with caution as it 1) requires aligned data points naming across all library items; 2) does not check the topological relationships between datapoints.
 
   - **Parameters**
@@ -87,7 +95,7 @@ Generate a dictionary with predefined keys so that a library item
 
 ---
 
-- `get_required_datapoints_by_library_items(`_items=[]_`)`
+- `get_required_datapoints_by_library_items(`_items=[]_`)` :one: :star:
   Summarize datapoints that need to be used to support specified library items. Use this function with caution as it 1) requires aligned data points naming across all library items; 2) does not check the topological relationships between datapoints.
 
   - **Parameters**
@@ -111,7 +119,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
 
 `class DataProcessing`
 
-- `__init__(`_data: str_`)`
+- `__init__(`_data: str_`)` :one:
 
   Class object initialization.
 
@@ -119,7 +127,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - **data**: Path to the data (CSV format) to be loaded for processing. Data will be stored in a `pandas.DataFrame()` object.
   - **Returns**: class object with `self.data` loaded with a `pandas.DataFrame`.
 
-- `slice(`_start_time: datetime, end_time: datetime object_, inplace=False`)`
+- `slice(`_start_time: datetime, end_time: datetime object_, inplace=False`)` :one:
 
   Discard any data in `self.data` before or after _start_time_ and _end_time_
 
@@ -129,7 +137,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _inplace_: bool, whether to do inplace modification of the data. By default, False.
   - **return**: `pandas.DataFrame()` that only contain a slice of the original `self.data`
 
-- `add_parameter(`_name: str, value: float_, inplace=False`)`
+- `add_parameter(`_name: str, value: float_, inplace=False`)` :one:
 
   Add a parameter to `self.data`. The parameter will be added as a constant value for all index of `self.data`
 
@@ -137,7 +145,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _name_: name of the parameter to add
     - _value_: value of the parameter
 
-- `concatenate(`\*datasets: list(pandas.DataFrame), inplace=False`)`
+- `concatenate(`\*datasets: list(pandas.DataFrame), inplace=False`)` :one:
 
   Concatenate datasets with `self.data`
 
@@ -149,7 +157,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
       - when 0: check if all datasets have same datetime index, if not, break.
     - **return**: `pandas.DataFrame` that contains the concatenated datasets
 
-- `apply_func(`_var_names: list(str), new_var_name: str, function: str_`)`
+- `apply_func(`_var_names: list(str), new_var_name: str, function: str_`)` :one:
 
   Apply a basic aggregate function to a list of variables from `self.data`
 
@@ -169,7 +177,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
 
 **for data sanity check, once we link the data with datapoint type through verification case, we can check data validity against different rules of different data types. e.g. sat should not be < -30**
 
-- `summary()`
+- `summary()` :one:
 
   Provide a summary of the data
 
@@ -206,7 +214,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _method_: 'linear', 'pad' as described [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.interpolate.html)
     - _variable_names_: list of variable names used for interpolation of missing values
 
-- `check_for_verif(`_verification_case_`)`
+- `check_for_verif(`_verification_case_`)` :one:
 
   Checks that all variables necessary for a specific verification item are present
 
@@ -264,11 +272,11 @@ dp.check_for_verif(verification_case=case_1)
 
 `class VerificationCase`
 
-- `__init__()`
+- `__init__()` :one:
 
   Class object initialization. Define `self.case_suite` as a Dict. keys being automatically generated unique id of case, values being the fully defined verification case Dict.
 
-- `load_verification_cases_from_json(`_json_case_path: str_`)`
+- `load_verification_cases_from_json(`_json_case_path: str_`)` :one:
 
   Add verification cases from specified json file into `self.case_suite`
 
@@ -292,7 +300,7 @@ dp.check_for_verif(verification_case=case_1)
     - _cases_: List, containing fully defined verification cases Dict.
   - **Returns** unique id of the cases stored in self.case_suite[unique_id]
 
-- `static create_verificaton_case_suite_from_base_case(`_base_case: dict, update_key_value: Dict_, keep_base_case=True`)`
+- `static create_verificaton_case_suite_from_base_case(`_base_case: dict, update_key_value: Dict_, keep_base_case=True`)` :one:
 
   Create slightly different multiple verification cases by changing keys and values as specified in `update_key_value`. Design illustrated with example below.
 
@@ -342,7 +350,7 @@ Define update_key_value as
 
   - **return**: Dictionary that has the `new_library_verification_cases.json` format
 
-- `static validate_verification_case_structure(`_case: dict, verbose: bool=False_`)`
+- `static validate_verification_case_structure(`_case: dict, verbose: bool=False_`)` :one:
 
   Validate verification case structure (e.g., check whether `run_simulation`, `simulation_IO`, etc. exist or not). Check if required key / values pairs exist in the case. check if datatype of values are appropriate, e.g. file path is str.
 
@@ -377,7 +385,7 @@ Define update_key_value as
   - **parameters**: -`_list_IDs_`: list of IDS that will be validated. -`_verbose_`: validate output option. If `verbose=True` is used and validation failed, output additional info.
   - **return**: list, the first element indicates whether the file is valid or not (bool). The second element outputs additional info (str)if verbose arg is set to `True`. -->
 
-- `save_case_suite_to_json(`_json_path: str, case_ids=[]_`)`
+- `save_case_suite_to_json(`_json_path: str, case_ids=[]_`)` :one:
 
   Save verification cases in `self.case_suite` to a dedicated file.
 
@@ -385,7 +393,7 @@ Define update_key_value as
     - _json_path_: str. json file path to save the cases
     - _case_ids_: List. Unique ids of verificationc cases to save. By default, save all cases in `self.case_suite`
 
-- `static save_verification_cases_to_json(`_json_path: str, cases: list_`)
+- `static save_verification_cases_to_json(`_json_path: str, cases: list_`) :one:
   - **parameters**:
     - _json_path_: str. json file path to save the cases
     - _case_ids_: List. List of complete verification cases Dictionary to save.
@@ -468,7 +476,7 @@ verification_instance.save_verification_case("./schema/new_library_verification_
 
 `class Verification`
 
-- `__init__(`_verification: verification object_`)`
+- `__init__(`_verification: verification object_`)` :one:
 
   Class initialization
 
@@ -486,7 +494,7 @@ verification_instance.save_verification_case("./schema/new_library_verification_
       - plot options
       - multiprocessing (num_threads)
 
-- `run(`_plotting_option: str, fig_size= list_`)`
+- `run(`_plotting_option: str, fig_size= list_`)` :one:
 
   Run verification
 
@@ -517,7 +525,7 @@ verif.run()
 
 ### Reporting API documentation
 
-- `__init__(`_verification_md: str, result_md_path: str, report_format: str_`)`
+- `__init__(`_verification_md: str, result_md_path: str, report_format: str_`)` :one:
 
   Class initialization
 
@@ -526,7 +534,7 @@ verif.run()
     - **result_md_path**: Path where the summarized markdown file is saved. the default path is (`./results`)
     - **report_format**: File format to be output (focus on markdown, later we can consider html, pdf, csv, etc.)
 
-- `report_multiple_cases(case_ids)`
+- `report_multiple_cases(case_ids)` :one:
 
   - **Parameters**
     - **case_ids**: List, of unique verification case ids. **Note, we need to assign unique verification case ids at case creation and check for verification case id uniqueness in case suite**
@@ -592,14 +600,14 @@ self.df = Utilities_instance.add_DST(self.df, 2017)
 
 The workflow API define a complete workflow of running ANIMATE verification job(s). It is designed to be an orchestration tool that coordinates the use of other categories of APIs.
 
-`class VerificationLibrary`
+`class VerificationLibrary` :star:
 
-- `static` `get_workflow_template()`
+- `static` `get_workflow_template()` :one:
   - **Returns** a `Dict` template of workflow definition with descriptions of fields to be filled.
 
 ---
 
-- `static` `list_existing_workflows(`_workflow_dir=''_`)`
+- `static` `list_existing_workflows(`_workflow_dir=''_`)` :one:
   List existing workflows (defined as json files) under a specific directory path.
 
   - **Parameters**
@@ -610,7 +618,7 @@ The workflow API define a complete workflow of running ANIMATE verification job(
 
 ---
 
-- `__init__(`_workflow_path: str_`)`
+- `__init__(`_workflow_path: str_`)` :one:
   Instantiate a Workflow class object and load specified workflow as a `Dict` in `self.workflow`.
 
   - **Parameters**
@@ -646,7 +654,7 @@ The workflow API define a complete workflow of running ANIMATE verification job(
 
 ---
 
-- `run_workflow(verbose=False)`
+- `run_workflow(verbose=False)` :one:
   - **Parameters**
     - `verbose`: bool. Wether to output detailed information. By default, False.
   - **Returns**: bool. Whether the run is successful or not.
