@@ -1,5 +1,6 @@
 import sys, os, logging, datetime
 import pandas as pd
+import numpy as np
 
 sys.path.append("..")
 from epreader import *
@@ -69,6 +70,9 @@ class DataProcessing:
             start_time (datetime): Python datetime object used as the slice start date of the data
             end_time (datetime): Python datetime object used as the slice end date of the data
             inplace (bool, optional): Modify the dataset directly. Defaults to False.
+
+        Returns:
+            pd.DataFrame(): Modified dataset
         """
         if isinstance(start_time, datetime.datetime):
             if isinstance(end_time, datetime.datetime):
@@ -94,6 +98,9 @@ class DataProcessing:
             name (str): Name of the parameter
             value (float): Value of the parameter.
             inplace (bool): Modify the dataset directly. Defaults to False.
+
+        Returns:
+            pd.DataFrame(): Modified dataset
         """
         if name is None:
             logging.error("A parameter name should be specified.")
@@ -124,6 +131,9 @@ class DataProcessing:
             new_variable_name (str): Name of the new variable containing the result of the function for each time stamp.
             function_to_apply (str): Name of the function to apply. Choices are: `sum`, `min`, `max`or `average`.
             inplace (bool): Modify the dataset directly. Defaults to False.
+
+        Returns:
+            pd.DataFrame(): Modified dataset
         """
         if variable_names is None:
             logging.error("A list of variables was not specified.")
@@ -171,3 +181,31 @@ class DataProcessing:
             d = self.data
             d[new_variable_name] = agg
             return d
+
+    def summary(self):
+        """Provide a summary of the dataset
+
+        Returns:
+            Dict: Dictionary containing the following information: 1) Number of data points, 2) Resolution, 3) For each variables: minimum, maximum, mean, standard deviation
+        """
+        data_summary = {}
+        data_summary["number_of_data_points"] = len(self.data)
+
+        # Calculate average timestampe difference, i.e. average resolution
+        # Report in seconds
+        d = self.data
+        d["date"] = self.data.index
+        data_summary["average_resolution_in_second"] = (
+            d["date"].diff().fillna(pd.Timedelta(seconds=0))[1:].mean().seconds
+        )
+        d.drop("date", inplace=True, axis=1)
+
+        data_summary["variables_summary"] = {}
+        for v in list(d.columns):
+            data_summary["variables_summary"][v] = {}
+            data_summary["variables_summary"][v]["minimum"] = d[v].min()
+            data_summary["variables_summary"][v]["maximum"] = d[v].max()
+            data_summary["variables_summary"][v]["mean"] = d[v].mean()
+            data_summary["variables_summary"][v]["standard_deviation"] = np.std(d[v])
+
+        return data_summary

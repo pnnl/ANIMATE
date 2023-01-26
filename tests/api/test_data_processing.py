@@ -198,3 +198,76 @@ class TestDataProcessing(unittest.TestCase):
             )
             == 20.18
         )
+
+    def test_summary(self):
+        expected_results = {
+            "number_of_data_points": 24,
+            "average_resolution_in_second": 3600,
+            "variables_summary": {
+                "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)": {
+                    "minimum": -4.0,
+                    "maximum": 6.25,
+                    "mean": 0.7833333333333333,
+                    "standard_deviation": 3.3630500376229255,
+                },
+                "CORE_BOTTOM:Zone Air Temperature [C](Hourly)": {
+                    "minimum": 18.27273964,
+                    "maximum": 21.00004169,
+                    "mean": 19.503968912500003,
+                    "standard_deviation": 1.0244291105492493,
+                },
+                "CORE_MID:Zone Air Temperature [C](Hourly)": {
+                    "minimum": 17.24338178,
+                    "maximum": 21.00003688,
+                    "mean": 19.194468342916668,
+                    "standard_deviation": 1.451985874981613,
+                },
+                "CORE_TOP:Zone Air Temperature [C](Hourly)": {
+                    "minimum": 15.59995364,
+                    "maximum": 21.00035935,
+                    "mean": 18.347906522916666,
+                    "standard_deviation": 2.247706588900561,
+                },
+                "PERIMETER_BOT_ZN_1:Zone Air Temperature [C](Hourly)": {
+                    "minimum": 16.76223663,
+                    "maximum": 23.64975651,
+                    "mean": 19.837477728333337,
+                    "standard_deviation": 2.2800476016223246,
+                },
+                "PERIMETER_MID_ZN_1:Zone Air Temperature [C](Hourly)": {
+                    "minimum": 15.60003369,
+                    "maximum": 24.00038357,
+                    "mean": 19.132399963749997,
+                    "standard_deviation": 3.3659979386208,
+                },
+            },
+        }
+        filep = "./tests/api/data/data_complete.csv"
+        dp = DataProcessing(data_path=filep, data_source="EnergyPlus")
+        results = dp.summary()
+        assert (
+            results["number_of_data_points"]
+            == expected_results["number_of_data_points"]
+        )
+        assert (
+            results["average_resolution_in_second"]
+            == expected_results["average_resolution_in_second"]
+        )
+        assert len(results["variables_summary"]) == len(
+            expected_results["variables_summary"]
+        )
+        for v in results["variables_summary"]:
+            assert round(results["variables_summary"][v]["minimum"], 2) == round(
+                expected_results["variables_summary"][v]["minimum"], 2
+            )
+            assert round(results["variables_summary"][v]["maximum"], 2) == round(
+                expected_results["variables_summary"][v]["maximum"], 2
+            )
+            assert round(results["variables_summary"][v]["mean"], 2) == round(
+                expected_results["variables_summary"][v]["mean"], 2
+            )
+            assert round(
+                results["variables_summary"][v]["standard_deviation"], 2
+            ) == round(
+                expected_results["variables_summary"][v]["standard_deviation"], 2
+            )

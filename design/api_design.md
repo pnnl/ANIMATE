@@ -171,9 +171,9 @@ This API loads datasets and manipulate data before feeding it to the verificatio
 
 **for data sanity check, once we link the data with datapoint type through verification case, we can check data validity against different rules of different data types. e.g. sat should not be < -30**
 
-- `summary()`
+- [x] `summary()`
 
-  Provide a summary of the data
+  Provide a summary of the dataset
 
   - **return**: dict showing the following information
     - Number of data points
