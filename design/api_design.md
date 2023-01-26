@@ -151,14 +151,14 @@ This API loads datasets and manipulate data before feeding it to the verificatio
       - when 0: check if all datasets have same datetime index, if not, break.
     - **return**: `pandas.DataFrame` that contains the concatenated datasets
 
-- `apply_func(`_var_names: list(str), new_var_name: str, function: str_`)`
+- [x] `apply_function(`variable_names: list(str), new_var_name: str, function_to_apply: str_, inplace=False`)`
 
-  Apply a basic aggregate function to a list of variables from `self.data`
+  Apply an aggregation function to a list of variables from the dataset
 
   - **parameters**:
-    - _var_names_: list of variables from `self.data` to be used for the aggregation function
-    - _new_var_name_: name of the new variable that will contain the aggregated data
-    - _function_: one of the following aggregate function 'sum', 'max', 'min', or 'average'
+    - _variable_names_: list of variables from `self.data` to be used for the aggregation function
+    - _new_variable_name_: name of the new variable that will contain the aggregated data
+    - _function_to_apply_: one of the following aggregate function 'sum', 'max', 'min', or 'average'
     - **return**: `pandas.DataFrame` containing all existing and a newly computed column.
 
 - `check()`

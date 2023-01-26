@@ -66,13 +66,13 @@ class DataProcessing:
         Args:
             start_time (datetime): Python datetime object used as the slice start date of the data
             end_time (datetime): Python datetime object used as the slice end date of the data
-            inplace (bool, optional): Modify the object directly. Defaults to False.
+            inplace (bool, optional): Modify the dataset directly. Defaults to False.
         """
         if isinstance(start_time, datetime.datetime):
             if isinstance(end_time, datetime.datetime):
                 if start_time > end_time:
                     logging.error(
-                        f"The end_time cannot be an earlier data than start_time."
+                        "The end_time cannot be an earlier data than start_time."
                     )
                 else:
                     if inplace:
@@ -80,9 +80,9 @@ class DataProcessing:
                     else:
                         return self.data[start_time:end_time]
             else:
-                logging.error(f"The end_time argument is not a Python datetime object.")
+                logging.error("The end_time argument is not a Python datetime object.")
         else:
-            logging.error(f"The start_time argument is not a Python datetime object.")
+            logging.error("The start_time argument is not a Python datetime object.")
         return None
 
     def add_parameter(self, name: str = None, value: float = None, inplace=False):
@@ -91,14 +91,14 @@ class DataProcessing:
         Args:
             name (str): Name of the parameter
             value (float): Value of the parameter.
-            inplace (bool): Modify the object directly. Defaults to False.
+            inplace (bool): Modify the dataset directly. Defaults to False.
         """
         if name is None:
-            logging.error(f"A parameter name should be specified.")
+            logging.error("A parameter name should be specified.")
             return None
 
         if value is None:
-            logging.error(f"A parameter value should be specified.")
+            logging.error("A parameter value should be specified.")
             return None
 
         if inplace:
@@ -106,4 +106,67 @@ class DataProcessing:
         else:
             d = self.data
             d[name] = value
+            return d
+
+    def apply_function(
+        self,
+        variable_names: list = None,
+        new_variable_name: str = None,
+        function_to_apply: str = None,
+        inplace=False,
+    ):
+        """Apply an aggregation function to a list of variables from the dataset
+
+        Args:
+            variable_names (str): List of variables used as input to the function.
+            new_variable_name (str): Name of the new variable containing the result of the function for each time stamp.
+            function_to_apply (str): Name of the function to apply. Choices are: `sum`, `min`, `max`or `average`.
+            inplace (bool): Modify the dataset directly. Defaults to False.
+        """
+        if variable_names is None:
+            logging.error("A list of variables was not specified.")
+            return None
+        if isinstance(variable_names, list):
+            if len(variable_names) == 0:
+                logging.error("The variable name list is empty.")
+                return None
+            else:
+                for v in variable_names:
+                    missing_variables = 0
+                    if not v in list(self.data.columns):
+                        logging.warning(f"The variable {v} is not in the dataset.")
+                        missing_variables += 1
+                    if missing_variables == len(variable_names):
+                        logging.error(
+                            "None of the variables passed in the variable name list argument are actually in the dataset."
+                        )
+                        return None
+        else:
+            print("yo!")
+            logging.error(
+                f"A list of variable names should be passed as an argument not a {type(variable_names)}."
+            )
+            return None
+
+        if new_variable_name is None:
+            logging.error("A new variable name should be provided.")
+            return None
+
+        if not function_to_apply.lower() in ["sum", "min", "max", "average"]:
+            logging.error(
+                f"The function to apply should be `sum`, `min`, `max`, or `average, not {function_to_apply.lower()}."
+            )
+            return None
+
+        agg = self.data.loc[:, variable_names].apply(
+            lambda r: eval(
+                f"{function_to_apply.lower().replace('average', 'sum(r)/len')}(r)"
+            ),
+            axis=1,
+        )
+        if inplace:
+            self.data[new_variable_name] = agg
+        else:
+            d = self.data
+            d[new_variable_name] = agg
             return d

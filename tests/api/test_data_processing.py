@@ -88,3 +88,111 @@ class TestDataProcessing(unittest.TestCase):
             inplace=True,
         )
         assert len(dp.data) == 2
+
+    def test_apply_function(self):
+        with self.assertLogs() as logobs:
+            filep = "./tests/api/data/data_complete.csv"
+            dp = DataProcessing(data_path=filep, data_source="EnergyPlus")
+            dp.apply_function()
+            self.assertEqual(
+                f"ERROR:root:A list of variables was not specified.",
+                logobs.output[len(logobs.output) - 1],
+            )
+            dp.apply_function([])
+            self.assertEqual(
+                f"ERROR:root:The variable name list is empty.",
+                logobs.output[len(logobs.output) - 1],
+            )
+            dp.apply_function(["VariableNotInDataset"])
+            self.assertEqual(
+                f"WARNING:root:The variable VariableNotInDataset is not in the dataset.",
+                logobs.output[len(logobs.output) - 2],
+            )
+            self.assertEqual(
+                f"ERROR:root:None of the variables passed in the variable name list argument are actually in the dataset.",
+                logobs.output[len(logobs.output) - 1],
+            )
+            dp.apply_function(variable_names={})
+            self.assertEqual(
+                f"ERROR:root:A list of variable names should be passed as an argument not a <class 'dict'>.",
+                logobs.output[len(logobs.output) - 1],
+            )
+            dp.apply_function(
+                [
+                    "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)",
+                    "CORE_BOTTOM:Zone Air Temperature [C](Hourly)",
+                ]
+            )
+            self.assertEqual(
+                f"ERROR:root:A new variable name should be provided.",
+                logobs.output[len(logobs.output) - 1],
+            )
+            dp.apply_function(
+                [
+                    "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)",
+                    "CORE_BOTTOM:Zone Air Temperature [C](Hourly)",
+                ],
+                "Agg",
+                "EXP",
+            )
+            self.assertEqual(
+                f"ERROR:root:The function to apply should be `sum`, `min`, `max`, or `average, not exp.",
+                logobs.output[len(logobs.output) - 1],
+            )
+
+        assert (
+            round(
+                dp.apply_function(
+                    [
+                        "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)",
+                        "CORE_BOTTOM:Zone Air Temperature [C](Hourly)",
+                    ],
+                    "Agg",
+                    "Average",
+                )["Agg"].iloc[0],
+                2,
+            )
+            == 10.09
+        )
+        assert (
+            round(
+                dp.apply_function(
+                    [
+                        "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)",
+                        "CORE_BOTTOM:Zone Air Temperature [C](Hourly)",
+                    ],
+                    "Agg",
+                    "min",
+                )["Agg"].iloc[0],
+                2,
+            )
+            == 1.65
+        )
+        assert (
+            round(
+                dp.apply_function(
+                    [
+                        "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)",
+                        "CORE_BOTTOM:Zone Air Temperature [C](Hourly)",
+                    ],
+                    "Agg",
+                    "max",
+                )["Agg"].iloc[0],
+                2,
+            )
+            == 18.53
+        )
+        assert (
+            round(
+                dp.apply_function(
+                    [
+                        "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)",
+                        "CORE_BOTTOM:Zone Air Temperature [C](Hourly)",
+                    ],
+                    "Agg",
+                    "Sum",
+                )["Agg"].iloc[0],
+                2,
+            )
+            == 20.18
+        )
