@@ -131,7 +131,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _inplace_: bool, whether to do inplace modification of the data. By default, False.
   - **return**: `pandas.DataFrame()` that only contain a slice of the original `self.data`
 
-- `add_parameter(`_name: str, value: float_, inplace=False`)`
+- [x] `add_parameter(`_name: str, value: float_, inplace=False`)`
 
   Add a parameter to `self.data`. The parameter will be added as a constant value for all index of `self.data`
 
@@ -249,7 +249,7 @@ dp.plot(variable_names=["Zone 1 Temp", "Zone 2 Temp"])
 dp.plot(variable_names=["Outdoor Air Temp", "Mixed Air Temp"])
 
 # Interpolate missing data
-dp.interpolate(method='linear', variable_names=['Outdoor Air Temperature])
+dp.interpolate(method='linear', variable_names=['Outdoor Air Temperature'])
 
 # Downsampling
 dp.downsampling(rule='1H')

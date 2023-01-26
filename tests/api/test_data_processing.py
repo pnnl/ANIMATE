@@ -51,7 +51,7 @@ class TestDataProcessing(unittest.TestCase):
                 logobs.output[0],
             )
 
-    def test_slice_args_check(self):
+    def test_slice_add_parameter(self):
         with self.assertLogs() as logobs:
             filep = "./tests/api/data/data_complete.csv"
             dp = DataProcessing(data_path=filep, data_source="EnergyPlus")
@@ -65,6 +65,19 @@ class TestDataProcessing(unittest.TestCase):
                 f"ERROR:root:The end_time argument is not a Python datetime object.",
                 logobs.output[1],
             )
+            dp.add_parameter()
+            self.assertEqual(
+                f"ERROR:root:A parameter name should be specified.",
+                logobs.output[2],
+            )
+            dp.add_parameter(name="test")
+            self.assertEqual(
+                f"ERROR:root:A parameter value should be specified.",
+                logobs.output[3],
+            )
+        assert "test" in list(dp.add_parameter(name="test", value=-999).columns)
+        dp.add_parameter(name="test", value=-999, inplace=True)
+        assert "test" in list(dp.data.columns)
         s = dp.slice(
             datetime.datetime(2000, 1, 1, 11), datetime.datetime(2000, 1, 1, 13)
         )

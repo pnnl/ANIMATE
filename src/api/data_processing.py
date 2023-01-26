@@ -84,3 +84,26 @@ class DataProcessing:
         else:
             logging.error(f"The start_time argument is not a Python datetime object.")
         return None
+
+    def add_parameter(self, name: str = None, value: float = None, inplace=False):
+        """Add a parameter to `data`. The parameter will be added as a constant value for all index of `data`
+
+        Args:
+            name (str): Name of the parameter
+            value (float): Value of the parameter.
+            inplace (bool): Modify the object directly. Defaults to False.
+        """
+        if name is None:
+            logging.error(f"A parameter name should be specified.")
+            return None
+
+        if value is None:
+            logging.error(f"A parameter value should be specified.")
+            return None
+
+        if inplace:
+            self.data[name] = value
+        else:
+            d = self.data
+            d[name] = value
+            return d
