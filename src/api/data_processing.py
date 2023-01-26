@@ -66,7 +66,7 @@ class DataProcessing:
 
     def slice(
         self, start_time: datetime, end_time: datetime, inplace: bool = False
-    ) -> Union[None , pd.DataFrame]:
+    ) -> Union[None, pd.DataFrame]:
         """Discard any data before `start_time` and after `end_time`.
 
         Args:
@@ -96,7 +96,7 @@ class DataProcessing:
 
     def add_parameter(
         self, name: str = None, value: float = None, inplace: bool = False
-    ) -> Union[None , pd.DataFrame]:
+    ) -> Union[None, pd.DataFrame]:
         """Add a parameter to `data`. The parameter will be added as a constant value for all index of `data`
 
         Args:
@@ -128,7 +128,7 @@ class DataProcessing:
         new_variable_name: str = None,
         function_to_apply: str = None,
         inplace: bool = False,
-    ) -> Union[None , pd.DataFrame]:
+    ) -> Union[None, pd.DataFrame]:
         """Apply an aggregation function to a list of variables from the dataset
 
         Args:
