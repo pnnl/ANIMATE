@@ -100,14 +100,3 @@ class VerificationLibrary:
         }
 
         return item_dict
-
-
-def main():
-    vl_obj = VerificationLibrary("../../schema/library.json")
-    vl_obj.lib_items
-    print("testing")
-    print("dd")
-
-
-if __name__ == "__main__":
-    main()
