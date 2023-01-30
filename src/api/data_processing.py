@@ -265,3 +265,29 @@ class DataProcessing:
             self.data = concatenated_datasets
         else:
             return concatenated_datasets
+
+    def check(self):
+        data_headers = list(self.data.columns)
+        if len(data_headers) == 0:
+            logging.eror("The data does not include any hearders.")
+            return None
+
+        check_summary = {}
+        for c in data_headers:
+            check_summary[c] = {}
+            # Look for missing data
+            missing_values_count = self.data[c].isnull().sum()
+            check_summary[c]["number_of_missing_values"] = missing_values_count
+
+            # Look for outliers
+            # 3x the standard deviation
+            data = self.data[c].dropna()
+            outliers = data[
+                ~data.apply(lambda v: np.abs(v - data.mean()) / data.std() < 3)
+            ]
+
+            if len(outliers) == 0:
+                outliers = None
+            check_summary[c]["outliers"] = outliers
+
+        return check_summary

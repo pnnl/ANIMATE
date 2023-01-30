@@ -323,3 +323,46 @@ class TestDataProcessing(unittest.TestCase):
                 f"ERROR:root:The datasets must have the same indexes.",
                 logobs.output[4],
             )
+
+    def test_check(self):
+        filep = "./tests/api/data/data_missing_outliers.csv"
+        dp = DataProcessing(data_path=filep, data_source="EnergyPlus")
+        expected_results = {
+            "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)": {
+                "number_of_missing_values": 1,
+                "outliers": 150.0,
+            },
+            "CORE_BOTTOM:Zone Air Temperature [C](Hourly)": {
+                "number_of_missing_values": 2,
+                "outliers": None,
+            },
+            "CORE_MID:Zone Air Temperature [C](Hourly)": {
+                "number_of_missing_values": 3,
+                "outliers": None,
+            },
+            "CORE_TOP:Zone Air Temperature [C](Hourly)": {
+                "number_of_missing_values": 0,
+                "outliers": 53.0,
+            },
+            "PERIMETER_BOT_ZN_1:Zone Air Temperature [C](Hourly)": {
+                "number_of_missing_values": 0,
+                "outliers": None,
+            },
+            "PERIMETER_MID_ZN_1:Zone Air Temperature [C](Hourly)": {
+                "number_of_missing_values": 0,
+                "outliers": 250.0,
+            },
+        }
+
+        results = dp.check()
+        for c in list(dp.data.columns):
+            assert (
+                expected_results[c]["number_of_missing_values"]
+                == results[c]["number_of_missing_values"]
+            )
+            if results[c]["outliers"] is None:
+                assert expected_results[c]["outliers"] == results[c]["outliers"]
+            else:
+                assert (
+                    expected_results[c]["outliers"] == results[c]["outliers"].values[0]
+                )

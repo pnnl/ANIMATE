@@ -161,7 +161,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _function_to_apply_: one of the following aggregate function 'sum', 'max', 'min', or 'average'
     - **return**: `pandas.DataFrame` containing all existing and a newly computed column.
 
-- `check()`
+- [x] `check()`
 
   Perform a sanity check on the data.
 
