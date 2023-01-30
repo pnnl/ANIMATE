@@ -139,7 +139,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _name_: name of the parameter to add
     - _value_: value of the parameter
 
-- `concatenate(`\*datasets: list(pandas.DataFrame), inplace=False`)`
+- [x] `concatenate(`\*datasets: list(pandas.DataFrame), axis = None, inplace=False`)`
 
   Concatenate datasets with `self.data`
 

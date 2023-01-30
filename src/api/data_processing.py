@@ -214,3 +214,54 @@ class DataProcessing:
             data_summary["variables_summary"][v]["standard_deviation"] = np.std(d[v])
 
         return data_summary
+
+    def concatenate(
+        self, datasets: list = None, axis: int = None, inplace: bool = False
+    ):
+        if not isinstance(datasets, list):
+            logging.error(
+                f"A list of datasets must be provided. The datasets argument that was passed is {type(datasets)}."
+            )
+            return None
+
+        if len(datasets) == 0:
+            logging.error("The list of dataset that was provided is empty.")
+            return None
+
+        if not axis in [0, 1]:
+            logging.error("The axis argument should either be 1, or 0.")
+            return None
+
+        if axis == 1:
+            # argument validation
+            datasets_columns = [sorted(list(d.columns)) for d in datasets]
+            if not all(c == datasets_columns[0] for c in datasets_columns):
+                logging.error("The datasets must contain the same column headers.")
+                return None
+
+            # perform concatenation
+            concatenated_datasets = datasets[0]
+            for ds in datasets[1:]:
+                concatenated_datasets = concatenated_datasets.append(ds)
+
+        else:  # axis == 0
+            # argument validation
+            datasets_indexes = [d.index for d in datasets]
+            if not all(len(i) == len(datasets_indexes[0]) for i in datasets_indexes):
+                logging.error("The datasets must have the same indexes.")
+                return None
+            if not all(all(i == datasets_indexes[0]) for i in datasets_indexes):
+                logging.error("The datasets must have the same indexes.")
+                return None
+
+            # perform concatenation
+            concatenated_datasets = datasets[0]
+            for ds in datasets[1:]:
+                concatenated_datasets = pd.concat(
+                    [concatenated_datasets, ds], ignore_index=False, axis=1
+                )
+
+        if inplace:
+            self.data = concatenated_datasets
+        else:
+            return concatenated_datasets
