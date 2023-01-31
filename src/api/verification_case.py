@@ -105,3 +105,63 @@ class VerificationCase:
             )
 
         return list(self.case_suite.keys())
+
+    def save_case_suite_to_json(self, json_path: str, case_ids: list = []):
+        """Save verification cases to a dedicated file. If case_ids is empty, all the cases in `self.case_suite` is saved. If case_ids includes specific cases' hash, the hashes in the list are only saved.
+
+        Args:
+            json_path: str. path to the json file to save the cases.
+            case_ids: List. Unique ids of verification cases to save. By default, save all cases in `self.case_suite`
+        """
+
+        # check json_path type
+        if not isinstance(json_path, str):
+            logging.error(
+                f"The type of the 'json_path' argument has to be str, but {type(json_path)} type is provided. Please verify the 'json_path' argument."
+            )
+            return None
+
+        # check case_ids type
+        if not isinstance(case_ids, list):
+            logging.error(
+                f"The type of the 'case_ids' argument has to be str, but {type(case_ids)} type is provided. Please verify the 'case_ids' argument."
+            )
+            return None
+
+        # if json_path is saved in a different dir, check if it exists
+        json_path_split = json_path.split("/")
+        dir_path = "/".join(json_path_split[:-1])
+        if len(dir_path) > 2:  # when json_path includes directory path
+            if not os.path.exists(dir_path):
+                logging.error(
+                    f"{dir_path} directory doesn't exist. Please make sure to provide an already existing directory."
+                )
+                return None
+
+        # organize the cases in the correct format
+        case_suite_in_template_format = {"cases": []}
+        case_suite_in_template_format_append = case_suite_in_template_format[
+            "cases"
+        ].append
+
+        # save all the cases in self.case_suite
+        if len(case_ids) == 0:
+            if len(self.case_suite) != 0:
+                for case in self.case_suite.items():
+                    case_suite_in_template_format_append(case[1])
+            else:
+                logging.warning(
+                    "There is no case to save. Please make sure if any cases are loaded."
+                )
+        else:  # save selective case(s)
+            for case_id in case_ids:
+                # check if case_id exists
+                if case_id in self.case_suite:
+                    case_suite_in_template_format_append(self.case_suite[case_id])
+                else:
+                    logging.error(
+                        f"{case_id} hash doesn't exist in the self.case_suite. Please make sure to provide a correct case_ids argument."
+                    )
+        # save the case suite
+        with open(json_path, "w") as fw:
+            json.dump(case_suite_in_template_format, fw, indent=4)

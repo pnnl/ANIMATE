@@ -272,7 +272,7 @@ dp.check_for_verif(verification_case=case_1)
     -_case_: (optional) case dictionary that includes verification items.  
     -_file_path_: (optional) path to the verification case file. If the path ends with `*.json`, then the items in the JSON file are loaded. If the path points to a directory, then verification case item JSON files are loaded.  
 
-- `load_verification_cases_from_json(`_json_case_path: str_`)`
+- [x] `load_verification_cases_from_json(`_json_case_path: str_`)`
 
   Add verification cases from specified json file into `self.case_suite`
 
@@ -381,15 +381,16 @@ Define update_key_value as
   - **parameters**: -`_list_IDs_`: list of IDS that will be validated. -`_verbose_`: validate output option. If `verbose=True` is used and validation failed, output additional info.
   - **return**: list, the first element indicates whether the file is valid or not (bool). The second element outputs additional info (str)if verbose arg is set to `True`. -->
 
-- `save_case_suite_to_json(`_json_path: str, case_ids=[]_`)`
+- [x] `save_case_suite_to_json(`_json_path: str, case_ids=[]_`)`
 
-  Save verification cases in `self.case_suite` to a dedicated file.
+  Save verification cases to a dedicated file. If case_ids is empty, all the cases in `self.case_suite` is saved. If case_ids includes specific cases' hash, the hashes in the list are only saved.
 
   - **parameters**:
-    - _json_path_: str. json file path to save the cases
-    - _case_ids_: List. Unique ids of verificationc cases to save. By default, save all cases in `self.case_suite`
+    - _json_path_: str. path to the json file to save the cases.
+    - _case_ids_: List. Unique ids of verification cases to save. By default, save all cases in `self.case_suite`
 
 - `static save_verification_cases_to_json(`_json_path: str, cases: list_`)
+
   - **parameters**:
     - _json_path_: str. json file path to save the cases
     - _case_ids_: List. List of complete verification cases Dictionary to save.
