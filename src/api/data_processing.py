@@ -217,7 +217,17 @@ class DataProcessing:
 
     def concatenate(
         self, datasets: list = None, axis: int = None, inplace: bool = False
-    ):
+    ) -> Union[None, pd.DataFrame]:
+        """Concatenate datasets
+
+        Args:
+            datasets (list): List of datasets (pd.DataFrame) to concatenate with `data`.
+            axis (int): 1 or 0. 1 performs a vertical concatenation and 0 performs an horizontal concatenation.
+            inplace (bool, optional): Modify the dataset directly. Defaults to False.
+
+        Returns:
+            pd.DataFrame(): Modified dataset
+        """
         if not isinstance(datasets, list):
             logging.error(
                 f"A list of datasets must be provided. The datasets argument that was passed is {type(datasets)}."
@@ -231,6 +241,8 @@ class DataProcessing:
         if not axis in [0, 1]:
             logging.error("The axis argument should either be 1, or 0.")
             return None
+
+        datasets.append(self.data)
 
         if axis == 1:
             # argument validation
@@ -267,6 +279,11 @@ class DataProcessing:
             return concatenated_datasets
 
     def check(self):
+        """Perform a sanity check on the data
+
+        Returns:
+            Dict: Dictionary showing the number of missing values for each variables as well as the outliers.
+        """
         data_headers = list(self.data.columns)
         if len(data_headers) == 0:
             logging.eror("The data does not include any hearders.")

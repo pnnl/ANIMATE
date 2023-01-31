@@ -287,38 +287,38 @@ class TestDataProcessing(unittest.TestCase):
                 f"ERROR:root:The list of dataset that was provided is empty.",
                 logobs.output[1],
             )
-            df_a = dp.slice(
-                datetime.datetime(2000, 1, 1, 11), datetime.datetime(2000, 1, 1, 13)
-            )
             df_b = dp.slice(
                 datetime.datetime(2000, 1, 1, 14), datetime.datetime(2000, 1, 1, 16)
             )
-            dp.concatenate(datasets=[df_a, df_b], axis=3)
+            dp.data = dp.slice(
+                datetime.datetime(2000, 1, 1, 11), datetime.datetime(2000, 1, 1, 13)
+            )
+            dp.concatenate(datasets=[df_b], axis=3)
             self.assertEqual(
                 f"ERROR:root:The axis argument should either be 1, or 0.",
                 logobs.output[2],
             )
-            df_c = dp.concatenate(datasets=[df_a, df_b], axis=1)
+            df_c = dp.concatenate(datasets=[df_b], axis=1)
             assert len(df_c) == 6
-            df_a["test"] = 12.0
-            df_d = dp.concatenate(datasets=[df_a, df_b], axis=1)
+            dp.data["test"] = 12.0
+            df_d = dp.concatenate(datasets=[df_b], axis=1)
             self.assertEqual(
                 f"ERROR:root:The datasets must contain the same column headers.",
                 logobs.output[3],
             )
-            df_e = copy.deepcopy(df_a)
-            df_a.drop("test", axis=1, inplace=True)
-            df_f = dp.concatenate(datasets=[df_a, df_c], axis=0)
+            df_e = copy.deepcopy(dp.data)
+            dp.data.drop("test", axis=1, inplace=True)
+            df_f = dp.concatenate(datasets=[df_c], axis=0)
             self.assertEqual(
                 f"ERROR:root:The datasets must have the same indexes.",
                 logobs.output[4],
             )
-            df_g = dp.concatenate(datasets=[df_a, df_e["test"]], axis=0)
+            df_g = dp.concatenate(datasets=[df_e["test"]], axis=0)
             assert len(df_g) == 3
             org_timestamps = df_e.index
             org_timestamps += datetime.timedelta(days=1)
             df_e.set_index(org_timestamps)
-            df_h = dp.concatenate(datasets=[df_a, df_e["test"]], axis=0)
+            df_h = dp.concatenate(datasets=[df_e["test"]], axis=0)
             self.assertEqual(
                 f"ERROR:root:The datasets must have the same indexes.",
                 logobs.output[4],
