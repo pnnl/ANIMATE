@@ -366,3 +366,41 @@ class TestDataProcessing(unittest.TestCase):
                 assert (
                     expected_results[c]["outliers"] == results[c]["outliers"].values[0]
                 )
+
+    def test_fill_missing_values(self):
+        with self.assertLogs() as logobs:
+            filep = "./tests/api/data/data_missing_outliers.csv"
+            dp = DataProcessing(data_path=filep, data_source="EnergyPlus")
+            dp.fill_missing_values()
+            self.assertEqual(
+                f"ERROR:root:The method should either be linear or bad but not None.",
+                logobs.output[0],
+            )
+            dp.fill_missing_values(method="wrong_method")
+            self.assertEqual(
+                f"ERROR:root:The method should either be linear or bad but not wrong_method.",
+                logobs.output[1],
+            )
+            dp.fill_missing_values(method="linear", variable_names="variable 1")
+            self.assertEqual(
+                f"ERROR:root:A list of variable names must be provided. The variables_name argument that was passed is <class 'str'>.",
+                logobs.output[2],
+            )
+            dp.fill_missing_values(method="linear", variable_names=[])
+            self.assertEqual(
+                f"ERROR:root:The list of variable names that was provided is empty.",
+                logobs.output[3],
+            )
+        dp.fill_missing_values(
+            method="linear",
+            variable_names=[
+                "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"
+            ],
+            inplace=True,
+        )
+        assert (
+            dp.check()["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"][
+                "number_of_missing_values"
+            ]
+            == 0
+        )

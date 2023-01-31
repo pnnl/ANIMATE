@@ -1,4 +1,4 @@
-import sys, os, logging, datetime
+import sys, os, logging, datetime, copy
 import pandas as pd
 import numpy as np
 
@@ -70,12 +70,12 @@ class DataProcessing:
         """Discard any data before `start_time` and after `end_time`.
 
         Args:
-            start_time (datetime): Python datetime object used as the slice start date of the data
-            end_time (datetime): Python datetime object used as the slice end date of the data
+            start_time (datetime): Python datetime object used as the slice start date of the data.
+            end_time (datetime): Python datetime object used as the slice end date of the data.
             inplace (bool, optional): Modify the dataset directly. Defaults to False.
 
         Returns:
-            pd.DataFrame(): Modified dataset
+            pd.DataFrame: Modified dataset
         """
         if isinstance(start_time, datetime.datetime):
             if isinstance(end_time, datetime.datetime):
@@ -97,7 +97,7 @@ class DataProcessing:
     def add_parameter(
         self, name: str = None, value: float = None, inplace: bool = False
     ) -> Union[None, pd.DataFrame]:
-        """Add a parameter to `data`. The parameter will be added as a constant value for all index of `data`
+        """Add a parameter to `data`. The parameter will be added as a constant value for all index of `data`.
 
         Args:
             name (str): Name of the parameter
@@ -105,7 +105,7 @@ class DataProcessing:
             inplace (bool): Modify the dataset directly. Defaults to False.
 
         Returns:
-            pd.DataFrame(): Modified dataset
+            pd.DataFrame: Modified dataset
         """
         if name is None:
             logging.error("A parameter name should be specified.")
@@ -129,7 +129,7 @@ class DataProcessing:
         function_to_apply: str = None,
         inplace: bool = False,
     ) -> Union[None, pd.DataFrame]:
-        """Apply an aggregation function to a list of variables from the dataset
+        """Apply an aggregation function to a list of variables from the dataset.
 
         Args:
             variable_names (str): List of variables used as input to the function.
@@ -138,7 +138,7 @@ class DataProcessing:
             inplace (bool): Modify the dataset directly. Defaults to False.
 
         Returns:
-            pd.DataFrame(): Modified dataset
+            pd.DataFrame: Modified dataset
         """
         if variable_names is None:
             logging.error("A list of variables was not specified.")
@@ -188,10 +188,10 @@ class DataProcessing:
             return d
 
     def summary(self) -> dict:
-        """Provide a summary of the dataset
+        """Provide a summary of the dataset.
 
         Returns:
-            Dict: Dictionary containing the following information: 1) Number of data points, 2) Resolution, 3) For each variables: minimum, maximum, mean, standard deviation
+            Dict: Dictionary containing the following information: 1) Number of data points, 2) Resolution, 3) For each variables: minimum, maximum, mean, standard deviation.
         """
         data_summary = {}
         data_summary["number_of_data_points"] = len(self.data)
@@ -218,7 +218,7 @@ class DataProcessing:
     def concatenate(
         self, datasets: list = None, axis: int = None, inplace: bool = False
     ) -> Union[None, pd.DataFrame]:
-        """Concatenate datasets
+        """Concatenate datasets.
 
         Args:
             datasets (list): List of datasets (pd.DataFrame) to concatenate with `data`.
@@ -226,7 +226,7 @@ class DataProcessing:
             inplace (bool, optional): Modify the dataset directly. Defaults to False.
 
         Returns:
-            pd.DataFrame(): Modified dataset
+            pd.DataFrame: Modified dataset
         """
         if not isinstance(datasets, list):
             logging.error(
@@ -278,8 +278,8 @@ class DataProcessing:
         else:
             return concatenated_datasets
 
-    def check(self):
-        """Perform a sanity check on the data
+    def check(self) -> dict:
+        """Perform a sanity check on the data.
 
         Returns:
             Dict: Dictionary showing the number of missing values for each variables as well as the outliers.
@@ -308,3 +308,46 @@ class DataProcessing:
             check_summary[c]["outliers"] = outliers
 
         return check_summary
+
+    def fill_missing_values(
+        self, method: str = None, variable_names: list = None, inplace: bool = False
+    ) -> Union[None, pd.DataFrame]:
+        """Fill missing values (NaN) in `data`.
+
+        Args:
+            method (str): Method to use to fill the missing values: 'linear' (treat values as equally spaced) or 'pad' (use existing values).
+            variable_names (list): List of variable names that need missing values to be filled.
+            inplace (bool): Modify the dataset directly. Defaults to False.
+
+        Returns:
+            pd.DataFrame: Modified dataset
+        """
+
+        if not method in ["linear", "pad"]:
+            logging.error(
+                f"The method should either be linear or bad but not {method}."
+            )
+            return None
+
+        if not isinstance(variable_names, list):
+            logging.error(
+                f"A list of variable names must be provided. The variables_name argument that was passed is {type(variable_names)}."
+            )
+            return None
+
+        if len(variable_names) == 0:
+            logging.error("The list of variable names that was provided is empty.")
+            return None
+
+        d = copy.deepcopy(self.data)
+        for v in variable_names:
+            if not v in list(self.data.columns):
+                logging.error(f"{v} is included in the data.")
+            else:
+                if inplace:
+                    self.data[v].interpolate(method=method, inplace=True)
+                else:
+                    d[v].interpolate(method=method, inplace=True)
+
+        if not inplace:
+            return d

@@ -145,8 +145,8 @@ This API loads datasets and manipulate data before feeding it to the verificatio
 
   - **parameters**:
     - _datasets_: list of datasets to concatenate with `self.data`
-    - inplace:
     - axis: 1: concatenate vertical (timestamp / row); 0: concatenate horizontally (datapoint / column).
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
       - when 1: check if all datasets have same columns, if not, break;
       - when 0: check if all datasets have same datetime index, if not, break.
     - **return**: `pandas.DataFrame` that contains the concatenated datasets
@@ -159,6 +159,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _variable_names_: list of variables from `self.data` to be used for the aggregation function
     - _new_variable_name_: name of the new variable that will contain the aggregated data
     - _function_to_apply_: one of the following aggregate function 'sum', 'max', 'min', or 'average'
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
     - **return**: `pandas.DataFrame` containing all existing and a newly computed column.
 
 - [x] `check()`
@@ -200,13 +201,15 @@ This API loads datasets and manipulate data before feeding it to the verificatio
   - **parameters**:
     - _rule_: follows the same convention as [pandas.DataFrame.resample](https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects)
 
-- `interpolate(`\*method: str, variable_names: list`)`
+- [x] `fill_missing_values(`\*method: str, variable_names: list, inplace=False`)`
 
-  Interpolate missing values (NaN) in `self.data` following a user specified method
+  Fill missing values (NaN) in `self.data` following a user specified method
 
   - **parameters**:
     - _method_: 'linear', 'pad' as described [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.interpolate.html)
     - _variable_names_: list of variable names used for interpolation of missing values
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
+    - **return**: `pandas.DataFrame` containing all existing and a newly computed column.
 
 - `check_for_verif(`_verification_case_`)`
 
