@@ -16,10 +16,10 @@ class VerificationCase:
 
         self.case_suite = {}
         if case is not None:
-            # check `case` type
+            # check
             if isinstance(case, dict):
-                # check if the input dict is in the right format.
-                # will employ 'validate_verification_case_structure' static method once it's added.
+                # check if the input dict is in the right format
+                # will employ 'validate_verification_case_structure' static method once it's added
 
                 # create a case_suite consisting of key: unique id, value: verification case
                 for ele in case["cases"]:
@@ -32,7 +32,7 @@ class VerificationCase:
         if file_path is not None:
             # check 'file_path' type
             if isinstance(file_path, str):
-                # check if json or directory path is provided.
+                # check if json or directory path is provided
                 if file_path[-4:] == "json":
                     # check if 'file_path' exists
                     if os.path.isfile(file_path):
@@ -42,10 +42,10 @@ class VerificationCase:
                         logging.error(
                             f"file_path: '{file_path}' doesn't exist. Please make sure if the provided path exists."
                         )
-                else:  # when directory path is provided.
-                    # check if the directory exists.
+                else:  # when directory path is provided
+                    # check if the directory exists
                     if os.path.exists(file_path):
-                        # find all the JSON files in file_path directory.
+                        # find all the JSON files in file_path directory
                         json_file_names = glob.glob(os.path.join(file_path, "*.json"))
 
                         # check if JSON file(s) exists.
@@ -60,7 +60,7 @@ class VerificationCase:
                             )
                     else:
                         logging.error(
-                            "The provided directory doesn't exist. Please make sure to provide a correct file_path."
+                            f"The provided directory doesn't exist. Please make sure to provide a correct file_path."
                         )
             else:
                 logging.error(
@@ -72,10 +72,36 @@ class VerificationCase:
         with open(file_name, "r") as f:
             loaded_cases = json.load(f)
 
-        # check if the input dict is in the right format.
-        # will employ 'validate_verification_case_structure' static method once it's added.
+        # check if the input dict is in the right format
+        # will employ 'validate_verification_case_structure' static method once it's added
 
         for ele in loaded_cases["cases"]:
             case_suite[uuid.uuid1()] = ele
 
         return case_suite
+
+    def load_verification_cases_from_json(self, json_case_path: str) -> list:
+        """Add verification cases from specified json file into self.case_suite
+
+        Args:
+            json_case_path: str, path to the json file containing fully defined verification cases.
+
+        Returns:
+          List, unique ids of verification cases loaded in self.case_suite
+        """
+
+        # check if json_case_path type is str
+        if isinstance(json_case_path, str):
+            # check if the json_case_path exists
+            if os.path.isfile(json_case_path):
+                self.case_suite = self.read_case(json_case_path, self.case_suite)
+            else:
+                logging.error(
+                    "Please make sure that the 'json_case_path' argument is correct."
+                )
+        else:
+            logging.error(
+                f"The type of the 'json_case_path' argument has to be str, but {type(json_case_path)} type is provided. Please verify the 'json_case_path' argument."
+            )
+
+        return list(self.case_suite.keys())

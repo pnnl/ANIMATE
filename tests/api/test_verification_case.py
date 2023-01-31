@@ -75,6 +75,23 @@ class TestDataProcessing(unittest.TestCase):
                 logobs.output[0],
             )
 
+    def test_load_verification_cases_from_json(self):
+        # test when the wrong file_path type is provided.
+        with self.assertLogs() as logobs:
+            vc = VerificationCase(case=None, file_path=None)
+            vc.load_verification_cases_from_json(["wrong_file_path_type.json"])
+            self.assertEqual(
+                "ERROR:root:The type of the 'json_case_path' argument has to be str, but <class "
+                "'list'> type is provided. Please verify the 'json_case_path' argument.",
+                logobs.output[0],
+            )
+
+        # test whether the length of returned hash is correct
+        file_path = "./data/verification_case_unit_test.json"
+        vc = VerificationCase(case=None, file_path=None)
+        list_of_hash = vc.load_verification_cases_from_json(file_path)
+        assert len(list_of_hash) == 2
+
 
 if __name__ == "__main__":
     unittest.main()

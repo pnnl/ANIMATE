@@ -277,7 +277,7 @@ dp.check_for_verif(verification_case=case_1)
   Add verification cases from specified json file into `self.case_suite`
 
   - **Parameter**
-    - _json_case_path_: Dict, path to the json file containing fully defined verification cases.
+    - _json_case_path_: str, path to the json file containing fully defined verification cases.
   - **Returns**: List, unique ids of verification cases loaded in `self.case_suite`
 
 - `load_verification_case_from_dict(`_case: Dict_`)`
