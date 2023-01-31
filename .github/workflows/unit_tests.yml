@@ -30,7 +30,7 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        pytest -s --disable-pytest-warnings --cov
+        pytest -s --disable-pytest-warnings
     - name: Archive artifacts
       uses: actions/upload-artifact@v3
       with:
