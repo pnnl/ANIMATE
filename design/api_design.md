@@ -264,9 +264,13 @@ dp.check_for_verif(verification_case=case_1)
 
 `class VerificationCase`
 
-- `__init__()`
+- [x] `__init__('_case: Dict_, file_path: str')`
 
-  Class object initialization. Define `self.case_suite` as a Dict. keys being automatically generated unique id of case, values being the fully defined verification case Dict.
+  Instantiate a verification case class object and load verification case(s) in `self.case_suite` as a Dict. keys are automatically generated unique id of cases, values are the fully defined verification case Dict.
+
+  - **Parameter**
+    -_case_: (optional) case dictionary that includes verification items.  
+    -_file_path_: (optional) path to the verification case file. If the path ends with `*.json`, then the items in the JSON file are loaded. If the path points to a directory, then verification case item JSON files are loaded.  
 
 - `load_verification_cases_from_json(`_json_case_path: str_`)`
 
