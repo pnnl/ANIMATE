@@ -89,9 +89,9 @@ class TestDataProcessing(unittest.TestCase):
     def test_load_verification_cases_from_json_correct_hash_len(self):
         # test whether the length of returned hash is correct
         json_case_path = "./data/verification_case_unit_test.json"
-        vc1 = VerificationCase(case=None, file_path=None)
-        list_of_hash = vc1.load_verification_cases_from_json(json_case_path)
-        self.assertEqual(len(list_of_hash), 2)
+        vc = VerificationCase(case=None, file_path=None)
+        list_of_hash = vc.load_verification_cases_from_json(json_case_path)
+        assert len(list_of_hash) == 2
 
 
 if __name__ == "__main__":
