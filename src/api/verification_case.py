@@ -67,7 +67,7 @@ class VerificationCase:
                     f"The type of the 'file_path' argument has to be str, but {type(file_path)} type is provided. Please verify the 'file_path' argument."
                 )
 
-    def read_case(self, file_name, case_suite):
+    def read_case(self, file_name: str, case_suite: Dict) -> Dict:
         # load the cases from file_path
         with open(file_name, "r") as f:
             loaded_cases = json.load(f)
