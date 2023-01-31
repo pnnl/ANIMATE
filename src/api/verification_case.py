@@ -16,7 +16,7 @@ class VerificationCase:
 
         self.case_suite = {}
         if case is not None:
-            # check
+            # check `case` type
             if isinstance(case, dict):
                 # check if the input dict is in the right format.
                 # will employ 'validate_verification_case_structure' static method once it's added.
