@@ -1,6 +1,8 @@
 import sys, os, logging, datetime, copy
 import pandas as pd
 import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
 
 sys.path.append("..")
 from epreader import *
@@ -342,7 +344,7 @@ class DataProcessing:
         d = copy.deepcopy(self.data)
         for v in variable_names:
             if not v in list(self.data.columns):
-                logging.error(f"{v} is included in the data.")
+                logging.error(f"{v} is not included in the data.")
             else:
                 if inplace:
                     self.data[v].interpolate(method=method, inplace=True)
@@ -351,3 +353,68 @@ class DataProcessing:
 
         if not inplace:
             return d
+
+    def plot(
+        self, variable_names: list = None, kind: str = None
+    ) -> matplotlib.axes.Axes:
+        if not isinstance(variable_names, list):
+            logging.error(
+                f"A list of variable names must be provided. The variables_name argument that was passed is {type(variable_names)}."
+            )
+            return None
+
+        if len(variable_names) == 0:
+            logging.error("The list of variable names that was provided is empty.")
+            return None
+
+        not_found_count = 0
+        for v in variable_names:
+            if not v in list(self.data.columns):
+                logging.warning(f"{v} is not included in the data.")
+                not_found_count += 1
+        if not_found_count == len(variable_names):
+            logging.error(
+                "None of the specified variables were found in data, the plot cannot be generated."
+            )
+            return None
+        elif not_found_count < 2 and kind == "scatter":
+            logging.error("A scatter plot requires at least two variables.")
+            return None
+
+        if not kind in ["timeseries", "scatter"]:
+            logging.error(
+                f"The kind of plot should be either timeseries or scatter but not {kind}."
+            )
+            return None
+
+        # Create groups
+        if kind == "timeseries":
+            groups = [v for v in variable_names[0:]]
+        elif kind == "scatter":
+            groups = [(variable_names[0], v) for v in variable_names[1:]]
+        else:
+            return None
+
+        fig, ax = plt.subplots()
+        for g in groups:
+            if kind == "timeseries":
+                ax.plot(
+                    self.data.index,
+                    self.data[g],
+                    label=g,
+                    marker="o",
+                    linestyle="",
+                    alpha=1 / len(groups),
+                )
+            elif kind == "scatter":
+                ax.plot(
+                    self.data[g[0]],
+                    self.data[g[1]],
+                    label=g[1],
+                    marker="o",
+                    linestyle="",
+                    alpha=1 / len(groups),
+                )
+        ax.legend()
+        plt.show()
+        return ax

@@ -185,7 +185,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
       - Mean
       - Standard deviation
 
-- `plot(`_variable_names: list(str), kind= str_`)`
+- [x] `plot(`_variable_names: list(str), kind= str_`)`
 
   Create plots of timesteries data, or scatter plot between two variables
 

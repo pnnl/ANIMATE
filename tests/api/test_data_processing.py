@@ -404,3 +404,48 @@ class TestDataProcessing(unittest.TestCase):
             ]
             == 0
         )
+
+    def test_plot(self):
+        with self.assertLogs() as logobs:
+            filep = "./tests/api/data/data_complete.csv"
+            dp = DataProcessing(data_path=filep, data_source="EnergyPlus")
+            dp.plot()
+            self.assertEqual(
+                f"ERROR:root:A list of variable names must be provided. The variables_name argument that was passed is <class 'NoneType'>.",
+                logobs.output[0],
+            )
+            dp.plot([])
+            self.assertEqual(
+                f"ERROR:root:The list of variable names that was provided is empty.",
+                logobs.output[1],
+            )
+            dp.plot(
+                variable_names=[
+                    "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)",
+                    "CORE_BOTTOM:Zone Air Temperature [C](Hourly)",
+                    "CORE_MID:Zone Air Temperature [C](Hourly)",
+                ]
+            )
+            self.assertEqual(
+                f"ERROR:root:The kind of plot should be either timeseries or scatter but not None.",
+                logobs.output[2],
+            )
+            dp.plot(variable_names=["wrong_variable"], kind="scatter")
+            self.assertEqual(
+                f"WARNING:root:wrong_variable is not included in the data.",
+                logobs.output[3],
+            )
+            self.assertEqual(
+                f"ERROR:root:None of the specified variables were found in data, the plot cannot be generated.",
+                logobs.output[4],
+            )
+            dp.plot(
+                variable_names=[
+                    "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"
+                ],
+                kind="scatter",
+            )
+            self.assertEqual(
+                f"ERROR:root:A scatter plot requires at least two variables.",
+                logobs.output[5],
+            )
