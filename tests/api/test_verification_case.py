@@ -6,7 +6,6 @@ from api import VerificationCase
 
 class TestDataProcessing(unittest.TestCase):
     def test_constructor(self):
-
         # test both `case` and `file_path` args aren't provided.
         vc = VerificationCase(case=None, file_path=None)
         assert vc.case_suite == {}
@@ -88,7 +87,7 @@ class TestDataProcessing(unittest.TestCase):
 
     def test_load_verification_cases_from_json_correct_hash_len(self):
         # test whether the length of returned hash is correct
-        json_case_path = "./data/verification_case_unit_test.json"
+        json_case_path = "./tests/api//data/verification_case_unit_test.json"
         vc = VerificationCase(case=None, file_path=None)
         list_of_hash = vc.load_verification_cases_from_json(json_case_path)
         assert len(list_of_hash) == 2
