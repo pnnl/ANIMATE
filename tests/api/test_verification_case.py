@@ -156,9 +156,12 @@ class TestDataProcessing(unittest.TestCase):
                 }
             ]
         }
-        vc = VerificationCase(case=None, file_path=None)
-        vc.save_case_suite_to_json("./tests/api/result/generated_from_unit_test.json")
-        assert os.path.isfile("./tests/api/result/generated_from_unit_test.json")
+        saving_file_path = "./tests/api/result/generated_from_unit_test.json"
+        vc = VerificationCase(
+            case=None, file_path="./tests/api/data/verification_case_unit_test.json"
+        )
+        vc.save_case_suite_to_json(saving_file_path)
+        assert os.path.isfile(saving_file_path)
 
 
 if __name__ == "__main__":
