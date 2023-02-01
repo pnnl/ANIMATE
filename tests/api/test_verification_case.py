@@ -156,7 +156,7 @@ class TestDataProcessing(unittest.TestCase):
                 }
             ]
         }
-        saving_file_path = "./tests/api/result/generated_from_unit_test.json"
+        saving_file_path = "./tests/api/result/from_test_save_case_suite_to_json_check_file_saving.json"
         vc = VerificationCase(
             case=None, file_path="./tests/api/data/verification_case_unit_test.json"
         )
