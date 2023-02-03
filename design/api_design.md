@@ -296,9 +296,9 @@ dp.check_for_verif(verification_case=case_1)
     - _cases_: List, containing fully defined verification cases Dict.
   - **Returns** unique id of the cases stored in self.case_suite[unique_id]
 
-- `static create_verificaton_case_suite_from_base_case(`_base_case: dict, update_key_value: Dict_, keep_base_case=True`)`
+- [x] `static create_verificaton_case_suite_from_base_case(`_base_case: dict, update_key_value: Dict_, keep_base_case=True`)`
 
-  Create slightly different multiple verification cases by changing keys and values as specified in `update_key_value`. Design illustrated with example below.
+  Create slightly different multiple verification cases by changing keys and values as specified in `update_key_value`. if `keep_base_case` is set to True, the `base_case` is added to the first element in the returned list. Design illustrated with example below.
 
   - **parameters**:
     - _base_case_: Dict. Base verification input information.
@@ -314,16 +314,16 @@ Base case:
 {
   "data_points": {
     "sat": {
-      "variable_name": "ahu1_sat"
+      "variable": "ahu1_sat"
     },
     "rat": {
-      "variable_name": "ahu1_rat"
+      "variable": "ahu1_rat"
     }
   }
 }
 ```
 
-Objective: change sat from ahu1_sat to ahu2_sat and ahu3_sat, and accordingly, change rat to the corresponding list (ahu1_rat, ahu2_rat, ahu3_rat).
+Objective: change the value of `sat`'s `variable` key to `ahu1_sat`, `ahu2_sat`, and `ahu3_sat` accordingly. Also, change the value of the `rat`'s `variable` key to `ahu1_rat`, `ahu2_rat`, and `ahu3_rat`.
 
 Define update_key_value as
 
@@ -331,13 +331,51 @@ Define update_key_value as
 {
   "data_points": {
     "sat": {
-      "variable_name": ["ahu1_sat", "ahu2_sat", "ahu3_sat"]
+      "variable": ["ahu1_sat", "ahu2_sat", "ahu3_sat"]
     },
     "rat": {
-      "variable_name": ["ahu1_rat", "ahu2_rat", "ahu3_rat"]
+      "variable": ["ahu1_rat", "ahu2_rat", "ahu3_rat"]
     }
   }
 }
+```
+The returned list is as follows.
+
+i) first element in the returned list.
+```json
+{
+  "data_points": {
+    "sat": {
+      "variable": "ahu1_sat",
+    },
+    "rat": {
+      "variable": "ahu1_rat",
+    }
+  }
+```
+ii) second element in the returned list.
+```json
+{
+  "data_points": {
+    "sat": {
+      "variable": "ahu2_sat",
+    },
+    "rat": {
+      "variable": "ahu2_rat",
+    }
+  }
+```
+iii) third element in the returned list.
+```json
+{
+  "data_points": {
+    "sat": {
+      "variable": "ahu3_sat",
+    },
+    "rat": {
+      "variable": "ahu3_rat",
+    }
+  }
 ```
 
 - `get_verification_case_template(`_tamplate_format: str_`)`

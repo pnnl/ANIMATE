@@ -167,6 +167,118 @@ class VerificationCase:
             json.dump(case_suite_in_template_format, fw, indent=4)
 
     @staticmethod
+    def create_verificaton_case_suite_from_base_case(
+        base_case: Dict, update_key_value: Dict, keep_base_case: bool = True
+    ):
+        """Create slightly different multiple verification cases by changing keys and values as specified in `update_key_value`. if `keep_base_case` is set to True, the `base_case` is added to the first element in the returned list.
+
+        Args:
+            json_path: str. json file path to save the cases.
+            cases: List. List of complete verification cases Dictionary to save.
+            keep_base_case: bool. whether to keep the base case in returned list of verification cases. Default to False.
+
+        Returns:
+          List,  A list of Dict, each dict is a generated case from the base case.
+        """
+
+        # return all the updating value lists' length
+        def _count_modifying_value_helper(update_key_value):
+            len_modifying_values = []
+
+            for key, value in update_key_value.items():
+                if isinstance(value, dict):
+                    len_modifying_values.extend(_count_modifying_value_helper(value))
+                elif isinstance(value, list):
+                    len_modifying_values.append(len(value))
+
+            return len_modifying_values
+
+        # update key/value based on `update_key_value` to `base_case`
+        def _update_key_helper(update_key_value, casees, prev_level_key=None):
+            for key, value in update_key_value.items():
+                if isinstance(value, dict):
+                    prev_level_key = key
+                    casees, prev_level_key = _update_key_helper(
+                        value, casees, prev_level_key
+                    )
+
+                elif isinstance(value, list):
+                    for idx, case in enumerate(casees):
+                        if key in [
+                            "no",
+                            "run_simulation",
+                            "expected_result",
+                            "datapoints_source",
+                            "verification_class",
+                        ]:
+                            case[key] = value[idx]
+                        elif key in ["idf", "idd", "weather", "output", "ep_path"]:
+                            case["simulation_IO"][key] = value[idx]
+
+                        elif key == "subject":
+                            case["datapoints_source"]["idf_output_variables"][
+                                prev_level_key
+                            ]["subject"] = value[idx]
+
+                        elif key == "variable":
+                            case["datapoints_source"]["idf_output_variables"][
+                                prev_level_key
+                            ]["variable"] = value[idx]
+
+                        elif key == "frequency":
+                            case["datapoints_source"]["idf_output_variables"][
+                                prev_level_key
+                            ]["frequency"] = value[idx]
+
+                        elif prev_level_key == "parameters":
+                            case["datapoints_source"]["parameters"][key] = value[idx]
+            return casees, prev_level_key
+
+        # check base_case type
+        if not isinstance(base_case, dict):
+            logging.error(
+                f"The type of `base_case` arg must be dict, but {type(base_case)} type is provided."
+            )
+            return None
+
+        # check update_key_value type
+        if not isinstance(update_key_value, dict):
+            logging.error(
+                f"The type of `update_key_value` arg must be dict, but {type(update_key_value)} type is provided."
+            )
+            return None
+
+        # check keep_base_case type
+        if not isinstance(keep_base_case, bool):
+            logging.error(
+                f"The type of `keep_base_case` arg must be bool, but {type(keep_base_case)} type is provided."
+            )
+            return None
+
+        # check if all the lists of modifying values have the same length.
+        len_of_each_modifying_list = _count_modifying_value_helper(update_key_value)
+        if len(set(len_of_each_modifying_list)) != 1:
+            logging.error(f"The length of modifying values in lists must be the same.")
+            return None
+
+        # deep-copy the base_case
+        generated_base_cases_list = []
+        generated_cases_list_append = generated_base_cases_list.append
+        for _ in range(len_of_each_modifying_list[0]):
+            generated_cases_list_append(copy.deepcopy(base_case))
+
+        # update the values based on `update_key_value` arg
+        updated_base_cases_list = _update_key_helper(
+            update_key_value, generated_base_cases_list
+        )[0]
+
+        # add base_case if `keep_base_case` set to True
+        if keep_base_case:
+            updated_base_cases_list.insert(0, base_case)
+
+        return updated_base_cases_list
+
+    @staticmethod
     def validate_verification_case_structure(case: Dict, verbose: bool = False) -> bool:
         """Validate verification case structure (e.g., check whether `run_simulation`, `simulation_IO`, etc. exist or not). Check if required key / values pairs exist in the case. check if datatype of values are appropriate, e.g. file path is str.
 

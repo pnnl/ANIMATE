@@ -165,6 +165,157 @@ class TestDataProcessing(unittest.TestCase):
         vc.save_case_suite_to_json(saving_file_path)
         assert os.path.isfile(saving_file_path)
 
+    def test_create_verificaton_case_suite_from_base_case(self):
+        example_base_case = {
+            "no": 1,
+            "run_simulation": True,
+            "simulation_IO": {
+                "idf": "../testing.idf",
+                "idd": "../Energy+V9_0_1.idd",
+                "weather": "./USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
+            },
+            "expected_result": "fail",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "oa_flow": {
+                        "subject": "VAV_1_OAInlet Node",
+                        "variable": "System Node Standard Density Volume Flow Rate",
+                        "frequency": "TimeStep",
+                    },
+                    "oa_db": {
+                        "subject": "Environment",
+                        "variable": "Site Outdoor Air Drybulb Temperature",
+                        "frequency": "TimeStep",
+                    },
+                },
+                "parameters": {"oa_threshold": 300},
+            },
+            "verification_class": "Testing",
+        }
+        update_key_value = {
+            "no": 1,
+            "run_simulation": True,
+            "simulation_IO": {
+                "idf": ["Testing_file1.idf", "Testing_file2.idf"],
+                "idd": "../Energy+V9_0_1.idd",
+                "weather": "./USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
+            },
+            "expected_result": "fail",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "oa_flow": {
+                        "subject": ["VAV_1_OAInlet Node", "VAV_2_OAInlet Node"],
+                        "variable": [
+                            "System Node Standard Density Volume Flow Rate",
+                            "Current Density Volume",
+                        ],
+                        "frequency": "TimeStep",
+                    },
+                    "oa_db": {
+                        "subject": "Environment",
+                        "variable": [
+                            "Site Outdoor Air Drybulb Temperature",
+                            "Site Outdoor Air Relative Humidity",
+                        ],
+                        "frequency": "TimeStep",
+                    },
+                },
+                "parameters": {"oa_threshold": [999, 1000]},
+            },
+            "verification_class": "Testing",
+        }
+
+        # test when wrong base_case type is provided.
+        with self.assertLogs() as logobs:
+            wrong_base_case_type = [{"wrong_base_case_type_key": "testing"}]
+            VerificationCase(
+                case=None, file_path=None
+            ).create_verificaton_case_suite_from_base_case(
+                wrong_base_case_type, update_key_value, keep_base_case=False
+            )
+            self.assertEqual(
+                "ERROR:root:The type of `base_case` arg must be dict, but <class 'list'> type is provided.",
+                logobs.output[0],
+            )
+
+        # test when wrong update_key_value type is provided.
+        with self.assertLogs() as logobs:
+            wrong_update_key_value_type = [{"wrong_update_key_type_key": "testing"}]
+            VerificationCase(
+                case=None, file_path=None
+            ).create_verificaton_case_suite_from_base_case(
+                example_base_case, wrong_update_key_value_type, keep_base_case=False
+            )
+            self.assertEqual(
+                "ERROR:root:The type of `update_key_value` arg must be dict, but <class 'list'> type is provided.",
+                logobs.output[0],
+            )
+
+        # test when wrong keep_base_case type is provided.
+        with self.assertLogs() as logobs:
+            VerificationCase(
+                case=None, file_path=None
+            ).create_verificaton_case_suite_from_base_case(
+                example_base_case, update_key_value, keep_base_case="Fail"
+            )
+            self.assertEqual(
+                "ERROR:root:The type of `keep_base_case` arg must be bool, but <class 'str'> type is provided.",
+                logobs.output[0],
+            )
+
+        # test when lengths of modifying lists are different.
+        with self.assertLogs() as logobs:
+            wrong_update_key_value = {
+                "no": 1,
+                "run_simulation": True,
+                "simulation_IO": {
+                    "idf": ["Testing_file1.idf", "Testing_file2.idf"],  # length: 2
+                    "idd": "../resources/Energy+V9_0_1.idd",
+                    "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                    "output": "eplusout.csv",
+                    "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
+                },
+                "expected_result": "fail",
+                "datapoints_source": {
+                    "idf_output_variables": {
+                        "oa_flow": {
+                            "subject": ["VAV_1_OAInlet Node", "VAV_2_OAInlet Node"],
+                            "variable": [
+                                "System Node Standard Density Volume Flow Rate",
+                                "Current Density Volume",
+                            ],
+                            "frequency": "TimeStep",
+                        },
+                        "oa_db": {
+                            "subject": "Environment",
+                            "variable": [
+                                "Site Outdoor Air Drybulb Temperature",
+                                "Site Outdoor Air Relative Humidity",
+                            ],
+                            "frequency": "TimeStep",
+                        },
+                    },
+                    "parameters": {
+                        "oa_threshold": [999, 1000, 1200]
+                    },  # length: 3 --> The list lengths are different.
+                },
+                "verification_class": "Testing",
+            }
+
+            VerificationCase(
+                case=None, file_path=None
+            ).create_verificaton_case_suite_from_base_case(
+                example_base_case, wrong_update_key_value, keep_base_case=False
+            )
+            self.assertEqual(
+                "ERROR:root:The length of modifying values in lists must be the same.",
+                logobs.output[0],
+            )
+
     def test_validate_verification_case_structure_wrong_input_type(self):
         # test when wrong case type is provided.
         with self.assertLogs() as logobs:
