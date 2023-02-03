@@ -94,7 +94,7 @@ class TestDataProcessing(unittest.TestCase):
         list_of_hash = vc.load_verification_cases_from_json(json_case_path)
         assert len(list_of_hash) == 2
 
-    def test_save_case_suite_to_json_wrong_json_path_type(self):
+    def test_save_case_suite_to_json(self):
         # test when not existing dir is provided
         with self.assertLogs() as logobs:
             vc = VerificationCase(
@@ -107,7 +107,6 @@ class TestDataProcessing(unittest.TestCase):
                 logobs.output[0],
             )
 
-    def test_save_case_suite_to_json_not_existing_dir_in_json_path(self):
         # test when not existing dir is provided
         with self.assertLogs() as logobs:
             vc = VerificationCase(
@@ -120,7 +119,6 @@ class TestDataProcessing(unittest.TestCase):
                 logobs.output[0],
             )
 
-    def test_save_case_suite_to_json_correct_json_path(self):
         # test when just file name (without including dir) is provided
         vc = VerificationCase(
             case=None, file_path="./tests/api/data/verification_case_unit_test.json"
@@ -129,7 +127,6 @@ class TestDataProcessing(unittest.TestCase):
         vc.save_case_suite_to_json(file_path)
         assert os.path.isfile(file_path)
 
-    def test_save_case_suite_to_json_check_file_saving(self):
         # test the given case is saved correctly.
         case_dict = {
             "cases": [
