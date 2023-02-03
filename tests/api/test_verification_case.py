@@ -190,7 +190,7 @@ class TestDataProcessing(unittest.TestCase):
             )
 
     def test_validate_verification_case_structure_wrong_case(self):
-        #
+        # test when `run_simulation` key is wrong
         case_wrong_run_simulation = {
             "no": 1,
             "run_simulation": "PASS",  # supposed to be True
@@ -222,6 +222,7 @@ class TestDataProcessing(unittest.TestCase):
             == False
         )
 
+        # test when 'subject' key is missing
         case_missing_subject = {
             "no": 1,
             "run_simulation": True,
@@ -253,6 +254,7 @@ class TestDataProcessing(unittest.TestCase):
             == False
         )
 
+        # test when `verification_class` is wrong
         case_missing_verification_class = {
             "no": 2,
             "run_simulation": True,
@@ -285,6 +287,95 @@ class TestDataProcessing(unittest.TestCase):
             ).validate_verification_case_structure(case_missing_verification_class)
             == False
         )
+
+    def test_save_verification_cases_to_json(self):
+        example_cases = [
+            {
+                "no": 1,
+                "run_simulation": True,
+                "simulation_IO": {
+                    "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case2.idf",
+                    "idd": "../resources/Energy+V9_0_1.idd",
+                    "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                    "output": "eplusout.csv",
+                    "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
+                },
+                "expected_result": "fail",
+                "datapoints_source": {
+                    "idf_output_variables": {
+                        "T_sa_set": {
+                            "subject": "VAV_1 Supply Equipment Outlet Node",
+                            "variable": "System Node Setpoint Temperature",
+                            "frequency": "detailed",
+                        }
+                    },
+                    "parameters": {"T_z_coo": 24.0},
+                },
+                "verification_class": "SupplyAirTempReset",
+            }
+        ]
+        json_path = "./tests/api/result/wrong_json_path.json"
+
+        # when wrong json_path type is provided
+        with self.assertLogs() as logobs:
+            wrong_json_path = ["./tests/api/resultwrong_json_path.json"]
+            VerificationCase(case=None, file_path=None).save_verification_cases_to_json(
+                wrong_json_path, example_cases
+            )
+            self.assertEqual(
+                "ERROR:root:The json_path argument type must be str, but <class 'list'> is provided.",
+                logobs.output[0],
+            )
+
+        # when wrong cases type is provided
+        with self.assertLogs() as logobs:
+            wrong_cases_type = {
+                "no": 1,
+                "run_simulation": True,
+                "simulation_IO": {
+                    "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case2.idf",
+                    "idd": "../resources/Energy+V9_0_1.idd",
+                    "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                    "output": "eplusout.csv",
+                    "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
+                },
+                "expected_result": "fail",
+                "datapoints_source": {
+                    "idf_output_variables": {
+                        "T_sa_set": {
+                            "subject": "VAV_1 Supply Equipment Outlet Node",
+                            "variable": "System Node Setpoint Temperature",
+                            "frequency": "detailed",
+                        }
+                    },
+                    "parameters": {"T_z_coo": 24.0},
+                },
+                "verification_class": "SupplyAirTempReset",
+            }
+            VerificationCase(case=None, file_path=None).save_verification_cases_to_json(
+                json_path, wrong_cases_type
+            )
+            self.assertEqual(
+                "ERROR:root:The cases argument type must be list, but <class 'dict'> is provided.",
+                logobs.output[0],
+            )
+
+        # when wrong json_path extension is provided
+        with self.assertLogs() as logobs:
+            wrong_json_path = "./tests/api/result/wrong_json_path.csv"
+            VerificationCase(case=None, file_path=None).save_verification_cases_to_json(
+                wrong_json_path, example_cases
+            )
+            self.assertEqual(
+                "ERROR:root:The json_path argument must end with '.json' extension.",
+                logobs.output[0],
+            )
+
+        # test if json is saved correctly
+        VerificationCase(case=None, file_path=None).save_verification_cases_to_json(
+            json_path, example_cases
+        )
+        assert os.path.isfile(json_path)
 
 
 if __name__ == "__main__":

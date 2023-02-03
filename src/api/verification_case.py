@@ -302,3 +302,44 @@ class VerificationCase:
             "verification_class": str,
         }
         return _validate_case_structure_helper(case_schema, case, verbose)
+
+    @staticmethod
+    def save_verification_cases_to_json(json_path: str, cases: list):
+        """Save verification cases to a dedicated file. The cases list consists of verification case dicts.
+
+        Args:
+            json_path: str. json file path to save the cases.
+            cases: List. List of complete verification cases Dictionary to save.
+
+        """
+
+        # check json_path type
+        if not isinstance(json_path, str):
+            logging.error(
+                f"The json_path argument type must be str, but {type(json_path)} is provided."
+            )
+            return None
+
+        # check cases type
+        if not isinstance(cases, list):
+            logging.error(
+                f"The cases argument type must be list, but {type(cases)} is provided."
+            )
+            return None
+
+        # check if json_path extension is .json
+        if json_path[-5:] != ".json":
+            logging.error(f"The json_path argument must end with '.json' extension.")
+            return None
+
+        # organize the cases in the correct format
+        case_suite_in_template_format = {"cases": []}
+        case_suite_in_template_format_append = case_suite_in_template_format[
+            "cases"
+        ].append
+        for case in cases:
+            case_suite_in_template_format_append(case)
+
+        # save the case suite
+        with open(json_path, "w") as fw:
+            json.dump(case_suite_in_template_format, fw, indent=4)

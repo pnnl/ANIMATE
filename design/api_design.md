@@ -389,11 +389,13 @@ Define update_key_value as
     - _json_path_: str. path to the json file to save the cases.
     - _case_ids_: List. Unique ids of verification cases to save. By default, save all cases in `self.case_suite`
 
-- `static save_verification_cases_to_json(`_json_path: str, cases: list_`)
+- [x] `static save_verification_cases_to_json(`_json_path: str, cases: list_`)
+
+  Save verification cases to a dedicated file. The cases list consists of verification case dicts.
 
   - **parameters**:
-    - _json_path_: str. json file path to save the cases
-    - _case_ids_: List. List of complete verification cases Dictionary to save.
+    - _json_path_: str. json file path to save the cases.
+    - _cases_: List. List of complete verification cases Dictionary to save.
 
 <!-- - `generate_verification_case_with_BRICK(`_BRICK_instance_path:str , verification_file_path: str_`)`
 
