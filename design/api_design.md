@@ -346,7 +346,7 @@ Define update_key_value as
 
   - **return**: Dictionary that has the `new_library_verification_cases.json` format
 
-- `static validate_verification_case_structure(`_case: dict, verbose: bool=False_`)`
+- [x] `static validate_verification_case_structure(`_case: dict, verbose: bool=False_`)`
 
   Validate verification case structure (e.g., check whether `run_simulation`, `simulation_IO`, etc. exist or not). Check if required key / values pairs exist in the case. check if datatype of values are appropriate, e.g. file path is str.
 
