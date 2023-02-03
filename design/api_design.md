@@ -354,7 +354,7 @@ Define update_key_value as
 
   - `_case_`: case information that will be validated.
   - `_verbose_`: whether to output verbose information. Default to False.
-  - **return**: Bool, indicating whether the case structure is valid or not (bool).
+  - **return**: Bool, indicating whether the case structure is valid or not.
 
 <!-- - `static validate_verification_cases(`_list_IDs: list, verbose: bool_`)`
 

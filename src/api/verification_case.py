@@ -165,3 +165,140 @@ class VerificationCase:
         # save the case suite
         with open(json_path, "w") as fw:
             json.dump(case_suite_in_template_format, fw, indent=4)
+
+    @staticmethod
+    def validate_verification_case_structure(case: Dict, verbose: bool = False) -> bool:
+        """Validate verification case structure (e.g., check whether `run_simulation`, `simulation_IO`, etc. exist or not). Check if required key / values pairs exist in the case. check if datatype of values are appropriate, e.g. file path is str.
+
+        Args:
+            case: dict. case information that will be validated.
+            verbose: bool. whether to output verbose information. Default to False.
+
+        Returns:
+            Bool, indicating whether the case structure is valid or not.
+        """
+
+        def _validate_case_structure_helper(schema, instance, verbose):
+            is_cases_valid = True
+            for key, value in schema.items():
+                if isinstance(value, dict):
+                    is_cases_valid = _validate_case_structure_helper(
+                        value, instance[key], verbose
+                    )
+                    if not is_cases_valid:
+                        break
+                else:
+                    if key in instance:
+                        if type(instance[key]) != schema[key]:
+                            if verbose:
+                                logging.error(
+                                    f"The type of '{key}' key must be {schema[key]}, but {type(instance[key])} is provided."
+                                )
+                            return False
+                    else:
+                        if verbose:
+                            logging.error(
+                                f"'{key}' key is NOT in the `case` argument. Please make sure to include the '{key}' key in the `case` argument. "
+                            )
+                        return False
+
+                    if key == "idf_output_variables":
+                        for idf_key, idf_value in instance[key].items():
+                            if not isinstance(instance[key][idf_key], dict):
+                                if verbose:
+                                    logging.error(
+                                        f"idf_output_variables is NOT dict type."
+                                    )
+                                return False
+
+                            if not instance[key][idf_key].get("subject"):
+                                if verbose:
+                                    print(
+                                        f"'subject' key doesn't exist in {instance[key][idf_key]}. Please make sure to include the 'subject' key."
+                                    )
+                                return False
+
+                            if not isinstance(
+                                instance[key][idf_key].get("subject"), str
+                            ):
+                                if verbose:
+                                    logging.error(
+                                        f"The type of '{idf_key}' subject's value must be str, but {type(instance[key][idf_key].get('subject'))} is provided."
+                                    )
+                                return False
+
+                            if not instance[key][idf_key].get("variable"):
+                                if verbose:
+                                    logging.error(
+                                        f"'variable' key doesn't exist in {instance[key][idf_key]}. Please make sure to include the 'variable' key."
+                                    )
+                                return False
+
+                            if not isinstance(
+                                instance[key][idf_key].get("variable"), str
+                            ):
+                                if verbose:
+                                    logging.error(
+                                        f"The type of '{idf_key}' variable's value must be str, but {type(instance[key][idf_key].get('variable'))} is provided."
+                                    )
+                                return False
+
+                            if not instance[key][idf_key].get("frequency"):
+                                if verbose:
+                                    logging.error(
+                                        f"'frequency' key doesn't exist in {instance[key][idf_key]}. Please make sure to include the 'frequency' key."
+                                    )
+                                return False
+
+                            if not isinstance(
+                                instance[key][idf_key].get("frequency"), str
+                            ):
+                                if verbose:
+                                    logging.error(
+                                        f"The type of '{idf_key}' frequency's value must be str, but {type(instance[key][idf_key].get('frequency'))} is provided."
+                                    )
+                                return False
+
+                    if key == "parameters":
+                        for idf_key, idf_value in instance[key].items():
+                            if not isinstance(
+                                instance[key][idf_key], float
+                            ) and not isinstance(instance[key][idf_key], int):
+                                if verbose:
+                                    logging.error(
+                                        f"The type of '{idf_key}' value must be either float or int, but {type(instance[key][idf_key])} is provided."
+                                    )
+                                return False
+
+            return is_cases_valid
+
+        # check case type
+        if not isinstance(case, Dict):
+            logging.error(
+                f"The case argument type must be dict, but {type(case)} is provided."
+            )
+            return None
+
+        # check verbose type
+        if not isinstance(verbose, bool):
+            logging.error(
+                f"The verbose argument type must be bool, but {type(verbose)} is provided."
+            )
+            return None
+
+        # case schema used for
+        case_schema = {
+            "no": int,
+            "run_simulation": bool,
+            "simulation_IO": {
+                "idf": str,
+                "idd": str,
+                "weather": str,
+                "output": str,
+                "ep_path": str,
+            },
+            "expected_result": str,
+            "datapoints_source": {"idf_output_variables": dict, "parameters": dict},
+            "verification_class": str,
+        }
+        return _validate_case_structure_helper(case_schema, case, verbose)

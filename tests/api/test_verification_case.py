@@ -1,6 +1,8 @@
 import unittest, sys, os
 
+
 sys.path.append("./src")
+
 from api import VerificationCase
 
 
@@ -162,6 +164,127 @@ class TestDataProcessing(unittest.TestCase):
         )
         vc.save_case_suite_to_json(saving_file_path)
         assert os.path.isfile(saving_file_path)
+
+    def test_validate_verification_case_structure_wrong_input_type(self):
+        # test when wrong case type is provided.
+        with self.assertLogs() as logobs:
+            case = []
+            VerificationCase(
+                case=None, file_path=None
+            ).validate_verification_case_structure(case)
+            self.assertEqual(
+                "ERROR:root:The case argument type must be dict, but <class 'list'> is provided.",
+                logobs.output[0],
+            )
+
+        # test when wrong verbose type is provided.
+        with self.assertLogs() as logobs:
+            case = {}
+            verbose = "pass"
+            VerificationCase(
+                case=None, file_path=None
+            ).validate_verification_case_structure(case, verbose)
+            self.assertEqual(
+                "ERROR:root:The verbose argument type must be bool, but <class 'str'> is provided.",
+                logobs.output[0],
+            )
+
+    def test_validate_verification_case_structure_wrong_case(self):
+        #
+        case_wrong_run_simulation = {
+            "no": 1,
+            "run_simulation": "PASS",  # supposed to be True
+            "simulation_IO": {
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case2.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
+            },
+            "expected_result": "fail",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_sa_set": {
+                        "subject": "VAV_1 Supply Equipment Outlet Node",
+                        "variable": "System Node Setpoint Temperature",
+                        "frequency": "detailed",
+                    }
+                },
+                "parameters": {"T_z_coo": 24.0},
+            },
+            "verification_class": "SupplyAirTempReset",
+        }
+
+        assert (
+            VerificationCase(
+                case=None, file_path=None
+            ).validate_verification_case_structure(case_wrong_run_simulation)
+            == False
+        )
+
+        case_missing_subject = {
+            "no": 1,
+            "run_simulation": True,
+            "simulation_IO": {
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case2.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
+            },
+            "expected_result": "fail",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_sa_set": {
+                        # intentionally missed subject key
+                        "variable": "System Node Setpoint Temperature",
+                        "frequency": "detailed",
+                    }
+                },
+                "parameters": {"T_z_coo": 24.0},
+            },
+            "verification_class": "SupplyAirTempReset",
+        }
+
+        assert (
+            VerificationCase(
+                case=None, file_path=None
+            ).validate_verification_case_structure(case_missing_subject)
+            == False
+        )
+
+        case_missing_verification_class = {
+            "no": 2,
+            "run_simulation": True,
+            "simulation_IO": {
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case2.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
+            },
+            "expected_result": "fail",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_sa_set": {
+                        "subject": "VAV_1 Supply Equipment Outlet Node",
+                        "variable": "System Node Setpoint Temperature",
+                        "frequency": "detailed",
+                    }
+                },
+                "parameters": {"T_z_coo": 24.0},
+            },
+            "verification_class": [
+                "SupplyAirTempReset"
+            ],  # intentionally put list instead of str
+        }
+
+        assert (
+            VerificationCase(
+                case=None, file_path=None
+            ).validate_verification_case_structure(case_missing_verification_class)
+            == False
+        )
 
 
 if __name__ == "__main__":
