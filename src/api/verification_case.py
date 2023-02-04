@@ -1,4 +1,4 @@
-import sys, os, logging, glob, json, inspect, uuid
+import sys, os, logging, glob, json, inspect, uuid, copy
 
 from typing import Dict
 
@@ -18,12 +18,10 @@ class VerificationCase:
         if case is not None:
             # check
             if isinstance(case, dict):
-                # check if the input dict is in the right format
-                # will employ 'validate_verification_case_structure' static method once it's added
-
-                # create a case_suite consisting of key: unique id, value: verification case
-                for ele in case["cases"]:
-                    self.case_suite[uuid.uuid1()] = ele
+                if self.validate_verification_case_structure(case):
+                    # create a case_suite consisting of key: unique id, value: verification case
+                    for ele in case["cases"]:
+                        self.case_suite[uuid.uuid1()] = ele
             else:
                 logging.error(
                     f"The type of the 'case' argument has to be str, but {type(case)} type is provided. Please verify the 'case' argument."
@@ -72,11 +70,14 @@ class VerificationCase:
         with open(file_name, "r") as f:
             loaded_cases = json.load(f)
 
-        # check if the input dict is in the right format
-        # will employ 'validate_verification_case_structure' static method once it's added
-
-        for ele in loaded_cases["cases"]:
-            case_suite[uuid.uuid1()] = ele
+        if all(
+            [
+                self.validate_verification_case_structure(loaded_case)
+                for loaded_case in loaded_cases["cases"]
+            ]
+        ):
+            for ele in loaded_cases["cases"]:
+                case_suite[uuid.uuid1()] = ele
 
         return case_suite
 
