@@ -76,7 +76,7 @@ class TestDataProcessing(unittest.TestCase):
                 logobs.output[0],
             )
 
-    def test_load_verification_cases_from_json_wrong_input_type(self):
+    def test_load_verification_cases_from_json(self):
         # test when the wrong file_path type is provided
         with self.assertLogs() as logobs:
             vc = VerificationCase(case=None, file_path=None)
@@ -87,7 +87,6 @@ class TestDataProcessing(unittest.TestCase):
                 logobs.output[0],
             )
 
-    def test_load_verification_cases_from_json_correct_hash_len(self):
         # test whether the length of returned hash is correct
         json_case_path = "./tests/api/data/verification_case_unit_test.json"
         vc = VerificationCase(case=None, file_path=None)
