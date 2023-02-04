@@ -312,7 +312,7 @@ class TestDataProcessing(unittest.TestCase):
                 logobs.output[0],
             )
 
-    def test_validate_verification_case_structure_wrong_input_type(self):
+    def test_validate_verification_case_structure(self):
         # test when wrong case type is provided.
         with self.assertLogs() as logobs:
             case = []
@@ -336,7 +336,6 @@ class TestDataProcessing(unittest.TestCase):
                 logobs.output[0],
             )
 
-    def test_validate_verification_case_structure_wrong_case(self):
         # test when `run_simulation` key is wrong
         case_wrong_run_simulation = {
             "no": 1,
