@@ -16,7 +16,7 @@ class VerificationCase:
 
         self.case_suite = {}
         if case is not None:
-            # check
+            # check `case` type
             if isinstance(case, dict):
                 if self.validate_verification_case_structure(case):
                     # create a case_suite consisting of key: unique id, value: verification case
