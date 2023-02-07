@@ -194,12 +194,14 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _kind_: 'timeseries', or 'scatter'; If 'timeseries' is used, all variable names provided in `variable_names` will be plotted against the index timestamp from `self.data`; If 'scatter' is used, the first variables provided in the list will be used as the x-axis, the other will be on the y-axis
   - **return**: `matplotlib.axes.Axes`
 
-- `downsample(`_rule: str_`)`
+- [x] `downsample(`_rule: str_, inplace=False`)`
 
   Downsample `self.data` according to a user provided rule
 
   - **parameters**:
-    - _rule_: follows the same convention as [pandas.DataFrame.resample](https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects)
+    - _frew_: follows the same convention as [pandas.DataFrame.resample](https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects)
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
+    - **return**: `pandas.DataFrame` that contains the downsampled data
 
 - [x] `fill_missing_values(`\*method: str, variable_names: list, inplace=False`)`
 
