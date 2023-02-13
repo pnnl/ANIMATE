@@ -122,7 +122,7 @@ class VerificationCase:
         base_case: Dict = None,
         update_key_value: Dict = None,
         keep_base_case: bool = False,
-    ) -> List:
+    ) -> List[Dict]:
         """Create slightly different multiple verification cases by changing keys and values as specified in `update_key_value`. if `keep_base_case` is set to True, the `base_case` is added to the first element in the returned list.
 
         Args:
