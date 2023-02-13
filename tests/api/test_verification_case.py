@@ -1,4 +1,4 @@
-import unittest, sys, os
+import unittest, sys, os, copy
 
 
 sys.path.append("./src")
@@ -8,11 +8,43 @@ from api import VerificationCase
 
 class TestDataProcessing(unittest.TestCase):
     def test_constructor(self):
-        # test both `case` and `file_path` args aren't provided.
+        # test both `case` and `file_path` args are `None `
         vc = VerificationCase(case=None, file_path=None)
         assert vc.case_suite == {}
 
-        # test when the wrong case arg provided.
+        # test when only correct `case` is provided
+        case = {
+            "no": 3,
+            "run_simulation": True,
+            "simulation_IO": {
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case3.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
+            },
+            "expected_result": "pass",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_sa_set": {
+                        "subject": "VAV_2 Supply Equipment Outlet Node",
+                        "variable": "System Node Setpoint Temperature",
+                        "frequency": "detailed",
+                    }
+                },
+                "parameters": {"T_z_coo": 24.0},
+            },
+            "verification_class": "SupplyAirTempReset",
+        }
+        case_original = copy.deepcopy(case)
+        vc = VerificationCase(case=case, file_path=None)
+        vs_case_suite = copy.deepcopy(vc.case_suite.popitem()[1])
+        del vs_case_suite[
+            "case_id_in_suite"
+        ]  # delete `case_id_in_suite` key b/c random unique id's assigned
+        assert vs_case_suite == case_original
+
+        # test when the wrong `case` arg is provided
         with self.assertLogs() as logobs:
             testing_case = [
                 {
@@ -43,31 +75,35 @@ class TestDataProcessing(unittest.TestCase):
             ]  # wrong data type
             vc = VerificationCase(case=testing_case, file_path=None)
             self.assertEqual(
-                "ERROR:root:The type of the 'case' argument has to be str, but <class "
-                "'list'> type is provided. Please verify the 'case' argument.",
+                "ERROR:root:The `case` argument's type must be typing.Dict, but <class 'list'> is provided.",
                 logobs.output[0],
             )
 
-        # test when the wrong file_path type is provided.
-        with self.assertLogs() as logobs:
-            file_path = ["wrong_file_path_type.json"]
-            vc = VerificationCase(case=None, file_path=file_path)
-            self.assertEqual(
-                "ERROR:root:The type of the 'file_path' argument has to be str, but <class "
-                "'list'> type is provided. Please verify the 'file_path' argument.",
-                logobs.output[0],
-            )
+        # test when the correct `file_path` is provided
+        file_path = "./tests/api/data/verification_case_unit_test.json"
+        vc = VerificationCase(case=None, file_path=file_path)
+        assert len(vc.case_suite) == 2
 
-        # test when the json file doesn't exist.
+        # test when the `file_path` doesn't exist
         with self.assertLogs() as logobs:
             file_path = "./not_existing_path/testing.json"
             vc = VerificationCase(case=None, file_path=file_path)
             self.assertEqual(
-                "ERROR:root:file_path: './not_existing_path/testing.json' doesn't exist. Please make sure if the provided path exists.",
+                f"ERROR:root:`./not_existing_path/testing.json' doesn't exist. Please make sure that the 'file_path' argument is correct.",
                 logobs.output[0],
             )
 
-        # test when the given directory doesn't exist.
+        # # test when the wrong `file_path` type is provided
+        with self.assertLogs() as logobs:
+            file_path = ["wrong_file_path_type.json"]
+            vc = VerificationCase(case=None, file_path=file_path)
+            self.assertEqual(
+                "ERROR:root:The `file_path` argument's type must be <class 'str'>, but <class "
+                "'list'> is provided.",
+                logobs.output[0],
+            )
+
+        # # test when the given directory doesn't exist
         with self.assertLogs() as logobs:
             file_path = "./not_existing_path"
             vc = VerificationCase(case=None, file_path=file_path)
@@ -82,8 +118,8 @@ class TestDataProcessing(unittest.TestCase):
             vc = VerificationCase(case=None, file_path=None)
             vc.load_verification_cases_from_json(["wrong_file_path_type.json"])
             self.assertEqual(
-                "ERROR:root:The type of the 'json_case_path' argument has to be str, but <class "
-                "'list'> type is provided. Please verify the 'json_case_path' argument.",
+                "ERROR:root:The `json_case_path` argument's type must be <class 'str'>, but <class "
+                "'list'> is provided.",
                 logobs.output[0],
             )
 
@@ -94,72 +130,41 @@ class TestDataProcessing(unittest.TestCase):
         assert len(list_of_hash) == 2
 
     def test_save_case_suite_to_json(self):
-        # test when not existing dir is provided
+        # test when `json_path` doesn't exist
         with self.assertLogs() as logobs:
             vc = VerificationCase(
-                case=None, file_path="./tests/api/data/verification_case_unit_test.json"
+                case=None,
+                file_path="./tests/api//data/verification_case_unit_test.json",
             )
             vc.save_case_suite_to_json(["./not_existing_dir/testing.json"])
             self.assertEqual(
-                "ERROR:root:The type of the 'json_path' argument has to be str, but <class "
-                "'list'> type is provided. Please verify the 'json_path' argument.",
+                "ERROR:root:The `json_path` argument's type must be <class 'str'>, but <class "
+                "'list'> is provided.",
                 logobs.output[0],
             )
 
-        # test when not existing dir is provided
+        # test when wrong `case_ids` type is provided
         with self.assertLogs() as logobs:
             vc = VerificationCase(
                 case=None, file_path="./tests/api/data/verification_case_unit_test.json"
             )
-            vc.save_case_suite_to_json("./not_existing_dir/testing.json", case_ids={})
+            vc.save_case_suite_to_json(
+                json_path="./testing.json", case_ids="this is wrong case_ids type"
+            )
             self.assertEqual(
-                "ERROR:root:The type of the 'case_ids' argument has to be str, but <class "
-                "'dict'> type is provided. Please verify the 'case_ids' argument.",
+                "ERROR:root:The `case_ids` argument's type must be typing.List, but <class "
+                "'str'> is provided.",
                 logobs.output[0],
             )
 
-        # test when just file name (without including dir) is provided
-        vc = VerificationCase(
-            case=None, file_path="./tests/api/data/verification_case_unit_test.json"
-        )
-        file_path = "./tests/api/result/from_test_save_case_suite_to_json_correct_json_path.json"
-        vc.save_case_suite_to_json(file_path)
-        assert os.path.isfile(file_path)
-
         # test the given case is saved correctly.
-        case_dict = {
-            "cases": [
-                {
-                    "no": 1,
-                    "run_simulation": True,
-                    "simulation_IO": {
-                        "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2019_Atlanta_Case1.idf",
-                        "idd": "../resources/Energy+V9_0_1.idd",
-                        "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                        "output": "eplusout.csv",
-                        "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
-                    },
-                    "expected_result": "pass",
-                    "datapoints_source": {
-                        "idf_output_variables": {
-                            "T_sa_set": {
-                                "subject": "VAV_1 Supply Equipment Outlet Node",
-                                "variable": "System Node Setpoint Temperature",
-                                "frequency": "detailed",
-                            }
-                        },
-                        "parameters": {},
-                    },
-                    "verification_class": "Testing",
-                }
-            ]
-        }
-        saving_file_path = "./tests/api/result/from_test_save_case_suite_to_json_check_file_saving.json"
+        saving_file_path = "./tests/api//result/from_test_save_case_suite_to_json_check_file_saving.json"
         vc = VerificationCase(
             case=None, file_path="./tests/api/data/verification_case_unit_test.json"
         )
         vc.save_case_suite_to_json(saving_file_path)
         assert os.path.isfile(saving_file_path)
+        os.remove(saving_file_path)
 
     def test_create_verificaton_case_suite_from_base_case(self):
         example_base_case = {
@@ -191,16 +196,9 @@ class TestDataProcessing(unittest.TestCase):
             "verification_class": "Testing",
         }
         update_key_value = {
-            "no": 1,
-            "run_simulation": True,
             "simulation_IO": {
                 "idf": ["Testing_file1.idf", "Testing_file2.idf"],
-                "idd": "../Energy+V9_0_1.idd",
-                "weather": "./USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv",
-                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
             },
-            "expected_result": "fail",
             "datapoints_source": {
                 "idf_output_variables": {
                     "oa_flow": {
@@ -209,23 +207,27 @@ class TestDataProcessing(unittest.TestCase):
                             "System Node Standard Density Volume Flow Rate",
                             "Current Density Volume",
                         ],
-                        "frequency": "TimeStep",
                     },
                     "oa_db": {
-                        "subject": "Environment",
                         "variable": [
                             "Site Outdoor Air Drybulb Temperature",
                             "Site Outdoor Air Relative Humidity",
                         ],
-                        "frequency": "TimeStep",
                     },
                 },
                 "parameters": {"oa_threshold": [999, 1000]},
             },
-            "verification_class": "Testing",
         }
 
-        # test when wrong base_case type is provided.
+        # test when correct `base_case` and `update_key_value` are provided
+        returned_updated_base_cases_list = VerificationCase(
+            case=None, file_path=None
+        ).create_verificaton_case_suite_from_base_case(
+            example_base_case, update_key_value, keep_base_case=True
+        )
+        assert len(returned_updated_base_cases_list) == 3
+
+        # test when wrong `base_case` type is provided.
         with self.assertLogs() as logobs:
             wrong_base_case_type = [{"wrong_base_case_type_key": "testing"}]
             VerificationCase(
@@ -234,11 +236,11 @@ class TestDataProcessing(unittest.TestCase):
                 wrong_base_case_type, update_key_value, keep_base_case=False
             )
             self.assertEqual(
-                "ERROR:root:The type of `base_case` arg must be dict, but <class 'list'> type is provided.",
+                "ERROR:root:The `base_case` argument type must be Dict, but <class 'list'> type is provided.",
                 logobs.output[0],
             )
 
-        # test when wrong update_key_value type is provided.
+        # test when wrong `update_key_value` type is provided.
         with self.assertLogs() as logobs:
             wrong_update_key_value_type = [{"wrong_update_key_type_key": "testing"}]
             VerificationCase(
@@ -247,11 +249,11 @@ class TestDataProcessing(unittest.TestCase):
                 example_base_case, wrong_update_key_value_type, keep_base_case=False
             )
             self.assertEqual(
-                "ERROR:root:The type of `update_key_value` arg must be dict, but <class 'list'> type is provided.",
+                "ERROR:root:The `update_key_value` argument type must be Dict, but <class 'list'> type is provided.",
                 logobs.output[0],
             )
 
-        # test when wrong keep_base_case type is provided.
+        # test when wrong `keep_base_case` type is provided.
         with self.assertLogs() as logobs:
             VerificationCase(
                 case=None, file_path=None
@@ -259,23 +261,16 @@ class TestDataProcessing(unittest.TestCase):
                 example_base_case, update_key_value, keep_base_case="Fail"
             )
             self.assertEqual(
-                "ERROR:root:The type of `keep_base_case` arg must be bool, but <class 'str'> type is provided.",
+                "ERROR:root:The `keep_base_case` argument must be bool, but <class 'str'> type is provided.",
                 logobs.output[0],
             )
 
         # test when lengths of modifying lists are different.
         with self.assertLogs() as logobs:
             wrong_update_key_value = {
-                "no": 1,
-                "run_simulation": True,
                 "simulation_IO": {
                     "idf": ["Testing_file1.idf", "Testing_file2.idf"],  # length: 2
-                    "idd": "../resources/Energy+V9_0_1.idd",
-                    "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                    "output": "eplusout.csv",
-                    "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
                 },
-                "expected_result": "fail",
                 "datapoints_source": {
                     "idf_output_variables": {
                         "oa_flow": {
@@ -284,22 +279,18 @@ class TestDataProcessing(unittest.TestCase):
                                 "System Node Standard Density Volume Flow Rate",
                                 "Current Density Volume",
                             ],
-                            "frequency": "TimeStep",
                         },
                         "oa_db": {
-                            "subject": "Environment",
                             "variable": [
                                 "Site Outdoor Air Drybulb Temperature",
                                 "Site Outdoor Air Relative Humidity",
                             ],
-                            "frequency": "TimeStep",
                         },
                     },
                     "parameters": {
                         "oa_threshold": [999, 1000, 1200]
                     },  # length: 3 --> The list lengths are different.
                 },
-                "verification_class": "Testing",
             }
 
             VerificationCase(
@@ -313,6 +304,33 @@ class TestDataProcessing(unittest.TestCase):
             )
 
     def test_validate_verification_case_structure(self):
+        # test when correct `case` arg is provided
+        vc = VerificationCase(case=None, file_path=None)
+        correct_case = {
+            "no": 4,
+            "run_simulation": True,
+            "simulation_IO": {
+                "idf": "../test_cases/doe_prototype_cases/ASHRAE901_Hospital_STD2004_Atlanta_Case4.idf",
+                "idd": "../resources/Energy+V9_0_1.idd",
+                "weather": "../weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
+            },
+            "expected_result": "fail",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "T_sa_set": {
+                        "subject": "VAV_2 Supply Equipment Outlet Node",
+                        "variable": "System Node Setpoint Temperature",
+                        "frequency": "detailed",
+                    }
+                },
+                "parameters": {"T_z_coo": 24.0},
+            },
+            "verification_class": "SupplyAirTempReset",
+        }
+        assert vc.validate_verification_case_structure(correct_case)
+
         # test when wrong case type is provided.
         with self.assertLogs() as logobs:
             case = []
@@ -368,7 +386,7 @@ class TestDataProcessing(unittest.TestCase):
             == False
         )
 
-        # test when 'subject' key is missing
+        # test when `run_simulation` key is wrong
         case_missing_subject = {
             "no": 1,
             "run_simulation": True,
@@ -400,7 +418,6 @@ class TestDataProcessing(unittest.TestCase):
             == False
         )
 
-        # test when `verification_class` is wrong
         case_missing_verification_class = {
             "no": 2,
             "run_simulation": True,
@@ -464,12 +481,12 @@ class TestDataProcessing(unittest.TestCase):
 
         # when wrong json_path type is provided
         with self.assertLogs() as logobs:
-            wrong_json_path = ["./tests/api/resultwrong_json_path.json"]
+            wrong_json_path = ["./wrong_json_path.json"]
             VerificationCase(case=None, file_path=None).save_verification_cases_to_json(
                 wrong_json_path, example_cases
             )
             self.assertEqual(
-                "ERROR:root:The json_path argument type must be str, but <class 'list'> is provided.",
+                "ERROR:root:The `json_path` argument type must be str, but <class 'list'> is provided.",
                 logobs.output[0],
             )
 
@@ -502,26 +519,27 @@ class TestDataProcessing(unittest.TestCase):
                 json_path, wrong_cases_type
             )
             self.assertEqual(
-                "ERROR:root:The cases argument type must be list, but <class 'dict'> is provided.",
+                "ERROR:root:The `cases` argument type must be list, but <class 'dict'> is provided.",
                 logobs.output[0],
             )
 
         # when wrong json_path extension is provided
         with self.assertLogs() as logobs:
-            wrong_json_path = "./tests/api/result/wrong_json_path.csv"
+            wrong_json_path = "./wrong_json_path.csv"
             VerificationCase(case=None, file_path=None).save_verification_cases_to_json(
                 wrong_json_path, example_cases
             )
             self.assertEqual(
-                "ERROR:root:The json_path argument must end with '.json' extension.",
+                "ERROR:root:The `json_path` argument must end with '.json' extension.",
                 logobs.output[0],
             )
 
-        # test if json is saved correctly
+        # test when correct `json_path` and `cases` arguments are provided
         VerificationCase(case=None, file_path=None).save_verification_cases_to_json(
             json_path, example_cases
         )
         assert os.path.isfile(json_path)
+        os.remove(json_path)
 
 
 if __name__ == "__main__":

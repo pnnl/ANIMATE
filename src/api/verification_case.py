@@ -1,45 +1,41 @@
 import sys, os, logging, glob, json, inspect, uuid, copy
 
-from typing import Dict
+from typing import Dict, List, Union, NoReturn
 
 sys.path.append("..")
 
 
 class VerificationCase:
-    def __init__(self, case: Dict = None, file_path: str = None):
-        """Instantiate a verification case class object and load verification case(s) in `self.case_suite` as a Dict. keys are automatically generated unique id of cases, values are the fully defined verification case Dict.
+    def __init__(self, case: Dict = None, file_path: str = None) -> NoReturn:
+        """Instantiate a verification case class object and load verification case(s) in `self.case_suite` as a Dict. keys are automatically generated unique id of cases, values are the fully defined verification case Dict. If one argument is invalid, the class is terminated with an error message regardless of the other arguments validity.
 
         Args:
-            case: case dictionary that includes verification items.
-            file_path: path to the verification case file. If the path ends with `*.json`, then the items in the JSON file are loaded. If the path points to a directory, then verification case item JSON files are loaded.
+            case: (optional) Dict. case dictionary that includes verification items.
+            file_path: (optional) str. path to the verification case file. If the path ends with `*.json`, then the items in the JSON file are loaded. If the path points to a directory, then verification case item JSON files are loaded.
         """
-
         self.case_suite = {}
         if case is not None:
             # check `case` type
-            if isinstance(case, dict):
-                if self.validate_verification_case_structure(case):
+            if self.check_type("case", case, Dict):
+                if self.validate_verification_case_structure(case, verbose=True):
                     # create a case_suite consisting of key: unique id, value: verification case
-                    for ele in case["cases"]:
-                        self.case_suite[uuid.uuid1()] = ele
+                    unique_hash = uuid.uuid1()
+                    case["case_id_in_suite"] = str(unique_hash)
+                    self.case_suite[uuid.uuid1()] = case
             else:
-                logging.error(
-                    f"The type of the 'case' argument has to be str, but {type(case)} type is provided. Please verify the 'case' argument."
-                )
+                return None
 
         if file_path is not None:
             # check 'file_path' type
-            if isinstance(file_path, str):
+            if self.check_type("file_path", file_path, str):
                 # check if json or directory path is provided
-                if file_path[-4:] == "json":
+                if self.is_json_path_type(file_path):
                     # check if 'file_path' exists
-                    if os.path.isfile(file_path):
-                        self.case_suite = self.read_case(file_path, self.case_suite)
-
+                    if self.check_file("file_path", file_path):
+                        self.case_suite = self.read_case(file_path, self.case_suite)[0]
                     else:
-                        logging.error(
-                            f"file_path: '{file_path}' doesn't exist. Please make sure if the provided path exists."
-                        )
+                        return None
+
                 else:  # when directory path is provided
                     # check if the directory exists
                     if os.path.exists(file_path):
@@ -51,7 +47,7 @@ class VerificationCase:
                             for file in json_file_names:
                                 self.case_suite = self.read_case(
                                     file_path, self.case_suite
-                                )
+                                )[0]
                         else:
                             logging.warning(
                                 "There is no JSON files in the given file_path."
@@ -60,28 +56,13 @@ class VerificationCase:
                         logging.error(
                             f"The provided directory doesn't exist. Please make sure to provide a correct file_path."
                         )
+                        return None
             else:
-                logging.error(
-                    f"The type of the 'file_path' argument has to be str, but {type(file_path)} type is provided. Please verify the 'file_path' argument."
-                )
+                return None
 
-    def read_case(self, file_name: str, case_suite: Dict) -> Dict:
-        # load the cases from file_path
-        with open(file_name, "r") as f:
-            loaded_cases = json.load(f)
-
-        if all(
-            [
-                self.validate_verification_case_structure(loaded_case)
-                for loaded_case in loaded_cases["cases"]
-            ]
-        ):
-            for ele in loaded_cases["cases"]:
-                case_suite[uuid.uuid1()] = ele
-
-        return case_suite
-
-    def load_verification_cases_from_json(self, json_case_path: str) -> list:
+    def load_verification_cases_from_json(
+        self, json_case_path: str = None
+    ) -> List[str]:
         """Add verification cases from specified json file into self.case_suite
 
         Args:
@@ -91,91 +72,62 @@ class VerificationCase:
           List, unique ids of verification cases loaded in self.case_suite
         """
 
-        # check if json_case_path type is str
-        if isinstance(json_case_path, str):
-            # check if the json_case_path exists
-            if os.path.isfile(json_case_path):
-                self.case_suite = self.read_case(json_case_path, self.case_suite)
-            else:
-                logging.error(
-                    "Please make sure that the 'json_case_path' argument is correct."
+        # check `json_case_path` type
+        if self.check_type("json_case_path", json_case_path, str):
+            # check if `json_case_path` exists
+            if self.check_file("json_case_path", json_case_path):
+                self.case_suite, newly_added_hash = self.read_case(
+                    json_case_path, self.case_suite
                 )
+            else:
+                return None
         else:
-            logging.error(
-                f"The type of the 'json_case_path' argument has to be str, but {type(json_case_path)} type is provided. Please verify the 'json_case_path' argument."
-            )
+            return None
 
-        return list(self.case_suite.keys())
+        return newly_added_hash
 
-    def save_case_suite_to_json(self, json_path: str, case_ids: list = []):
-        """Save verification cases to a dedicated file. If case_ids is empty, all the cases in `self.case_suite` is saved. If case_ids includes specific cases' hash, the hashes in the list are only saved.
+    def save_case_suite_to_json(
+        self, json_path: str = None, case_ids: List = []
+    ) -> NoReturn:
+        """Save verification cases to a dedicated file. If the `case_ids` argument is empty, all the cases in `self.case_suite` is saved. If `case_ids` includes specific cases' hash, only the hashes in the list are saved.
 
         Args:
             json_path: str. path to the json file to save the cases.
-            case_ids: List. Unique ids of verification cases to save. By default, save all cases in `self.case_suite`
+            case_ids: List. Unique ids of verification cases to save. By default, save all cases in `self.case_suite`. Default to an empty list.
         """
 
-        # check json_path type
-        if not isinstance(json_path, str):
-            logging.error(
-                f"The type of the 'json_path' argument has to be str, but {type(json_path)} type is provided. Please verify the 'json_path' argument."
-            )
+        # check `json_path` type
+        if not self.check_type("json_path", json_path, str):
             return None
 
-        # check case_ids type
-        if not isinstance(case_ids, list):
-            logging.error(
-                f"The type of the 'case_ids' argument has to be str, but {type(case_ids)} type is provided. Please verify the 'case_ids' argument."
-            )
+        # check `case_ids` type
+        if not self.check_type("case_ids", case_ids, List):
             return None
 
-        # if json_path is saved in a different dir, check if it exists
-        json_path_split = json_path.split("/")
-        dir_path = "/".join(json_path_split[:-1])
-        if len(dir_path) > 2:  # when json_path includes directory path
-            if not os.path.exists(dir_path):
-                logging.error(
-                    f"{dir_path} directory doesn't exist. Please make sure to provide an already existing directory."
-                )
-                return None
+        # save case(s) based on `case_ids` arg
+        cases = []
+        cases_append = cases.append
+        len_case_ids = len(case_ids)
+        for hash, case in self.case_suite.items():
+            if len_case_ids == 0:
+                cases_append(case)
+            elif len_case_ids != 0 and hash in case_ids:
+                cases_append(case)
 
-        # organize the cases in the correct format
-        case_suite_in_template_format = {"cases": []}
-        case_suite_in_template_format_append = case_suite_in_template_format[
-            "cases"
-        ].append
-
-        # save all the cases in self.case_suite
-        if len(case_ids) == 0:
-            if len(self.case_suite) != 0:
-                for case in self.case_suite.items():
-                    case_suite_in_template_format_append(case[1])
-            else:
-                logging.warning(
-                    "There is no case to save. Please make sure if any cases are loaded."
-                )
-        else:  # save selective case(s)
-            for case_id in case_ids:
-                # check if case_id exists
-                if case_id in self.case_suite:
-                    case_suite_in_template_format_append(self.case_suite[case_id])
-                else:
-                    logging.error(
-                        f"{case_id} hash doesn't exist in the self.case_suite. Please make sure to provide a correct case_ids argument."
-                    )
-        # save the case suite
-        with open(json_path, "w") as fw:
-            json.dump(case_suite_in_template_format, fw, indent=4)
+        # use the `save_verification_cases_to_json` method to save
+        self.save_verification_cases_to_json(json_path, cases)
 
     @staticmethod
     def create_verificaton_case_suite_from_base_case(
-        base_case: Dict, update_key_value: Dict, keep_base_case: bool = True
-    ):
+        base_case: Dict = None,
+        update_key_value: Dict = None,
+        keep_base_case: bool = False,
+    ) -> List:
         """Create slightly different multiple verification cases by changing keys and values as specified in `update_key_value`. if `keep_base_case` is set to True, the `base_case` is added to the first element in the returned list.
 
         Args:
-            json_path: str. json file path to save the cases.
-            cases: List. List of complete verification cases Dictionary to save.
+            base_case: Dict. base verification input information.
+            update_key_value: Dict. the same format as the `base_case` arg, but the updating fields consist of a list of values to be populated with.
             keep_base_case: bool. whether to keep the base case in returned list of verification cases. Default to False.
 
         Returns:
@@ -183,7 +135,7 @@ class VerificationCase:
         """
 
         # return all the updating value lists' length
-        def _count_modifying_value_helper(update_key_value):
+        def _count_modifying_value_helper(update_key_value: Dict) -> List:
             len_modifying_values = []
 
             for key, value in update_key_value.items():
@@ -195,7 +147,9 @@ class VerificationCase:
             return len_modifying_values
 
         # update key/value based on `update_key_value` to `base_case`
-        def _update_key_helper(update_key_value, casees, prev_level_key=None):
+        def _update_key_helper(
+            update_key_value: Dict, casees: Dict, prev_level_key: str = None
+        ) -> Union[Dict, str]:
             for key, value in update_key_value.items():
                 if isinstance(value, dict):
                     prev_level_key = key
@@ -216,43 +170,33 @@ class VerificationCase:
                         elif key in ["idf", "idd", "weather", "output", "ep_path"]:
                             case["simulation_IO"][key] = value[idx]
 
-                        elif key == "subject":
+                        elif key in ["subject", "variable", "frequency"]:
                             case["datapoints_source"]["idf_output_variables"][
                                 prev_level_key
-                            ]["subject"] = value[idx]
-
-                        elif key == "variable":
-                            case["datapoints_source"]["idf_output_variables"][
-                                prev_level_key
-                            ]["variable"] = value[idx]
-
-                        elif key == "frequency":
-                            case["datapoints_source"]["idf_output_variables"][
-                                prev_level_key
-                            ]["frequency"] = value[idx]
+                            ][key] = value[idx]
 
                         elif prev_level_key == "parameters":
                             case["datapoints_source"]["parameters"][key] = value[idx]
             return casees, prev_level_key
 
-        # check base_case type
-        if not isinstance(base_case, dict):
+        # check `base_case` type
+        if not isinstance(base_case, Dict):
             logging.error(
-                f"The type of `base_case` arg must be dict, but {type(base_case)} type is provided."
+                f"The `base_case` argument type must be Dict, but {type(base_case)} type is provided."
             )
             return None
 
-        # check update_key_value type
-        if not isinstance(update_key_value, dict):
+        # check `update_key_value` type
+        if not isinstance(update_key_value, Dict):
             logging.error(
-                f"The type of `update_key_value` arg must be dict, but {type(update_key_value)} type is provided."
+                f"The `update_key_value` argument type must be Dict, but {type(update_key_value)} type is provided."
             )
             return None
 
-        # check keep_base_case type
+        # check `keep_base_case` type
         if not isinstance(keep_base_case, bool):
             logging.error(
-                f"The type of `keep_base_case` arg must be bool, but {type(keep_base_case)} type is provided."
+                f"The `keep_base_case` argument must be bool, but {type(keep_base_case)} type is provided."
             )
             return None
 
@@ -280,7 +224,9 @@ class VerificationCase:
         return updated_base_cases_list
 
     @staticmethod
-    def validate_verification_case_structure(case: Dict, verbose: bool = False) -> bool:
+    def validate_verification_case_structure(
+        case: Dict = None, verbose: bool = False
+    ) -> bool:
         """Validate verification case structure (e.g., check whether `run_simulation`, `simulation_IO`, etc. exist or not). Check if required key / values pairs exist in the case. check if datatype of values are appropriate, e.g. file path is str.
 
         Args:
@@ -302,86 +248,67 @@ class VerificationCase:
                         break
                 else:
                     if key in instance:
-                        if type(instance[key]) != schema[key]:
-                            if verbose:
-                                logging.error(
-                                    f"The type of '{key}' key must be {schema[key]}, but {type(instance[key])} is provided."
-                                )
-                            return False
-                    else:
-                        if verbose:
+                        if not isinstance(instance[key], schema[key]):
                             logging.error(
-                                f"'{key}' key is NOT in the `case` argument. Please make sure to include the '{key}' key in the `case` argument. "
+                                f"The type of '{key}' key must be {schema[key]}, but {type(instance[key])} is provided."
                             )
+                            return False
+                        else:
+                            if verbose:
+                                print(
+                                    f"The type of {key} has the correct type {schema[key]}"
+                                )
+                    else:
+                        logging.error(
+                            f"'{key}' key is NOT in the `case` argument. Please make sure to include the '{key}' key in the `case` argument. "
+                        )
                         return False
 
                     if key == "idf_output_variables":
                         for idf_key, idf_value in instance[key].items():
                             if not isinstance(instance[key][idf_key], dict):
-                                if verbose:
-                                    logging.error(
-                                        f"idf_output_variables is NOT dict type."
-                                    )
+                                logging.error(f"idf_output_variables is NOT dict type.")
                                 return False
-
-                            if not instance[key][idf_key].get("subject"):
+                            else:
                                 if verbose:
                                     print(
-                                        f"'subject' key doesn't exist in {instance[key][idf_key]}. Please make sure to include the 'subject' key."
+                                        f"{instance[key][idf_key]} has correct type (dict)."
                                     )
-                                return False
 
-                            if not isinstance(
-                                instance[key][idf_key].get("subject"), str
-                            ):
-                                if verbose:
-                                    logging.error(
-                                        f"The type of '{idf_key}' subject's value must be str, but {type(instance[key][idf_key].get('subject'))} is provided."
+                            for key_name in ["subject", "variable", "frequency"]:
+                                if not instance[key][idf_key].get(key_name):
+                                    print(
+                                        f"'{key_name}' key doesn't exist in {instance[key][idf_key]}. Please make sure to include the '{key_name}' key."
                                     )
-                                return False
+                                    return False
 
-                            if not instance[key][idf_key].get("variable"):
-                                if verbose:
+                                if not isinstance(
+                                    instance[key][idf_key].get(key_name), str
+                                ):
                                     logging.error(
-                                        f"'variable' key doesn't exist in {instance[key][idf_key]}. Please make sure to include the 'variable' key."
+                                        f"The type of '{idf_key}' {key_name}'s value must be str, but {type(instance[key][idf_key].get(key_name))} is provided."
                                     )
-                                return False
-
-                            if not isinstance(
-                                instance[key][idf_key].get("variable"), str
-                            ):
-                                if verbose:
-                                    logging.error(
-                                        f"The type of '{idf_key}' variable's value must be str, but {type(instance[key][idf_key].get('variable'))} is provided."
-                                    )
-                                return False
-
-                            if not instance[key][idf_key].get("frequency"):
-                                if verbose:
-                                    logging.error(
-                                        f"'frequency' key doesn't exist in {instance[key][idf_key]}. Please make sure to include the 'frequency' key."
-                                    )
-                                return False
-
-                            if not isinstance(
-                                instance[key][idf_key].get("frequency"), str
-                            ):
-                                if verbose:
-                                    logging.error(
-                                        f"The type of '{idf_key}' frequency's value must be str, but {type(instance[key][idf_key].get('frequency'))} is provided."
-                                    )
-                                return False
+                                    return False
+                                else:
+                                    if verbose:
+                                        print(
+                                            f"The type of {idf_key}'s {key_name} is str, which is correct."
+                                        )
 
                     if key == "parameters":
                         for idf_key, idf_value in instance[key].items():
                             if not isinstance(
                                 instance[key][idf_key], float
                             ) and not isinstance(instance[key][idf_key], int):
-                                if verbose:
-                                    logging.error(
-                                        f"The type of '{idf_key}' value must be either float or int, but {type(instance[key][idf_key])} is provided."
-                                    )
+                                logging.error(
+                                    f"The type of '{idf_key}' value must be either float or int, but {type(instance[key][idf_key])} is provided."
+                                )
                                 return False
+                            else:
+                                if verbose:
+                                    print(
+                                        f"The correct {idf_key} type {type(idf_value)} is provided."
+                                    )
 
             return is_cases_valid
 
@@ -399,7 +326,6 @@ class VerificationCase:
             )
             return None
 
-        # case schema used for
         case_schema = {
             "no": int,
             "run_simulation": bool,
@@ -417,32 +343,32 @@ class VerificationCase:
         return _validate_case_structure_helper(case_schema, case, verbose)
 
     @staticmethod
-    def save_verification_cases_to_json(json_path: str, cases: list):
+    def save_verification_cases_to_json(
+        json_path: str = None, cases: list = None
+    ) -> NoReturn:
         """Save verification cases to a dedicated file. The cases list consists of verification case dicts.
 
         Args:
             json_path: str. json file path to save the cases.
             cases: List. List of complete verification cases Dictionary to save.
-
         """
-
-        # check json_path type
+        # check `json_path` type
         if not isinstance(json_path, str):
             logging.error(
-                f"The json_path argument type must be str, but {type(json_path)} is provided."
+                f"The `json_path` argument type must be str, but {type(json_path)} is provided."
             )
             return None
 
-        # check cases type
+        # check `cases` type
         if not isinstance(cases, list):
             logging.error(
-                f"The cases argument type must be list, but {type(cases)} is provided."
+                f"The `cases` argument type must be list, but {type(cases)} is provided."
             )
             return None
 
-        # check if json_path extension is .json
-        if json_path[-5:] != ".json":
-            logging.error(f"The json_path argument must end with '.json' extension.")
+        # check if `json_path` extension is .json
+        if not json_path[-5:] == ".json":
+            logging.error(f"The `json_path` argument must end with '.json' extension.")
             return None
 
         # organize the cases in the correct format
@@ -456,3 +382,49 @@ class VerificationCase:
         # save the case suite
         with open(json_path, "w") as fw:
             json.dump(case_suite_in_template_format, fw, indent=4)
+
+    def read_case(self, file_name: str, case_suite: Dict) -> Dict:
+        # load the cases from file_path
+        with open(file_name, "r") as f:
+            loaded_cases = json.load(f)
+
+        newly_added_hash = []
+        newly_added_hash_append = newly_added_hash.append
+        if all(
+            [
+                self.validate_verification_case_structure(loaded_case)
+                for loaded_case in loaded_cases["cases"]
+            ]
+        ):
+            for case in loaded_cases["cases"]:
+                # check if there is any duplicated case. If so, don't add the case to `self.case_suite`
+                if all([loaded_cases != ele[1] for ele in self.case_suite.items()]):
+                    unique_hash = uuid.uuid1()
+                    case["case_id_in_suite"] = str(unique_hash)
+                    case_suite[unique_hash] = case
+                    newly_added_hash_append(unique_hash)
+
+        return case_suite, newly_added_hash
+
+    def is_json_path_type(self, json_path: str) -> bool:
+        return True if json_path[-5:] == ".json" else False
+
+    def check_type(
+        self, var_name: str, var_value: Union[str, list, dict], var_type: type
+    ) -> Union[bool, None]:
+        if not isinstance(var_value, var_type):
+            logging.error(
+                f"The `{var_name}` argument's type must be {var_type}, but {type(var_value)} is provided."
+            )
+            return None
+        else:
+            return True
+
+    def check_file(self, file_path_name: str, file_path: str) -> Union[bool, None]:
+        if os.path.isfile(file_path):
+            return True
+        else:
+            logging.error(
+                f"`{file_path}' doesn't exist. Please make sure that the '{file_path_name}' argument is correct."
+            )
+            return None

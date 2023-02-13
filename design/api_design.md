@@ -266,11 +266,11 @@ dp.check_for_verif(verification_case=case_1)
 
 - [x] `__init__('_case: Dict_, file_path: str')`
 
-  Instantiate a verification case class object and load verification case(s) in `self.case_suite` as a Dict. keys are automatically generated unique id of cases, values are the fully defined verification case Dict.
+  Instantiate a verification case class object and load verification case(s) in `self.case_suite` as a Dict. keys are automatically generated unique id of cases, and values are the fully defined verification case Dict. The `case` and `file_path` arguments must be valid. If one argument is invalid, the class is terminated with an error message regardless of the other arguments validity.
 
   - **Parameter**
-    -_case_: (optional) case dictionary that includes verification items.  
-    -_file_path_: (optional) path to the verification case file. If the path ends with `*.json`, then the items in the JSON file are loaded. If the path points to a directory, then verification case item JSON files are loaded.  
+    -_case_: (optional) Dict. case dictionary that includes verification items.  
+    -_file_path_: (optional) str. path to the verification case file. If the path ends with `*.json`, then the items in the JSON file are loaded. If the path points to a directory, then verification case item JSON files are loaded.  
 
 - [x] `load_verification_cases_from_json(`_json_case_path: str_`)`
 
@@ -296,13 +296,13 @@ dp.check_for_verif(verification_case=case_1)
     - _cases_: List, containing fully defined verification cases Dict.
   - **Returns** unique id of the cases stored in self.case_suite[unique_id]
 
-- [x] `static create_verificaton_case_suite_from_base_case(`_base_case: dict, update_key_value: Dict_, keep_base_case=True`)`
+- [x] `static create_verificaton_case_suite_from_base_case(`_base_case: dict, update_key_value: Dict_, keep_base_case=False`)`
 
-  Create slightly different multiple verification cases by changing keys and values as specified in `update_key_value`. if `keep_base_case` is set to True, the `base_case` is added to the first element in the returned list. Design illustrated with example below.
+  Create slightly different multiple verification cases by changing keys and values as specified in `update_key_value`. if `keep_base_case` is set to True, the `base_case` is added to the first element in the returned list. 
 
   - **parameters**:
-    - _base_case_: Dict. Base verification input information.
-    - _update_key_value_: Dict with structured keys pointing to fields to be updated and leaf values being list of values to be populated with.
+    - _base_case_: Dict. base verification input information.
+    - _update_key_value_: Dict. the same format as the `base_case` arg, but the updating fields consist of a list of values to be populated with.
     - _keep_base_case_: Bool, whether to keep the base case in returned list of verification cases. Default to False.
   - **Returns** List. A list of Dict, each dict is a generated case from the base case.
 
@@ -421,11 +421,11 @@ iii) third element in the returned list.
 
 - [x] `save_case_suite_to_json(`_json_path: str, case_ids=[]_`)`
 
-  Save verification cases to a dedicated file. If case_ids is empty, all the cases in `self.case_suite` is saved. If case_ids includes specific cases' hash, the hashes in the list are only saved.
+  Save verification cases to a dedicated file. If the `case_ids` argument is empty, all the cases in `self.case_suite` is saved. If `case_ids` includes specific cases' hash, only the hashes in the list are saved.
 
   - **parameters**:
     - _json_path_: str. path to the json file to save the cases.
-    - _case_ids_: List. Unique ids of verification cases to save. By default, save all cases in `self.case_suite`
+    - _case_ids_: List. Unique ids of verification cases to save. By default, save all cases in `self.case_suite`. Default to an empty list.
 
 - [x] `static save_verification_cases_to_json(`_json_path: str, cases: list_`)
 
@@ -469,18 +469,15 @@ SAT_case = {
         },
         "parameters": {}
     },
-    "verification_class": "NightCycleOperation"
+    "verification_class": "testing_verification_class"
 }
 
-
-# define Verification object
-verification_instnace = an.Verification()
+# define VerificationCase object
+verification_instnace = an.VerificationCase(case=SAT_case, file_path=None)
 
 # load existing verification case
-verification_instance.load_verification_case("./schema/new_library_verification_cases.json")
-
-# add a case to the existing case
-verification_instance.generate_verification_case(SAT_case)
+if sat_case_validity:
+  verification_instance.load_verification_cases_from_json("./schema/new_library_verification_cases.json")
 
 # create verification cases in suite
 update_key_value = {
@@ -494,16 +491,14 @@ update_key_value = {
     }
   }
 
-verification_instance.create_verificaton_case_suite_from_base_case(SAT_case, update_key_value)
+updated_base_cases_list = verification_instance.create_verificaton_case_suite_from_base_case(SAT_case, update_key_value)
 
-# validate the case format
-verification_instance.validate_verification_cases_validity(["example_id"], verbose=False)
+# save the `updated_base_cases_list` to json
+verification_instnace.save_verification_cases_to_json("./schema/updated_base_case.json", updated_base_cases_list)
 
-# validate the cases
-verification_instance.validate_verification_cases(["example_id"], verbose=False)
 
 # save the updated cases
-verification_instance.save_verification_case("./schema/new_library_verification_cases.json")
+verification_instance.save_case_suite_to_json("./schema/new_library_verification_cases.json")
 
 ```
 
