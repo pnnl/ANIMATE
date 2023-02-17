@@ -1,68 +1,61 @@
-import sys, os, logging, glob, json, inspect, uuid, copy
+import sys, os, logging, glob, json, uuid, copy
 
-from typing import Dict, List, Union, NoReturn
+from typing import Dict, List, Tuple, Union
 
 sys.path.append("..")
 
 
 class VerificationCase:
-    def __init__(self, case: Dict = None, file_path: str = None) -> NoReturn:
+    def __init__(self, cases: List = None, json_case_path: str = None) -> None:
         """Instantiate a verification case class object and load verification case(s) in `self.case_suite` as a Dict. keys are automatically generated unique id of cases, values are the fully defined verification case Dict. If one argument is invalid, the class is terminated with an error message regardless of the other arguments validity.
 
         Args:
-            case: (optional) Dict. case dictionary that includes verification items.
-            file_path: (optional) str. path to the verification case file. If the path ends with `*.json`, then the items in the JSON file are loaded. If the path points to a directory, then verification case item JSON files are loaded.
+            cases: (optional) A list of Dict. dictionary that includes verification case(s).
+            json_case_path: (optional) str. path to the verification case file. If the path ends with `*.json`, then the items in the JSON file are
+        loaded. If the path points to a directory, then verification case item JSON files are loaded.
         """
         self.case_suite = {}
-        if case is not None:
-            # check `case` type
-            if self.check_type("case", case, Dict):
-                if self.validate_verification_case_structure(case, verbose=True):
-                    # create a case_suite consisting of key: unique id, value: verification case
-                    unique_hash = uuid.uuid1()
-                    case["case_id_in_suite"] = str(unique_hash)
-                    self.case_suite[uuid.uuid1()] = case
+        if cases is not None:
+            if self.check_type("cases", cases, List) and all(
+                [self.validate_verification_case_structure(case) for case in cases]
+            ):
+                for case in cases:
+                    unique_hash = str(uuid.uuid1())
+                    case["case_id_in_suite"] = unique_hash
+                    self.case_suite[unique_hash] = case
             else:
                 return None
 
-        if file_path is not None:
-            # check 'file_path' type
-            if self.check_type("file_path", file_path, str):
-                # check if json or directory path is provided
-                if self.is_json_path_type(file_path):
-                    # check if 'file_path' exists
-                    if self.check_file("file_path", file_path):
-                        self.case_suite = self.read_case(file_path, self.case_suite)[0]
-                    else:
-                        return None
+        if json_case_path is not None and self.check_type(
+            "json_case_path", json_case_path, str
+        ):
+            # check if json or directory path is provided
+            if self.check_json_path_type(json_case_path):
+                self.load_verification_cases_from_json(json_case_path)
+            else:  # when directory path is provided
+                # check if the directory exists
+                if os.path.exists(json_case_path):
+                    # find all the JSON files in json_case_path directory
+                    json_file_names = glob.glob(os.path.join(json_case_path, "*.json"))
 
-                else:  # when directory path is provided
-                    # check if the directory exists
-                    if os.path.exists(file_path):
-                        # find all the JSON files in file_path directory
-                        json_file_names = glob.glob(os.path.join(file_path, "*.json"))
-
-                        # check if JSON file(s) exists.
-                        if len(json_file_names) != 0:
-                            for file in json_file_names:
-                                self.case_suite = self.read_case(
-                                    file_path, self.case_suite
-                                )[0]
-                        else:
-                            logging.warning(
-                                "There is no JSON files in the given file_path."
-                            )
+                    # check if no of json_file_names isn't 0
+                    if json_file_names:
+                        for file in json_file_names:
+                            self.read_case(file)
                     else:
-                        logging.error(
-                            f"The provided directory doesn't exist. Please make sure to provide a correct file_path."
+                        logging.warning(
+                            "There is no JSON files in the given `json_case_path` directory."
                         )
-                        return None
-            else:
-                return None
+                else:
+                    logging.error(
+                        f"The provided directory doesn't exist. Please make sure to provide a correct json_case_path."
+                    )
+                    return None
+        return None
 
     def load_verification_cases_from_json(
         self, json_case_path: str = None
-    ) -> List[str]:
+    ) -> Union[List[str], None]:
         """Add verification cases from specified json file into self.case_suite
 
         Args:
@@ -76,9 +69,7 @@ class VerificationCase:
         if self.check_type("json_case_path", json_case_path, str):
             # check if `json_case_path` exists
             if self.check_file("json_case_path", json_case_path):
-                self.case_suite, newly_added_hash = self.read_case(
-                    json_case_path, self.case_suite
-                )
+                newly_added_hash = self.read_case(json_case_path)
             else:
                 return None
         else:
@@ -87,14 +78,17 @@ class VerificationCase:
         return newly_added_hash
 
     def save_case_suite_to_json(
-        self, json_path: str = None, case_ids: List = []
-    ) -> NoReturn:
+        self, json_path: str = None, case_ids: List = None
+    ) -> None:
         """Save verification cases to a dedicated file. If the `case_ids` argument is empty, all the cases in `self.case_suite` is saved. If `case_ids` includes specific cases' hash, only the hashes in the list are saved.
 
         Args:
             json_path: str. path to the json file to save the cases.
             case_ids: List. Unique ids of verification cases to save. By default, save all cases in `self.case_suite`. Default to an empty list.
         """
+        # default `case_ids` is list b/c every call shares the same list
+        if case_ids is None:
+            case_ids = []
 
         # check `json_path` type
         if not self.check_type("json_path", json_path, str):
@@ -106,23 +100,22 @@ class VerificationCase:
 
         # save case(s) based on `case_ids` arg
         cases = []
-        cases_append = cases.append
         len_case_ids = len(case_ids)
-        for hash, case in self.case_suite.items():
+        for id, case in self.case_suite.items():
             if len_case_ids == 0:
-                cases_append(case)
-            elif len_case_ids != 0 and hash in case_ids:
-                cases_append(case)
+                cases.append(case)
+            elif len_case_ids != 0 and id in case_ids:
+                cases.append(case)
 
         # use the `save_verification_cases_to_json` method to save
         self.save_verification_cases_to_json(json_path, cases)
 
     @staticmethod
-    def create_verificaton_case_suite_from_base_case(
+    def create_verification_case_suite_from_base_case(
         base_case: Dict = None,
         update_key_value: Dict = None,
         keep_base_case: bool = False,
-    ) -> List[Dict]:
+    ) -> Union[List[Dict], None]:
         """Create slightly different multiple verification cases by changing keys and values as specified in `update_key_value`. if `keep_base_case` is set to True, the `base_case` is added to the first element in the returned list.
 
         Args:
@@ -148,8 +141,8 @@ class VerificationCase:
 
         # update key/value based on `update_key_value` to `base_case`
         def _update_key_helper(
-            update_key_value: Dict, casees: Dict, prev_level_key: str = None
-        ) -> Union[Dict, str]:
+            update_key_value: Dict, casees: List, prev_level_key: str = None
+        ) -> Tuple[Dict, str]:
             for key, value in update_key_value.items():
                 if isinstance(value, dict):
                     prev_level_key = key
@@ -208,9 +201,8 @@ class VerificationCase:
 
         # deep-copy the base_case
         generated_base_cases_list = []
-        generated_cases_list_append = generated_base_cases_list.append
         for _ in range(len_of_each_modifying_list[0]):
-            generated_cases_list_append(copy.deepcopy(base_case))
+            generated_base_cases_list.append(copy.deepcopy(base_case))
 
         # update the values based on `update_key_value` arg
         updated_base_cases_list = _update_key_helper(
@@ -237,7 +229,7 @@ class VerificationCase:
             Bool, indicating whether the case structure is valid or not.
         """
 
-        def _validate_case_structure_helper(schema, instance, verbose):
+        def _validate_case_structure_helper(schema, instance, verbose) -> Union[bool]:
             is_cases_valid = True
             for key, value in schema.items():
                 if isinstance(value, dict):
@@ -259,10 +251,11 @@ class VerificationCase:
                                     f"The type of {key} has the correct type {schema[key]}"
                                 )
                     else:
-                        logging.error(
-                            f"'{key}' key is NOT in the `case` argument. Please make sure to include the '{key}' key in the `case` argument. "
-                        )
-                        return False
+                        if key != "parameters":
+                            logging.error(
+                                f"'{key}' key is NOT in the `case` argument. Please make sure to include the '{key}' key in the `case` argument. "
+                            )
+                            return False
 
                     if key == "idf_output_variables":
                         for idf_key, idf_value in instance[key].items():
@@ -295,7 +288,7 @@ class VerificationCase:
                                             f"The type of {idf_key}'s {key_name} is str, which is correct."
                                         )
 
-                    if key == "parameters":
+                    if key == "parameters" and key in instance:
                         for idf_key, idf_value in instance[key].items():
                             if not isinstance(
                                 instance[key][idf_key], float
@@ -345,7 +338,7 @@ class VerificationCase:
     @staticmethod
     def save_verification_cases_to_json(
         json_path: str = None, cases: list = None
-    ) -> NoReturn:
+    ) -> None:
         """Save verification cases to a dedicated file. The cases list consists of verification case dicts.
 
         Args:
@@ -372,59 +365,68 @@ class VerificationCase:
             return None
 
         # organize the cases in the correct format
-        case_suite_in_template_format = {"cases": []}
-        case_suite_in_template_format_append = case_suite_in_template_format[
-            "cases"
-        ].append
-        for case in cases:
-            case_suite_in_template_format_append(case)
+        case_suite_in_template_format = {"cases": cases}
 
         # save the case suite
         with open(json_path, "w") as fw:
             json.dump(case_suite_in_template_format, fw, indent=4)
 
-    def read_case(self, file_name: str, case_suite: Dict) -> Dict:
+    def read_case(self, file_name: str) -> List:
         # load the cases from file_path
         with open(file_name, "r") as f:
             loaded_cases = json.load(f)
 
         newly_added_hash = []
-        newly_added_hash_append = newly_added_hash.append
         if all(
             [
                 self.validate_verification_case_structure(loaded_case)
                 for loaded_case in loaded_cases["cases"]
             ]
         ):
-            for case in loaded_cases["cases"]:
+
+            for loaded_case in loaded_cases["cases"]:
                 # check if there is any duplicated case. If so, don't add the case to `self.case_suite`
-                if all([loaded_cases != ele[1] for ele in self.case_suite.items()]):
-                    unique_hash = uuid.uuid1()
-                    case["case_id_in_suite"] = str(unique_hash)
-                    case_suite[unique_hash] = case
-                    newly_added_hash_append(unique_hash)
+                have_same_case = []
+                for case in self.case_suite.items():
+                    case_copy = copy.deepcopy(case[1])
+                    del case_copy["case_id_in_suite"]  # delete the key for comparison
+                    if loaded_case != case_copy:
+                        have_same_case.append(
+                            True
+                        )  # there is no duplicate case in `self.case_suite`
+                    else:
+                        have_same_case.append(False)
 
-        return case_suite, newly_added_hash
+                if all(have_same_case):
+                    unique_hash = str(uuid.uuid1())
+                    loaded_case["case_id_in_suite"] = unique_hash
+                    self.case_suite[unique_hash] = loaded_case
+                    newly_added_hash.append(unique_hash)
 
-    def is_json_path_type(self, json_path: str) -> bool:
+        return newly_added_hash
+
+    @staticmethod
+    def check_json_path_type(json_path: str) -> bool:
         return True if json_path[-5:] == ".json" else False
 
+    @staticmethod
     def check_type(
-        self, var_name: str, var_value: Union[str, list, dict], var_type: type
-    ) -> Union[bool, None]:
+        var_name: str, var_value: Union[str, list, dict], var_type: type
+    ) -> bool:
         if not isinstance(var_value, var_type):
             logging.error(
                 f"The `{var_name}` argument's type must be {var_type}, but {type(var_value)} is provided."
             )
-            return None
+            return False
         else:
             return True
 
-    def check_file(self, file_path_name: str, file_path: str) -> Union[bool, None]:
+    @staticmethod
+    def check_file(file_path_name: str, file_path: str) -> bool:
         if os.path.isfile(file_path):
             return True
         else:
             logging.error(
                 f"`{file_path}' doesn't exist. Please make sure that the '{file_path_name}' argument is correct."
             )
-            return None
+            return False
