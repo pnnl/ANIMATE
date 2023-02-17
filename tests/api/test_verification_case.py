@@ -92,7 +92,9 @@ class TestDataProcessing(unittest.TestCase):
 
         # test whether duplicated case isn't added to `self.case_suite`
         vc = VerificationCase(cases=[self.case], json_case_path=None)
-        vc.load_verification_cases_from_json("./tests/api/data/verification_case_unit_test.json")
+        vc.load_verification_cases_from_json(
+            "./tests/api/data/verification_case_unit_test.json"
+        )
         assert len(vc.case_suite) == 2
 
     def test_load_verification_cases_from_json(self):
