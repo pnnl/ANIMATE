@@ -383,7 +383,6 @@ class VerificationCase:
                 for loaded_case in loaded_cases["cases"]
             ]
         ):
-
             for loaded_case in loaded_cases["cases"]:
                 # check if there is any duplicated case. If so, don't add the case to `self.case_suite`
                 have_same_case = []
