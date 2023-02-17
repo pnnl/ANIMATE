@@ -396,7 +396,7 @@ class VerificationCase:
                     else:
                         have_same_case.append(False)
 
-                if all(have_same_case):
+                if all(have_same_case) or len(self.case_suite) == 0:
                     unique_hash = str(uuid.uuid1())
                     loaded_case["case_id_in_suite"] = unique_hash
                     self.case_suite[unique_hash] = loaded_case
