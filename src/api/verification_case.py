@@ -51,7 +51,8 @@ class VerificationCase:
                         f"The provided directory doesn't exist. Please make sure to provide a correct `json_case_path`."
                     )
                     return None
-        return None
+        else:
+            return None
 
     def load_verification_cases_from_json(
         self, json_case_path: str = None
@@ -377,13 +378,8 @@ class VerificationCase:
             loaded_cases = json.load(f)
 
         newly_added_hash = []
-        if all(
-            [
-                self.validate_verification_case_structure(loaded_case)
-                for loaded_case in loaded_cases["cases"]
-            ]
-        ):
-            for loaded_case in loaded_cases["cases"]:
+        for loaded_case in loaded_cases["cases"]:
+            if self.validate_verification_case_structure(loaded_case):
                 # check if there is any duplicated case. If so, don't add the case to `self.case_suite`
                 have_same_case = []
                 for case in self.case_suite.items():

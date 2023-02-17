@@ -33,8 +33,7 @@ class TestDataProcessing(unittest.TestCase):
 
     def test_constructor(self):
         # test both `cases` and `json_case_path` args are `None `
-        vc = VerificationCase(cases=None, json_case_path=None)
-        assert vc.case_suite == {}
+        assert VerificationCase(cases=None, json_case_path=None).case_suite == {}
 
         # test when only correct `cases` is provided
         case = [self.case]
@@ -46,7 +45,7 @@ class TestDataProcessing(unittest.TestCase):
         # test when the wrong `cases` arg is provided
         with self.assertLogs() as logobs:
             testing_case = {"cases": self.case}  # wrong data type
-            vc = VerificationCase(cases=testing_case, json_case_path=None)
+            VerificationCase(cases=testing_case, json_case_path=None)
             self.assertEqual(
                 "ERROR:root:The `cases` argument's type must be typing.List, but <class 'dict'> is provided.",
                 logobs.output[0],
@@ -60,7 +59,7 @@ class TestDataProcessing(unittest.TestCase):
         # test when the `json_case_path` doesn't exist
         with self.assertLogs() as logobs:
             json_case_path = "./not_existing_path/testing.json"
-            vc = VerificationCase(cases=None, json_case_path=json_case_path)
+            VerificationCase(cases=None, json_case_path=json_case_path)
             self.assertEqual(
                 f"ERROR:root:`./not_existing_path/testing.json' doesn't exist. Please make sure that the 'json_case_path' argument is correct.",
                 logobs.output[0],
@@ -69,7 +68,7 @@ class TestDataProcessing(unittest.TestCase):
         # test when the wrong `json_case_path` type is provided
         with self.assertLogs() as logobs:
             json_case_path = ["wrong_file_path_type.json"]
-            vc = VerificationCase(cases=None, json_case_path=json_case_path)
+            VerificationCase(cases=None, json_case_path=json_case_path)
             self.assertEqual(
                 "ERROR:root:The `json_case_path` argument's type must be <class 'str'>, but <class "
                 "'list'> is provided.",
@@ -79,7 +78,7 @@ class TestDataProcessing(unittest.TestCase):
         # test when the given `json_case_path` directory doesn't exist
         with self.assertLogs() as logobs:
             json_case_path = "./not_existing_path"
-            vc = VerificationCase(cases=None, json_case_path=json_case_path)
+            VerificationCase(cases=None, json_case_path=json_case_path)
             self.assertEqual(
                 "ERROR:root:The provided directory doesn't exist. Please make sure to provide a correct `json_case_path`.",
                 logobs.output[0],
