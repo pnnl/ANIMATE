@@ -48,7 +48,7 @@ class VerificationCase:
                         )
                 else:
                     logging.error(
-                        f"The provided directory doesn't exist. Please make sure to provide a correct json_case_path."
+                        f"The provided directory doesn't exist. Please make sure to provide a correct `json_case_path`."
                     )
                     return None
         return None

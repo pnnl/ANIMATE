@@ -81,7 +81,7 @@ class TestDataProcessing(unittest.TestCase):
             json_case_path = "./not_existing_path"
             vc = VerificationCase(cases=None, json_case_path=json_case_path)
             self.assertEqual(
-                "ERROR:root:The provided directory doesn't exist. Please make sure to provide a correct json_case_path.",
+                "ERROR:root:The provided directory doesn't exist. Please make sure to provide a correct `json_case_path`.",
                 logobs.output[0],
             )
 
