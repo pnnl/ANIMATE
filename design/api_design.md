@@ -39,7 +39,7 @@ Use this API to manage the verification items library
 
 ---
 
-- `get_library_items(`_items=[]_`)`
+- [x] `get_library_items(`_items=[]_`)`
   Get the json definition and meta information of a list of specific library items.
 
   - **Parameters**
