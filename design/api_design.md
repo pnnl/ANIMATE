@@ -77,7 +77,7 @@ Generate a dictionary with predefined keys so that a library item
 
 ---
 
-- `get_applicable_library_items_by_datapoints(`_datapoints_`)`
+- [x] `get_applicable_library_items_by_datapoints(`_datapoints_`)`
   Based on provided datapoints lists, identify potentially applicable library items from all loaded items. Use this function with caution as it 1) requires aligned data points naming across all library items; 2) does not check the topological relationships between datapoints.
 
   - **Parameters**

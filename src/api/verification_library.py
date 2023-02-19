@@ -1,5 +1,5 @@
 import sys, logging, glob, json, inspect
-from typing import Dict
+from typing import Dict, List
 
 sys.path.append("..")
 from library import *
@@ -100,3 +100,39 @@ class VerificationLibrary:
         }
 
         return item_dict
+
+    def get_applicable_library_items_by_datapoints(self, datapoints: List = []) -> Dict:
+        """Based on provided datapoints lists, identify potentially applicable library items from all loaded items. Use this function with caution as it 1) requires aligned data points naming across all library items; 2) does not check the topological relationships between datapoints.
+
+        Args:
+            datapoints: list of str datapoints names.
+
+        Returns:
+            Dict with keys being the library item names and values being the required datapoints for the corresponding keys.
+        """
+
+        # check `datapoints` type
+        if not isinstance(datapoints, List):
+            logging.error(
+                f"datapoints' type must be List. It can't be {type(datapoints)}."
+            )
+            return None
+
+        # check the type of elements in `datapoints`
+        for datapoint in datapoints:
+            if not isinstance(datapoint, str):
+                logging.error(
+                    f"element's type in the datapoints argument must be str. It can't be {type(datapoint)}."
+                )
+                return None
+
+        # check if applicable lib(s) exists with the datapoints arg
+        applicable_lib_dict = {}
+        for lib_item in self.lib_items.keys():
+            required_lib_datapoints = list(
+                self.lib_items[lib_item]["description_datapoints"].keys()
+            )
+            if set(required_lib_datapoints).issubset(set(datapoints)):
+                applicable_lib_dict[lib_item] = required_lib_datapoints
+
+        return applicable_lib_dict
