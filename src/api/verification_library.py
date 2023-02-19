@@ -1,5 +1,5 @@
 import sys, logging, glob, json, inspect
-from typing import Dict
+from typing import Dict, List, Union
 
 sys.path.append("..")
 from library import *
@@ -100,3 +100,25 @@ class VerificationLibrary:
         }
 
         return item_dict
+
+    def get_library_items(self, items: List = []) -> Union[List, None]:
+        """Get the json definition and meta information of a list of specific library items.
+
+        Args:
+            items:  list of str, default []. Library items to get. By default, get all library items loaded at instantiation.
+
+        Returns:
+            Dict that contains summary information of library items.
+        """
+
+        # check `items` arg type
+        if not isinstance(items, List):
+            logging.error(f"items' type must be List. It can't be {type(items)}.")
+            return None
+
+        # check
+        item_list = []
+        for item in items:
+            item_list.append(self.get_library_item(item))
+
+        return item_list
