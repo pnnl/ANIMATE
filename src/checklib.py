@@ -204,7 +204,6 @@ class CheckLibBase(ABC):
         print()
 
     def calculate_plot_day(self):
-
         trueday = None
         truedaydf = None
         falseday = None
@@ -354,7 +353,6 @@ class EconomizerHeatingCompliance(RuleCheckBase):
     points = ["OA_min_sys", "OA_timestep", "Heat_sys_out"]
 
     def verify(self):
-
         self.result = ~(
             (self.df["OA_timestep"] > self.df["OA_min_sys"])
             & (self.df["Heat_sys_out"] > 0)
