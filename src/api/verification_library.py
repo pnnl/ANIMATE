@@ -116,7 +116,7 @@ class VerificationLibrary:
             logging.error(f"items' type must be List. It can't be {type(items)}.")
             return None
 
-        # check
+        # get each lib item's summary info
         item_list = []
         for item in items:
             item_list.append(self.get_library_item(item))
