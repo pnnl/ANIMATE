@@ -1,5 +1,6 @@
 import sys, logging, glob, json, inspect
-from typing import Dict
+from typing import Dict, List
+import pandas as pd
 
 sys.path.append("..")
 from library import *
@@ -100,3 +101,26 @@ class VerificationLibrary:
         }
 
         return item_dict
+
+    def validate_library(self, items: List = []) -> pd.DataFrame:
+        """Check the validity of library items definition. This validity check includes checking the completeness of json specification (against library json schema) and Python verification class definition (against library class interface) and the match between the json and python implementation.
+
+        Args:
+            items: list of str, default []. Library items to validate. By default, summarize all library items loaded at instantiation.
+
+        Returns:
+            pandas.DataFrame that contains validity information of library items.
+        """
+
+        # check `items` type
+        if not isinstance(items, List):
+            # TODO add err msg
+            return None
+
+        # validate lib
+        validity_info = pd.DataFrame()
+        for lib_item in self.lib_items.keys():
+            # TODO validate item using recursion
+            break
+
+        return validity_info

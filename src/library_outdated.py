@@ -50,7 +50,6 @@ class SupplyAirTempReset(RuleCheckBase):
     points = ["T_sa_set", "T_z_coo"]
 
     def verify(self):
-
         t_sa_set_max = max(self.df["T_sa_set"])
         t_sa_set_min = min(self.df["T_sa_set"])
 
