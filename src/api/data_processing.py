@@ -24,6 +24,9 @@ class DataProcessing:
             data_source (str): Data source name. Use `EnergyPlus` or `Other`.
             timestamp_column_name (str): Name of the column header that contains the time series timestamps.
         """
+
+        self.data = None
+
         if data_path == None:
             logging.error("A `data_path` argument should be provided.")
             return None
@@ -40,32 +43,31 @@ class DataProcessing:
                     data = CSVReader(csv_file=data_path).getseries()
                     data = DateTimeEP(data, 2000).transform()
                     data.drop("Date/Time", inplace=True, axis=1)
-                    self.data = data
+
                 elif data_source == "Other":
                     if timestamp_column_name is None:
                         logging.error(
                             "timestamp_column_name is required when data_source = 'Other'"
                         )
                         return None
-                    if not timestamp_column_name in self.data.columns:
+
+                    data = pd.read_csv(data_path)
+                    if not timestamp_column_name in data.columns:
                         logging.error(
                             f"The data does not contain a column header named {timestamp_column_name}."
                         )
                         return None
-
-                    self.data = pd.read_csv(data_path)
-                    self.data.set_index(timestamp_column_name, inplace=True)
+                    data.set_index(timestamp_column_name, inplace=True)
                     try:
-                        self.data = pd.to_datetime(self.data.index)
+                        data = pd.to_datetime(data.index)
                     except:
                         logging.error(
                             f"The data in {timestamp_column_name} could not be converted to Python datetime object. Make sure that the data is consistent defined as a set of date strings."
                         )
                         return None
                 else:
-                    logging.error(
-                        f"data_source = {data_source} is not allowed."
-                    )
+                    logging.error(f"data_source = {data_source} is not allowed.")
+                self.data = data
 
             except:
                 logging.error(
