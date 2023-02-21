@@ -6,7 +6,7 @@ sys.path.append("./src")
 from api import VerificationCase
 
 
-class TestDataProcessing(unittest.TestCase):
+class TestVerificaqtionCase(unittest.TestCase):
     case = {
         "no": 1,
         "run_simulation": True,
@@ -31,31 +31,38 @@ class TestDataProcessing(unittest.TestCase):
         "verification_class": "SupplyAirTempReset",
     }
 
-    def test_constructor(self):
-        # test both `cases` and `json_case_path` args are `None `
+    json_case_path = "./tests/api/data/verification_case_unit_test.json"
+
+    def test_constructor_none(self):
         assert VerificationCase(cases=None, json_case_path=None).case_suite == {}
 
-        # test when only correct `cases` is provided
-        case = [self.case]
-        vc = VerificationCase(cases=case, json_case_path=None)
+    def test_constructor_valid_cases(self):
+        cases = [self.case]
+        vc = VerificationCase(cases=cases, json_case_path=None)
         popped_case = vc.case_suite.popitem()
-        case[0]["case_id_in_suite"] = popped_case[0]
-        assert popped_case[1] == case[0]
+        cases[0]["case_id_in_suite"] = popped_case[0]
+        assert popped_case[1] == cases[0]
 
-        # test when the wrong `cases` arg is provided
+    def test_constructor_invalid_cases(self):
         with self.assertLogs() as logobs:
             testing_case = {"cases": self.case}  # wrong data type
-            VerificationCase(cases=testing_case, json_case_path=None)
+            vc = VerificationCase(cases=testing_case, json_case_path=None)
             self.assertEqual(
                 "ERROR:root:The `cases` argument's type must be typing.List, but <class 'dict'> is provided.",
                 logobs.output[0],
             )
 
-        # test when the correct `json_case_path` is provided
-        json_case_path = "./tests/api/data/verification_case_unit_test.json"
-        vc = VerificationCase(cases=None, json_case_path=json_case_path)
+    def test_constructor_valid_path(self):
+        vc = VerificationCase(cases=None, json_case_path=self.json_case_path)
         assert len(vc.case_suite) == 2
 
+    def test_constructor_valid_cases_and_path(self):
+        cases = [self.case]
+        cases[0]["test_duplicate_key"] = "test_duplicate_value"
+        vc = VerificationCase(cases=cases, json_case_path=self.json_case_path)
+        assert len(vc.case_suite) == 3
+
+    def test_constructor_invalid_path(self):
         # test when the `json_case_path` doesn't exist
         with self.assertLogs() as logobs:
             json_case_path = "./not_existing_path/testing.json"
@@ -84,11 +91,13 @@ class TestDataProcessing(unittest.TestCase):
                 logobs.output[0],
             )
 
+    def test_constructor_dir_path(self):
         # test whether the json files in the given directory `json_case_path` are read correctly
         json_case_path = "./tests/api/data/"
         vc = VerificationCase(cases=None, json_case_path=json_case_path)
         assert len(vc.case_suite) == 4
 
+    def test_load_verification_cases_from_json_duplicate_cases(self):
         # test whether duplicated case isn't added to `self.case_suite`
         vc = VerificationCase(cases=[self.case], json_case_path=None)
         vc.load_verification_cases_from_json(

@@ -7,28 +7,21 @@ sys.path.append("..")
 
 class VerificationCase:
     def __init__(self, cases: List = None, json_case_path: str = None) -> None:
-        """Instantiate a verification case class object and load verification case(s) in `self.case_suite` as a Dict. keys are automatically generated unique id of cases, values are the fully defined verification case Dict. If one argument is invalid, the class is terminated with an error message regardless of the other arguments validity.
+        """Instantiate a verification case class object and load verification case(s) in `self.case_suite` as a Dict. keys are automatically generated unique id of cases, values are the fully defined verification case Dict. If any argument is invalid, the object instantion will report an error message.
 
         Args:
             cases: (optional) A list of Dict. dictionary that includes verification case(s).
-            json_case_path: (optional) str. path to the verification case file. If the path ends with `*.json`, then the items in the JSON file are
-        loaded. If the path points to a directory, then verification case item JSON files are loaded.
+            json_case_path: (optional) str. path to the verification case file. If the path ends with `*.json`, then the items in the JSON file are loaded. If the path points to a directory, then verification cases JSON files are loaded.
         """
         self.case_suite = {}
-        if cases is not None:
-            if self.check_type("cases", cases, List) and all(
-                [self.validate_verification_case_structure(case) for case in cases]
-            ):
-                for case in cases:
-                    unique_hash = str(uuid.uuid1())
-                    case["case_id_in_suite"] = unique_hash
-                    self.case_suite[unique_hash] = case
-            else:
-                return None
 
-        if json_case_path is not None and self.check_type(
-            "json_case_path", json_case_path, str
-        ):
+        if self.check_type("cases", cases, List):
+            for case in cases:
+                unique_hash = str(uuid.uuid1())
+                case["case_id_in_suite"] = unique_hash
+                self.case_suite[unique_hash] = case
+
+        if self.check_type("json_case_path", json_case_path, str):
             # check if json or directory path is provided
             if self.check_json_path_type(json_case_path):
                 self.load_verification_cases_from_json(json_case_path)
@@ -50,9 +43,6 @@ class VerificationCase:
                     logging.error(
                         f"The provided directory doesn't exist. Please make sure to provide a correct `json_case_path`."
                     )
-                    return None
-        else:
-            return None
 
     def load_verification_cases_from_json(
         self, json_case_path: str = None
@@ -379,24 +369,24 @@ class VerificationCase:
 
         newly_added_hash = []
         for loaded_case in loaded_cases["cases"]:
-            if self.validate_verification_case_structure(loaded_case):
-                # check if there is any duplicated case. If so, don't add the case to `self.case_suite`
-                have_same_case = []
-                for case in self.case_suite.items():
-                    case_copy = copy.deepcopy(case[1])
-                    del case_copy["case_id_in_suite"]  # delete the key for comparison
-                    if loaded_case != case_copy:
-                        have_same_case.append(
-                            True
-                        )  # there is no duplicate case in `self.case_suite`
-                    else:
-                        have_same_case.append(False)
+            # check if there is any duplicated case. If so, don't add the case to `self.case_suite`
+            have_same_case = []
+            for case in self.case_suite.items():
+                case_copy = copy.deepcopy(case[1])
+                del case_copy["case_id_in_suite"]  # delete the key for comparison
+                if loaded_case != case_copy:
+                    have_same_case.append(
+                        True
+                    )  # there is no duplicate case in `self.case_suite`
+                else:
+                    have_same_case.append(False)
 
-                if all(have_same_case) or len(self.case_suite) == 0:
-                    unique_hash = str(uuid.uuid1())
-                    loaded_case["case_id_in_suite"] = unique_hash
-                    self.case_suite[unique_hash] = loaded_case
-                    newly_added_hash.append(unique_hash)
+            # TODO: JXL handling seems to be off, to be investigated
+            if all(have_same_case) or len(self.case_suite) == 0:
+                unique_hash = str(uuid.uuid1())
+                loaded_case["case_id_in_suite"] = unique_hash
+                self.case_suite[unique_hash] = loaded_case
+                newly_added_hash.append(unique_hash)
 
         return newly_added_hash
 
@@ -408,6 +398,9 @@ class VerificationCase:
     def check_type(
         var_name: str, var_value: Union[str, list, dict], var_type: type
     ) -> bool:
+        if var_value is None:
+            # no error msg if None
+            return False
         if not isinstance(var_value, var_type):
             logging.error(
                 f"The `{var_name}` argument's type must be {var_type}, but {type(var_value)} is provided."
