@@ -224,7 +224,6 @@ class VerificationCase:
 
         def _validate_case_structure_helper(schema, instance, verbose) -> Union[bool]:
             for schema_key, schema_value in schema.items():
-
                 # accommodate data points alike scenarios (random string key with required value structure)
                 if schema_key == "*":
                     keys = list(instance.keys())
