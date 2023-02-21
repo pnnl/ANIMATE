@@ -1,3 +1,4 @@
+import json
 import os, sys, unittest, copy
 
 
@@ -107,19 +108,18 @@ class TestVerificaqtionCase(unittest.TestCase):
             )
 
     def test_load_verification_cases_from_json_with_duplicate_cases(self):
-        # test whether the length of returned hash is correct
         json_case_path = "./tests/api/data/verification_case_unit_test.json"
         vc = VerificationCase(cases=[self.case], json_case_path=None)
         list_of_hash = vc.load_verification_cases_from_json(json_case_path)
         assert len(list_of_hash) == 1
         assert len(vc.case_suite) == 2
 
-    def test_save_case_suite_to_json(self):
+    def test_save_case_suite_to_json_invalid_path(self):
         # test when `json_path` doesn't exist
         with self.assertLogs() as logobs:
             vc = VerificationCase(
                 cases=None,
-                json_case_path="./tests/api//data/verification_case_unit_test.json",
+                json_case_path="./tests/api/data/verification_case_unit_test.json",
             )
             vc.save_case_suite_to_json(["./not_existing_dir/testing.json"])
             self.assertEqual(
@@ -128,6 +128,7 @@ class TestVerificaqtionCase(unittest.TestCase):
                 logobs.output[0],
             )
 
+    def test_save_case_suite_to_json_invalid_caseid(self):
         # test when wrong `case_ids` type is provided
         with self.assertLogs() as logobs:
             vc = VerificationCase(
@@ -143,14 +144,57 @@ class TestVerificaqtionCase(unittest.TestCase):
                 logobs.output[0],
             )
 
+    def test_save_case_suite_to_json_valid(self):
         # test the given case is saved correctly.
-        saving_file_path = "./tests/api//result/from_test_save_case_suite_to_json_check_file_saving.json"
+        saving_file_path = "./tests/api/result/from_test_save_case_suite_to_json_check_file_saving.json"
         vc = VerificationCase(
             cases=None,
             json_case_path="./tests/api/data/verification_case_unit_test.json",
         )
         vc.save_case_suite_to_json(saving_file_path)
         assert os.path.isfile(saving_file_path)
+        os.remove(saving_file_path)
+
+    def test_save_case_suite_to_json_all_cases(self):
+        saving_file_path = "./tests/api/result/from_test_save_case_suite_to_json_check_file_saving.json"
+        cases = [{"fake_case_key": f"fake_case_value_{i}"} for i in range(3)]
+        vc = VerificationCase(
+            cases=cases,
+            json_case_path="./tests/api/data/verification_case_unit_test.json",
+        )
+        vc.save_case_suite_to_json(saving_file_path)
+
+        with open(saving_file_path, "r") as f:
+            loaded_cases = json.load(f)
+        num_cases = len(loaded_cases["cases"])
+        assert num_cases == 5  # 3 ram cases and 2 file cases
+        os.remove(saving_file_path)
+
+    def test_save_case_suite_to_json_by_partial_valid_caseid(self):
+        saving_file_path = "./tests/api/result/from_test_save_case_suite_to_json_check_file_saving.json"
+        cases = [{"fake_case_key": f"fake_case_value_{i}"} for i in range(3)]
+
+        with self.assertLogs() as logobs:
+            vc = VerificationCase(
+                cases=cases,
+                json_case_path="./tests/api/data/verification_case_unit_test.json",
+            )
+            suite_keys = list(vc.case_suite.keys())
+            partial_good_keys = suite_keys[:2] + ["wrong-key-1", 2]
+            vc.save_case_suite_to_json(saving_file_path, case_ids=partial_good_keys)
+            self.assertEqual(
+                "WARNING:root:case_id wrong-key-1 is not in self.case_suite!",
+                logobs.output[0],
+            )
+            self.assertEqual(
+                "WARNING:root:case_id 2 is not in self.case_suite!",
+                logobs.output[1],
+            )
+
+        with open(saving_file_path, "r") as f:
+            loaded_cases = json.load(f)
+        num_cases = len(loaded_cases["cases"])
+        assert num_cases == 2
         os.remove(saving_file_path)
 
     def test_create_verification_case_suite_from_base_case(self):

@@ -69,15 +69,15 @@ class VerificationCase:
         return newly_added_hash
 
     def save_case_suite_to_json(
-        self, json_path: str = None, case_ids: List = None
+        self, json_path: str = None, case_ids: List = []
     ) -> None:
         """Save verification cases to a dedicated file. If the `case_ids` argument is empty, all the cases in `self.case_suite` is saved. If `case_ids` includes specific cases' hash, only the hashes in the list are saved.
 
         Args:
             json_path: str. path to the json file to save the cases.
-            case_ids: List. Unique ids of verification cases to save. By default, save all cases in `self.case_suite`. Default to an empty list.
+            case_ids: (optional) List. Unique ids of verification cases to save. By default, save all cases in `self.case_suite`. Default to an empty list.
         """
-        # default `case_ids` is list b/c every call shares the same list
+
         if case_ids is None:
             case_ids = []
 
@@ -91,12 +91,14 @@ class VerificationCase:
 
         # save case(s) based on `case_ids` arg
         cases = []
-        len_case_ids = len(case_ids)
-        for id, case in self.case_suite.items():
-            if len_case_ids == 0:
-                cases.append(case)
-            elif len_case_ids != 0 and id in case_ids:
-                cases.append(case)
+        if len(case_ids) == 0:
+            case_ids = list(self.case_suite.keys())
+
+        for case_id in case_ids:
+            if case_id in self.case_suite.keys():
+                cases.append(self.case_suite[case_id])
+            else:
+                logging.warning(f"case_id {case_id} is not in self.case_suite!")
 
         # use the `save_verification_cases_to_json` method to save
         self.save_verification_cases_to_json(json_path, cases)
@@ -370,7 +372,6 @@ class VerificationCase:
         newly_added_hash = []
         for loaded_case in loaded_cases["cases"]:
             # check if there is any duplicated case. If so, don't add the case to `self.case_suite`
-            have_same_case = []
             if not self.case_already_in_suite(case=loaded_case):
                 unique_hash = str(uuid.uuid1())
                 loaded_case["case_id_in_suite"] = unique_hash
