@@ -110,7 +110,7 @@ class TestVerificaqtionCase(unittest.TestCase):
         assert len(vc.case_suite) == 2
 
     def test_constructor_valid_cases_and_path(self):
-        cases = [self.case]
+        cases = [copy.deepcopy(self.case)]
         cases[0]["test_duplicate_key"] = "test_duplicate_value"
         vc = VerificationCase(cases=cases, json_case_path=self.json_case_path)
         assert len(vc.case_suite) == 3
@@ -163,6 +163,7 @@ class TestVerificaqtionCase(unittest.TestCase):
         json_case_path = "./tests/api/data/verification_case_unit_test.json"
         vc = VerificationCase(cases=[self.case], json_case_path=None)
         list_of_hash = vc.load_verification_cases_from_json(json_case_path)
+        print(list_of_hash)
         assert len(list_of_hash) == 1
         assert len(vc.case_suite) == 2
 
@@ -383,13 +384,14 @@ class TestVerificaqtionCase(unittest.TestCase):
         with self.assertLogs() as logobs:
             case = copy.deepcopy(self.case)
             case["datapoints_source"]["parameters"]["parameter2"] = "33"
-            validation_result = VerificationCase.validate_verification_case_structure(case)
+            validation_result = VerificationCase.validate_verification_case_structure(
+                case
+            )
             assert not validation_result
             self.assertEqual(
                 "ERROR:root:The type of 'parameter2' key must be <class 'float'>, but <class 'str'> is provided.",
                 logobs.output[0],
             )
-
 
     def test_save_verification_cases_to_json(self):
         json_path = "./tests/api/result/wrong_json_path.json"
