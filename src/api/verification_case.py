@@ -114,7 +114,7 @@ class VerificationCase:
         Args:
             base_case: Dict. base verification input information.
             update_key_value: Dict. the same format as the `base_case` arg, but the updating fields consist of a list of values to be populated with.
-            keep_base_case: bool. whether to keep the base case in returned list of verification cases. Default to False.
+            keep_base_case: (optional) bool. whether to keep the base case in returned list of verification cases. Default to False.
 
         Returns:
           List,  A list of Dict, each dict is a generated case from the base case.
@@ -223,80 +223,52 @@ class VerificationCase:
         """
 
         def _validate_case_structure_helper(schema, instance, verbose) -> Union[bool]:
-            is_cases_valid = True
-            for key, value in schema.items():
-                if isinstance(value, dict):
-                    is_cases_valid = _validate_case_structure_helper(
-                        value, instance[key], verbose
-                    )
-                    if not is_cases_valid:
-                        break
+            for schema_key, schema_value in schema.items():
+
+                # accommodate data points alike scenarios (random string key with required value structure)
+                if schema_key == "*":
+                    keys = list(instance.keys())
                 else:
-                    if key in instance:
-                        if not isinstance(instance[key], schema[key]):
+                    keys = [schema_key]
+
+                for key in keys:
+                    # check key match
+                    if key not in instance:
+                        logging.error(f"Missing required key '{key}' in {instance}")
+                        return False
+
+                    case_value = instance[key]
+
+                    if isinstance(schema_value, dict):
+                        # recursively check nested value
+                        is_cases_valid = _validate_case_structure_helper(
+                            schema_value, case_value, verbose
+                        )
+                        if not is_cases_valid:
+                            return False
+                    else:
+                        # check leaf value match
+                        # if require float, it can be int
+                        if schema_value == float:
+                            eligible_types = [int, float]
+                        else:
+                            eligible_types = [schema_value]
+
+                        type_match_list = [
+                            isinstance(case_value, sv) for sv in eligible_types
+                        ]
+
+                        if not any(type_match_list):
                             logging.error(
-                                f"The type of '{key}' key must be {schema[key]}, but {type(instance[key])} is provided."
+                                f"The type of '{key}' key must be {schema_value}, but {type(case_value)} is provided."
                             )
                             return False
                         else:
                             if verbose:
                                 print(
-                                    f"The type of {key} has the correct type {schema[key]}"
+                                    f"The type of {key} has the correct type {schema_value}"
                                 )
-                    else:
-                        if key != "parameters":
-                            logging.error(
-                                f"'{key}' key is NOT in the `case` argument. Please make sure to include the '{key}' key in the `case` argument. "
-                            )
-                            return False
-
-                    if key == "idf_output_variables":
-                        for idf_key, idf_value in instance[key].items():
-                            if not isinstance(instance[key][idf_key], dict):
-                                logging.error(f"idf_output_variables is NOT dict type.")
-                                return False
-                            else:
-                                if verbose:
-                                    print(
-                                        f"{instance[key][idf_key]} has correct type (dict)."
-                                    )
-
-                            for key_name in ["subject", "variable", "frequency"]:
-                                if not instance[key][idf_key].get(key_name):
-                                    print(
-                                        f"'{key_name}' key doesn't exist in {instance[key][idf_key]}. Please make sure to include the '{key_name}' key."
-                                    )
-                                    return False
-
-                                if not isinstance(
-                                    instance[key][idf_key].get(key_name), str
-                                ):
-                                    logging.error(
-                                        f"The type of '{idf_key}' {key_name}'s value must be str, but {type(instance[key][idf_key].get(key_name))} is provided."
-                                    )
-                                    return False
-                                else:
-                                    if verbose:
-                                        print(
-                                            f"The type of {idf_key}'s {key_name} is str, which is correct."
-                                        )
-
-                    if key == "parameters" and key in instance:
-                        for idf_key, idf_value in instance[key].items():
-                            if not isinstance(
-                                instance[key][idf_key], float
-                            ) and not isinstance(instance[key][idf_key], int):
-                                logging.error(
-                                    f"The type of '{idf_key}' value must be either float or int, but {type(instance[key][idf_key])} is provided."
-                                )
-                                return False
-                            else:
-                                if verbose:
-                                    print(
-                                        f"The correct {idf_key} type {type(idf_value)} is provided."
-                                    )
-
-            return is_cases_valid
+            return True
 
         # check case type
         if not isinstance(case, Dict):
@@ -323,7 +295,12 @@ class VerificationCase:
                 "ep_path": str,
             },
             "expected_result": str,
-            "datapoints_source": {"idf_output_variables": dict, "parameters": dict},
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "*": {"subject": str, "variable": str, "frequency": str}
+                },
+                "parameters": {"*": float},
+            },
             "verification_class": str,
         }
         return _validate_case_structure_helper(case_schema, case, verbose)

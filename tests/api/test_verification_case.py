@@ -34,6 +34,58 @@ class TestVerificaqtionCase(unittest.TestCase):
 
     json_case_path = "./tests/api/data/verification_case_unit_test.json"
 
+    example_base_case = {
+        "no": 1,
+        "run_simulation": True,
+        "simulation_IO": {
+            "idf": "../testing.idf",
+            "idd": "../Energy+V9_0_1.idd",
+            "weather": "./USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+            "output": "eplusout.csv",
+            "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
+        },
+        "expected_result": "fail",
+        "datapoints_source": {
+            "idf_output_variables": {
+                "oa_flow": {
+                    "subject": "VAV_1_OAInlet Node",
+                    "variable": "System Node Standard Density Volume Flow Rate",
+                    "frequency": "TimeStep",
+                },
+                "oa_db": {
+                    "subject": "Environment",
+                    "variable": "Site Outdoor Air Drybulb Temperature",
+                    "frequency": "TimeStep",
+                },
+            },
+            "parameters": {"oa_threshold": 300},
+        },
+        "verification_class": "Testing",
+    }
+    update_key_value = {
+        "simulation_IO": {
+            "idf": ["Testing_file1.idf", "Testing_file2.idf"],
+        },
+        "datapoints_source": {
+            "idf_output_variables": {
+                "oa_flow": {
+                    "subject": ["VAV_1_OAInlet Node", "VAV_2_OAInlet Node"],
+                    "variable": [
+                        "System Node Standard Density Volume Flow Rate",
+                        "Current Density Volume",
+                    ],
+                },
+                "oa_db": {
+                    "variable": [
+                        "Site Outdoor Air Drybulb Temperature",
+                        "Site Outdoor Air Relative Humidity",
+                    ],
+                },
+            },
+            "parameters": {"oa_threshold": [999, 1000]},
+        },
+    }
+
     def test_constructor_none(self):
         assert VerificationCase(cases=None, json_case_path=None).case_suite == {}
 
@@ -197,102 +249,51 @@ class TestVerificaqtionCase(unittest.TestCase):
         assert num_cases == 2
         os.remove(saving_file_path)
 
-    def test_create_verification_case_suite_from_base_case(self):
-        example_base_case = {
-            "no": 1,
-            "run_simulation": True,
-            "simulation_IO": {
-                "idf": "../testing.idf",
-                "idd": "../Energy+V9_0_1.idd",
-                "weather": "./USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
-                "output": "eplusout.csv",
-                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe",
-            },
-            "expected_result": "fail",
-            "datapoints_source": {
-                "idf_output_variables": {
-                    "oa_flow": {
-                        "subject": "VAV_1_OAInlet Node",
-                        "variable": "System Node Standard Density Volume Flow Rate",
-                        "frequency": "TimeStep",
-                    },
-                    "oa_db": {
-                        "subject": "Environment",
-                        "variable": "Site Outdoor Air Drybulb Temperature",
-                        "frequency": "TimeStep",
-                    },
-                },
-                "parameters": {"oa_threshold": 300},
-            },
-            "verification_class": "Testing",
-        }
-        update_key_value = {
-            "simulation_IO": {
-                "idf": ["Testing_file1.idf", "Testing_file2.idf"],
-            },
-            "datapoints_source": {
-                "idf_output_variables": {
-                    "oa_flow": {
-                        "subject": ["VAV_1_OAInlet Node", "VAV_2_OAInlet Node"],
-                        "variable": [
-                            "System Node Standard Density Volume Flow Rate",
-                            "Current Density Volume",
-                        ],
-                    },
-                    "oa_db": {
-                        "variable": [
-                            "Site Outdoor Air Drybulb Temperature",
-                            "Site Outdoor Air Relative Humidity",
-                        ],
-                    },
-                },
-                "parameters": {"oa_threshold": [999, 1000]},
-            },
-        }
-
-        # test when correct `base_case` and `update_key_value` are provided
+    def test_create_verification_case_suite_from_base_case_valid(self):
         returned_updated_base_cases_list = (
             VerificationCase.create_verification_case_suite_from_base_case(
-                example_base_case, update_key_value, keep_base_case=True
+                self.example_base_case, self.update_key_value, keep_base_case=True
             )
         )
         assert len(returned_updated_base_cases_list) == 3
 
-        # test when wrong `base_case` type is provided.
+    def test_create_verification_case_suite_from_base_case_invalid_basecase(self):
         with self.assertLogs() as logobs:
             wrong_base_case_type = [{"wrong_base_case_type_key": "testing"}]
             VerificationCase.create_verification_case_suite_from_base_case(
-                wrong_base_case_type, update_key_value, keep_base_case=False
+                wrong_base_case_type, self.update_key_value, keep_base_case=False
             )
             self.assertEqual(
                 "ERROR:root:The `base_case` argument type must be Dict, but <class 'list'> type is provided.",
                 logobs.output[0],
             )
 
-        # test when wrong `update_key_value` type is provided.
+    def test_create_verification_case_suite_from_base_case_invalid_update_dict(self):
         with self.assertLogs() as logobs:
             wrong_update_key_value_type = [{"wrong_update_key_type_key": "testing"}]
             VerificationCase.create_verification_case_suite_from_base_case(
-                example_base_case, wrong_update_key_value_type, keep_base_case=False
+                self.example_base_case,
+                wrong_update_key_value_type,
+                keep_base_case=False,
             )
             self.assertEqual(
                 "ERROR:root:The `update_key_value` argument type must be Dict, but <class 'list'> type is provided.",
                 logobs.output[0],
             )
 
-        # test when wrong `keep_base_case` type is provided.
+    def test_create_verification_case_suite_from_base_case_invalid_keep_flag(self):
         with self.assertLogs() as logobs:
             VerificationCase.create_verification_case_suite_from_base_case(
-                example_base_case, update_key_value, keep_base_case="Fail"
+                self.example_base_case, self.update_key_value, keep_base_case="Fail"
             )
             self.assertEqual(
                 "ERROR:root:The `keep_base_case` argument must be bool, but <class 'str'> type is provided.",
                 logobs.output[0],
             )
 
-        # test when lengths of modifying lists are different.
+    def test_create_verification_case_suite_from_base_case_wrong_length(self):
         with self.assertLogs() as logobs:
-            wrong_update_key_value = copy.deepcopy(update_key_value)
+            wrong_update_key_value = copy.deepcopy(self.update_key_value)
             wrong_update_key_value["datapoints_source"]["parameters"][
                 "oa_threshold"
             ] = [
@@ -302,69 +303,93 @@ class TestVerificaqtionCase(unittest.TestCase):
             ]  # intentionally add wrong length of list (should be length of 2 list)
 
             VerificationCase.create_verification_case_suite_from_base_case(
-                example_base_case, wrong_update_key_value, keep_base_case=False
+                self.example_base_case, wrong_update_key_value, keep_base_case=False
             )
             self.assertEqual(
                 "ERROR:root:The length of modifying values in lists must be the same.",
                 logobs.output[0],
             )
 
-    def test_validate_verification_case_structure(self):
-        # test when correct `case` arg is provided
+    def test_validate_verification_case_structure_valid(self):
         assert VerificationCase.validate_verification_case_structure(self.case)
 
+    def test_validate_verification_case_structure_invalid_case_type(self):
         # test when wrong case type is provided.
         with self.assertLogs() as logobs:
             case = []
-            VerificationCase.validate_verification_case_structure(case)
+            validation_result = VerificationCase.validate_verification_case_structure(
+                case
+            )
+            self.assertFalse(validation_result)
             self.assertEqual(
                 "ERROR:root:The case argument type must be dict, but <class 'list'> is provided.",
                 logobs.output[0],
             )
 
-        # test when wrong verbose type is provided.
+    def test_validate_verification_case_structure_wrong_verbose_flag(self):
         with self.assertLogs() as logobs:
             case = {}
             verbose = "pass"
-            VerificationCase.validate_verification_case_structure(case, verbose)
+            validation_result = VerificationCase.validate_verification_case_structure(
+                case, verbose
+            )
+            self.assertFalse(validation_result)
             self.assertEqual(
                 "ERROR:root:The verbose argument type must be bool, but <class 'str'> is provided.",
                 logobs.output[0],
             )
 
-        # test when `run_simulation` key is wrong
-        case_wrong_run_simulation = copy.deepcopy(self.case)
-        case_wrong_run_simulation["run_simulation"] = "PASS"  # supposed to be True
-        assert (
-            VerificationCase.validate_verification_case_structure(
+    def test_validate_verification_case_structure_wrong_leaf_value(self):
+        with self.assertLogs() as logobs:
+            case_wrong_run_simulation = copy.deepcopy(self.case)
+            case_wrong_run_simulation["run_simulation"] = "PASS"  # supposed to be True
+            validation_result = VerificationCase.validate_verification_case_structure(
                 case_wrong_run_simulation
             )
-            == False
-        )
-
-        # test when 'subject' key is missing
-        case_missing_subject = copy.deepcopy(self.case)
-        del case_missing_subject["datapoints_source"]["idf_output_variables"][
-            "T_sa_set"
-        ][
-            "subject"
-        ]  # intentionally missed subject key
-        assert (
-            VerificationCase.validate_verification_case_structure(case_missing_subject)
-            == False
-        )
-
-        # test when wrong `verification_class` type is provided
-        case_missing_verification_class = copy.deepcopy(self.case)
-        case_missing_verification_class["verification_class"] = [
-            "SupplyAirTempReset"
-        ]  # intentionally put list instead of str
-        assert (
-            VerificationCase.validate_verification_case_structure(
-                case_missing_verification_class
+            self.assertFalse(validation_result)
+            self.assertEqual(
+                "ERROR:root:The type of 'run_simulation' key must be <class 'bool'>, but <class 'str'> is provided.",
+                logobs.output[0],
             )
-            == False
-        )
+
+    def test_validate_verification_case_structure_missing_leaf_key(self):
+        with self.assertLogs() as logobs:
+            case_missing_subject = copy.deepcopy(self.case)
+            del case_missing_subject["datapoints_source"]["idf_output_variables"][
+                "T_sa_set"
+            ][
+                "subject"
+            ]  # intentionally missed subject key
+            validation_result = VerificationCase.validate_verification_case_structure(
+                case_missing_subject
+            )
+            self.assertFalse(validation_result)
+            self.assertTrue(
+                "ERROR:root:Missing required key 'subject' in" in logobs.output[0]
+            )
+
+    def test_validate_verification_case_structure_datapoints_test_valid(self):
+        case = copy.deepcopy(self.case)
+        case["datapoints_source"]["idf_output_variables"]["T_ra_set"] = {
+            "subject": "VAV_1 Return Equipment Outlet Node",
+            "variable": "System Node Setpoint Temperature",
+            "frequency": "detailed",
+        }
+        case["datapoints_source"]["parameters"]["parameter2"] = 33
+        validation_result = VerificationCase.validate_verification_case_structure(case)
+        assert validation_result
+
+    def test_validate_verification_case_structure_datapoints_test_invalid(self):
+        with self.assertLogs() as logobs:
+            case = copy.deepcopy(self.case)
+            case["datapoints_source"]["parameters"]["parameter2"] = "33"
+            validation_result = VerificationCase.validate_verification_case_structure(case)
+            assert not validation_result
+            self.assertEqual(
+                "ERROR:root:The type of 'parameter2' key must be <class 'float'>, but <class 'str'> is provided.",
+                logobs.output[0],
+            )
+
 
     def test_save_verification_cases_to_json(self):
         json_path = "./tests/api/result/wrong_json_path.json"
