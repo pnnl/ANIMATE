@@ -263,16 +263,20 @@ dp.check_for_verif(verification_case=case_1)
 
 `class VerificationCase`
 
-- `__init__()`
+- [x] `__init__('_cases: Dict_, json_case_path: str')`
 
-  Class object initialization. Define `self.case_suite` as a Dict. keys being automatically generated unique id of case, values being the fully defined verification case Dict.
+  Instantiate a verification case class object and load verification case(s) in `self.case_suite` as a Dict. keys are automatically generated unique id of cases, and values are the fully defined verification case Dict. The `cases` and `json_case_path` arguments must be valid. If one argument is invalid, the class is terminated with an error message regardless of the other arguments validity.
 
-- `load_verification_cases_from_json(`_json_case_path: str_`)`
+  - **Parameter**
+    -_cases_: (optional) A list of Dict. dictionary that includes verification case(s).  
+    -_json_case_path_: (optional) str. path to the verification case file. If the path ends with `*.json`, then the items in the JSON file are loaded. If the path points to a directory, then verification case item JSON files are loaded.  
+
+- [x] `load_verification_cases_from_json(`_json_case_path: str_`)`
 
   Add verification cases from specified json file into `self.case_suite`
 
   - **Parameter**
-    - _json_case_path_: Dict, path to the json file containing fully defined verification cases.
+    - _json_case_path_: str, path to the json file containing fully defined verification cases.
   - **Returns**: List, unique ids of verification cases loaded in `self.case_suite`
 
 - `load_verification_case_from_dict(`_case: Dict_`)`
@@ -291,13 +295,13 @@ dp.check_for_verif(verification_case=case_1)
     - _cases_: List, containing fully defined verification cases Dict.
   - **Returns** unique id of the cases stored in self.case_suite[unique_id]
 
-- `static create_verificaton_case_suite_from_base_case(`_base_case: dict, update_key_value: Dict_, keep_base_case=True`)`
+- [x] `static create_verification_case_suite_from_base_case(`_base_case: dict, update_key_value: Dict_, keep_base_case=False`)`
 
-  Create slightly different multiple verification cases by changing keys and values as specified in `update_key_value`. Design illustrated with example below.
+  Create slightly different multiple verification cases by changing keys and values as specified in `update_key_value`. if `keep_base_case` is set to True, the `base_case` is added to the first element in the returned list. 
 
   - **parameters**:
-    - _base_case_: Dict. Base verification input information.
-    - _update_key_value_: Dict with structured keys pointing to fields to be updated and leaf values being list of values to be populated with.
+    - _base_case_: Dict. base verification input information.
+    - _update_key_value_: Dict. the same format as the `base_case` arg, but the updating fields consist of a list of values to be populated with.
     - _keep_base_case_: Bool, whether to keep the base case in returned list of verification cases. Default to False.
   - **Returns** List. A list of Dict, each dict is a generated case from the base case.
 
@@ -309,16 +313,16 @@ Base case:
 {
   "data_points": {
     "sat": {
-      "variable_name": "ahu1_sat"
+      "variable": "ahu1_sat"
     },
     "rat": {
-      "variable_name": "ahu1_rat"
+      "variable": "ahu1_rat"
     }
   }
 }
 ```
 
-Objective: change sat from ahu1_sat to ahu2_sat and ahu3_sat, and accordingly, change rat to the corresponding list (ahu1_rat, ahu2_rat, ahu3_rat).
+Objective: change the value of `sat`'s `variable` key to `ahu1_sat`, `ahu2_sat`, and `ahu3_sat` accordingly. Also, change the value of the `rat`'s `variable` key to `ahu1_rat`, `ahu2_rat`, and `ahu3_rat`.
 
 Define update_key_value as
 
@@ -326,13 +330,51 @@ Define update_key_value as
 {
   "data_points": {
     "sat": {
-      "variable_name": ["ahu1_sat", "ahu2_sat", "ahu3_sat"]
+      "variable": ["ahu1_sat", "ahu2_sat", "ahu3_sat"]
     },
     "rat": {
-      "variable_name": ["ahu1_rat", "ahu2_rat", "ahu3_rat"]
+      "variable": ["ahu1_rat", "ahu2_rat", "ahu3_rat"]
     }
   }
 }
+```
+The returned list is as follows.
+
+i) first element in the returned list.
+```json
+{
+  "data_points": {
+    "sat": {
+      "variable": "ahu1_sat",
+    },
+    "rat": {
+      "variable": "ahu1_rat",
+    }
+  }
+```
+ii) second element in the returned list.
+```json
+{
+  "data_points": {
+    "sat": {
+      "variable": "ahu2_sat",
+    },
+    "rat": {
+      "variable": "ahu2_rat",
+    }
+  }
+```
+iii) third element in the returned list.
+```json
+{
+  "data_points": {
+    "sat": {
+      "variable": "ahu3_sat",
+    },
+    "rat": {
+      "variable": "ahu3_rat",
+    }
+  }
 ```
 
 - `get_verification_case_template(`_tamplate_format: str_`)`
@@ -341,7 +383,7 @@ Define update_key_value as
 
   - **return**: Dictionary that has the `new_library_verification_cases.json` format
 
-- `static validate_verification_case_structure(`_case: dict, verbose: bool=False_`)`
+- [x] `static validate_verification_case_structure(`_case: dict, verbose: bool=False_`)`
 
   Validate verification case structure (e.g., check whether `run_simulation`, `simulation_IO`, etc. exist or not). Check if required key / values pairs exist in the case. check if datatype of values are appropriate, e.g. file path is str.
 
@@ -349,7 +391,7 @@ Define update_key_value as
 
   - `_case_`: case information that will be validated.
   - `_verbose_`: whether to output verbose information. Default to False.
-  - **return**: Bool, indicating whether the case structure is valid or not (bool).
+  - **return**: Bool, indicating whether the case structure is valid or not.
 
 <!-- - `static validate_verification_cases(`_list_IDs: list, verbose: bool_`)`
 
@@ -376,18 +418,21 @@ Define update_key_value as
   - **parameters**: -`_list_IDs_`: list of IDS that will be validated. -`_verbose_`: validate output option. If `verbose=True` is used and validation failed, output additional info.
   - **return**: list, the first element indicates whether the file is valid or not (bool). The second element outputs additional info (str)if verbose arg is set to `True`. -->
 
-- `save_case_suite_to_json(`_json_path: str, case_ids=[]_`)`
+- [x] `save_case_suite_to_json(`_json_path: str, case_ids=[]_`)`
 
-  Save verification cases in `self.case_suite` to a dedicated file.
+  Save verification cases to a dedicated file. If the `case_ids` argument is empty, all the cases in `self.case_suite` is saved. If `case_ids` includes specific cases' hash, only the hashes in the list are saved.
 
   - **parameters**:
-    - _json_path_: str. json file path to save the cases
-    - _case_ids_: List. Unique ids of verificationc cases to save. By default, save all cases in `self.case_suite`
+    - _json_path_: str. path to the json file to save the cases.
+    - _case_ids_: List. Unique ids of verification cases to save. By default, save all cases in `self.case_suite`. Default to an empty list.
 
-- `static save_verification_cases_to_json(`_json_path: str, cases: list_`)
+- [x] `static save_verification_cases_to_json(`_json_path: str, cases: list_`)
+
+  Save verification cases to a dedicated file. The cases list consists of verification case dicts.
+
   - **parameters**:
-    - _json_path_: str. json file path to save the cases
-    - _case_ids_: List. List of complete verification cases Dictionary to save.
+    - _json_path_: str. json file path to save the cases.
+    - _cases_: List. List of complete verification cases Dictionary to save.
 
 <!-- - `generate_verification_case_with_BRICK(`_BRICK_instance_path:str , verification_file_path: str_`)`
 
@@ -423,18 +468,15 @@ SAT_case = {
         },
         "parameters": {}
     },
-    "verification_class": "NightCycleOperation"
+    "verification_class": "testing_verification_class"
 }
 
-
-# define Verification object
-verification_instnace = an.Verification()
+# define VerificationCase object
+verification_instnace = an.VerificationCase(case=SAT_case, file_path=None)
 
 # load existing verification case
-verification_instance.load_verification_case("./schema/new_library_verification_cases.json")
-
-# add a case to the existing case
-verification_instance.generate_verification_case(SAT_case)
+if sat_case_validity:
+  verification_instance.load_verification_cases_from_json("./schema/new_library_verification_cases.json")
 
 # create verification cases in suite
 update_key_value = {
@@ -448,16 +490,14 @@ update_key_value = {
     }
   }
 
-verification_instance.create_verificaton_case_suite_from_base_case(SAT_case, update_key_value)
+updated_base_cases_list = verification_instance.create_verification_case_suite_from_base_case(SAT_case, update_key_value)
 
-# validate the case format
-verification_instance.validate_verification_cases_validity(["example_id"], verbose=False)
+# save the `updated_base_cases_list` to json
+verification_instnace.save_verification_cases_to_json("./schema/updated_base_case.json", updated_base_cases_list)
 
-# validate the cases
-verification_instance.validate_verification_cases(["example_id"], verbose=False)
 
 # save the updated cases
-verification_instance.save_verification_case("./schema/new_library_verification_cases.json")
+verification_instance.save_case_suite_to_json("./schema/new_library_verification_cases.json")
 
 ```
 

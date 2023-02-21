@@ -14,7 +14,6 @@ class DemandControlVentilation(CheckLibBase):
     ]
 
     def verify(self):
-
         self.bool_result = None
         df_filtered = self.df.loc[
             (self.df["s_eco"] == 0.0) & (self.df["s_ahu"] != 0.0)
