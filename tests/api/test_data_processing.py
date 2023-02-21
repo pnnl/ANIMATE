@@ -31,17 +31,24 @@ class TestDataProcessing(unittest.TestCase):
 
     def test_missing_datafile_error(self):
         with self.assertLogs() as logobs:
-            filep = "./tests/api/data/data_err.csv"
+            filep = "./tests/api/data/data_non_ep_head.csv"
             dp = DataProcessing(data_path=filep, data_source="EnergyPlus")
             self.assertEqual(
                 f"ERROR:root:An error occured when opening {filep}. Please make sure that the file can be opened, and/or that it contains the correct headers.",
                 logobs.output[0],
             )
 
-    def test_data_file(self):
+    def test_ep_data_file(self):
         filep = "./tests/api/data/data_eplus.csv"
         t = DataProcessing(data_path=filep, data_source="EnergyPlus")
         assert len(t.data) == 2
+
+    def test_other_data_file(self):
+        filep = "./tests/api/data/data_non_ep_head.csv"
+        dp = DataProcessing(
+            data_path=filep, data_source="Other", timestamp_column_name="Date Time"
+        )
+        assert len(dp.data) == 2
 
     def test_datafile_error_parsing(self):
         with self.assertLogs() as logobs:
@@ -51,6 +58,24 @@ class TestDataProcessing(unittest.TestCase):
             )
             self.assertEqual(
                 f"ERROR:root:The data in Date/Time could not be converted to Python datetime object. Make sure that the data is consistent defined as a set of date strings.",
+                logobs.output[0],
+            )
+
+    def test_datafile_missing_datetimecol(self):
+        with self.assertLogs() as logobs:
+            filep = "./tests/api/data/data_non_ep_head.csv"
+            dp = DataProcessing(data_path=filep, data_source="Other")
+            self.assertEqual(
+                "ERROR:root:timestamp_column_name is required when data_source = 'Other'",
+                logobs.output[0],
+            )
+
+    def test_datafile_missing_datetimecol(self):
+        with self.assertLogs() as logobs:
+            filep = "./tests/api/data/data_non_ep_head.csv"
+            dp = DataProcessing(data_path=filep, data_source="Make up source")
+            self.assertEqual(
+                "ERROR:root:data_source = Make up source is not allowed.",
                 logobs.output[0],
             )
 

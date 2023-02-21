@@ -42,14 +42,19 @@ class DataProcessing:
                     data.drop("Date/Time", inplace=True, axis=1)
                     self.data = data
                 elif data_source == "Other":
-                    self.data = pd.read_csv(data_path)
-                    if not timestamp_column_name in self.data.columns:
+                    if timestamp_column_name is None:
                         logging.error(
-                            f"The data does not contain a column header named {data_path}."
+                            "timestamp_column_name is required when data_source = 'Other'"
                         )
                         return None
-                    else:
-                        self.data.set_index(timestamp_column_name, inplace=True)
+                    if not timestamp_column_name in self.data.columns:
+                        logging.error(
+                            f"The data does not contain a column header named {timestamp_column_name}."
+                        )
+                        return None
+
+                    self.data = pd.read_csv(data_path)
+                    self.data.set_index(timestamp_column_name, inplace=True)
                     try:
                         self.data = pd.to_datetime(self.data.index)
                     except:
@@ -57,6 +62,10 @@ class DataProcessing:
                             f"The data in {timestamp_column_name} could not be converted to Python datetime object. Make sure that the data is consistent defined as a set of date strings."
                         )
                         return None
+                else:
+                    logging.error(
+                        f"data_source = {data_source} is not allowed."
+                    )
 
             except:
                 logging.error(
