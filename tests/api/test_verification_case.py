@@ -97,14 +97,6 @@ class TestVerificaqtionCase(unittest.TestCase):
         vc = VerificationCase(cases=None, json_case_path=json_case_path)
         assert len(vc.case_suite) == 4
 
-    def test_load_verification_cases_from_json_duplicate_cases(self):
-        # test whether duplicated case isn't added to `self.case_suite`
-        vc = VerificationCase(cases=[self.case], json_case_path=None)
-        vc.load_verification_cases_from_json(
-            "./tests/api/data/verification_case_unit_test.json"
-        )
-        assert len(vc.case_suite) == 2
-
     def test_load_verification_cases_from_json_invalid_path(self):
         with self.assertLogs() as logobs:
             vc = VerificationCase(cases=None, json_case_path=None)
@@ -114,7 +106,7 @@ class TestVerificaqtionCase(unittest.TestCase):
                 logobs.output[0],
             )
 
-    def test_load_verification_cases_from_json(self):
+    def test_load_verification_cases_from_json_with_duplicate_cases(self):
         # test whether the length of returned hash is correct
         json_case_path = "./tests/api/data/verification_case_unit_test.json"
         vc = VerificationCase(cases=[self.case], json_case_path=None)
