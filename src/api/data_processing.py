@@ -35,7 +35,13 @@ class DataProcessing:
         # check if data file exists
         if os.path.isfile(data_path):
             try:
-                if data_source != "EnergyPlus":
+                if data_source == "EnergyPlus":
+                    # Use CSVReader to parse EnergyPlus timestamps
+                    data = CSVReader(csv_file=data_path).getseries()
+                    data = DateTimeEP(data, 2000).transform()
+                    data.drop("Date/Time", inplace=True, axis=1)
+                    self.data = data
+                elif data_source == "Other":
                     self.data = pd.read_csv(data_path)
                     if not timestamp_column_name in self.data.columns:
                         logging.error(
@@ -51,12 +57,7 @@ class DataProcessing:
                             f"The data in {timestamp_column_name} could not be converted to Python datetime object. Make sure that the data is consistent defined as a set of date strings."
                         )
                         return None
-                else:
-                    # Use CSVReader to parse EnergyPlus timestamps
-                    data = CSVReader(csv_file=data_path).getseries()
-                    data = DateTimeEP(data, 2000).transform()
-                    data.drop("Date/Time", inplace=True, axis=1)
-                    self.data = data
+
             except:
                 logging.error(
                     f"An error occured when opening {data_path}. Please make sure that the file can be opened, and/or that it contains the correct headers."
