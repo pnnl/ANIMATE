@@ -79,7 +79,10 @@ class DataProcessing:
             return None
 
     def slice(
-        self, start_time: datetime, end_time: datetime, inplace: bool = False
+        self,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+        inplace: bool = False,
     ) -> Union[None, pd.DataFrame]:
         """Discard any data before `start_time` and after `end_time`.
 
@@ -98,10 +101,15 @@ class DataProcessing:
                         "The end_time cannot be an earlier data than start_time."
                     )
                 else:
+                    data_slice = self.data[start_time:end_time]
+                    if len(data_slice) == 0:
+                        logging.warning(f"Data slice contains no sample.")
                     if inplace:
-                        self.data = self.data[start_time:end_time]
+                        self.data = data_slice
                     else:
-                        return self.data[start_time:end_time]
+                        return data_slice.copy(
+                            deep=True
+                        )  # probably not necessary, just to be safe
             else:
                 logging.error("The end_time argument is not a Python datetime object.")
         else:
@@ -132,7 +140,9 @@ class DataProcessing:
         if inplace:
             self.data[name] = value
         else:
-            d = self.data
+            d = self.data.copy(
+                deep=True
+            )  # deep copy to not change self.data in next line
             d[name] = value
             return d
 

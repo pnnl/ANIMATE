@@ -103,7 +103,9 @@ class TestDataProcessing(unittest.TestCase):
                 f"ERROR:root:A parameter value should be specified.",
                 logobs.output[3],
             )
-        assert "test" in list(dp.add_parameter(name="test", value=-999).columns)
+        df_w_param = dp.add_parameter(name="test", value=-999)
+        assert "test" in list(df_w_param)
+        assert "test" not in dp.data.columns
         dp.add_parameter(name="test", value=-999, inplace=True)
         assert "test" in list(dp.data.columns)
         s = dp.slice(
@@ -116,6 +118,24 @@ class TestDataProcessing(unittest.TestCase):
             inplace=True,
         )
         assert len(dp.data) == 2
+
+        with self.assertLogs() as logobs:
+            dp.slice(
+                datetime.datetime(2000, 1, 1, 12), datetime.datetime(2000, 1, 1, 11)
+            )
+            self.assertEqual(
+                f"ERROR:root:The end_time cannot be an earlier data than start_time.",
+                logobs.output[0],
+            )
+
+        with self.assertLogs() as logobs:
+            s = dp.slice(
+                datetime.datetime(2000, 1, 1, 11), datetime.datetime(2000, 1, 1, 11)
+            )
+            self.assertEqual(
+                f"WARNING:root:Data slice contains no sample.",
+                logobs.output[0],
+            )
 
     def test_apply_function(self):
         with self.assertLogs() as logobs:
