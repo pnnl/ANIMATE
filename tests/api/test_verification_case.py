@@ -105,8 +105,7 @@ class TestVerificaqtionCase(unittest.TestCase):
         )
         assert len(vc.case_suite) == 2
 
-    def test_load_verification_cases_from_json(self):
-        # test when the wrong `file_path` type is provided
+    def test_load_verification_cases_from_json_invalid_path(self):
         with self.assertLogs() as logobs:
             vc = VerificationCase(cases=None, json_case_path=None)
             vc.load_verification_cases_from_json(["wrong_file_path_type.json"])
@@ -115,15 +114,12 @@ class TestVerificaqtionCase(unittest.TestCase):
                 logobs.output[0],
             )
 
+    def test_load_verification_cases_from_json(self):
         # test whether the length of returned hash is correct
         json_case_path = "./tests/api/data/verification_case_unit_test.json"
         vc = VerificationCase(cases=[self.case], json_case_path=None)
         list_of_hash = vc.load_verification_cases_from_json(json_case_path)
         assert len(list_of_hash) == 1
-
-        # test whether case(s) from json is correctly added to `self.case_suite`
-        vc = VerificationCase(cases=[self.case], json_case_path=None)
-        vc.load_verification_cases_from_json(json_case_path)
         assert len(vc.case_suite) == 2
 
     def test_save_case_suite_to_json(self):

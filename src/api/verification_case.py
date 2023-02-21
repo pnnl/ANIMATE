@@ -47,7 +47,7 @@ class VerificationCase:
     def load_verification_cases_from_json(
         self, json_case_path: str = None
     ) -> Union[List[str], None]:
-        """Add verification cases from specified json file into self.case_suite
+        """Add verification cases from specified json file into self.case_suite. Cases that have already been loaded are ignored.
 
         Args:
             json_case_path: str, path to the json file containing fully defined verification cases.
@@ -371,24 +371,27 @@ class VerificationCase:
         for loaded_case in loaded_cases["cases"]:
             # check if there is any duplicated case. If so, don't add the case to `self.case_suite`
             have_same_case = []
-            for case in self.case_suite.items():
-                case_copy = copy.deepcopy(case[1])
-                del case_copy["case_id_in_suite"]  # delete the key for comparison
-                if loaded_case != case_copy:
-                    have_same_case.append(
-                        True
-                    )  # there is no duplicate case in `self.case_suite`
-                else:
-                    have_same_case.append(False)
-
-            # TODO: JXL handling seems to be off, to be investigated
-            if all(have_same_case) or len(self.case_suite) == 0:
+            if not self.case_already_in_suite(case=loaded_case):
                 unique_hash = str(uuid.uuid1())
                 loaded_case["case_id_in_suite"] = unique_hash
                 self.case_suite[unique_hash] = loaded_case
                 newly_added_hash.append(unique_hash)
 
         return newly_added_hash
+
+    @staticmethod
+    def same_case(case_a: {}, case_b: {}, ignored_keys=["case_id_in_suite"]) -> bool:
+        case_a_new = {k: v for k, v in case_a.items() if k not in ignored_keys}
+        case_b_new = {k: v for k, v in case_b.items() if k not in ignored_keys}
+        return case_a_new == case_b_new
+
+    def case_already_in_suite(
+        self, case: {}, ignored_keys=["case_id_in_suite"]
+    ) -> bool:
+        for k, v in self.case_suite.items():
+            if self.same_case(case, v, ignored_keys=ignored_keys):
+                return True
+        return False
 
     @staticmethod
     def check_json_path_type(json_path: str) -> bool:
