@@ -607,12 +607,12 @@ class TestDataProcessing(unittest.TestCase):
             )
             dp.downsample("day")
             self.assertEqual(
-                f"ERROR:root:The number of periods should be specified as an integer, a <class 'NoneType'>.",
+                f"ERROR:root:The number of periods should be specified as an integer, not <class 'NoneType'>.",
                 logobs.output[2],
             )
             dp.downsample("day", "a")
             self.assertEqual(
-                f"ERROR:root:The number of periods should be specified as an integer, a <class 'str'>.",
+                f"ERROR:root:The number of periods should be specified as an integer, not <class 'str'>.",
                 logobs.output[3],
             )
             dp.downsample("day", 0)
@@ -628,7 +628,7 @@ class TestDataProcessing(unittest.TestCase):
             dp.downsample("day", 2, "wrong")
             self.assertEqual(
                 f"ERROR:root:The sampling function should be either 'mean' or 'sum'.",
-                logobs.output[7],
+                logobs.output[6],
             )
             assert len(dp.downsample("day", 2, "mean")) == 1
             assert (
@@ -656,7 +656,7 @@ class TestDataProcessing(unittest.TestCase):
             )
             dp.downsample("day", 2, {})
             self.assertEqual(
-                f"ERROR:root:The dictionary past as the sample_function argument cannot be empty.",
+                f"ERROR:root:The dictionary passed as the sample_function argument cannot be empty.",
                 logobs.output[-1],
             )
             dp.downsample(
