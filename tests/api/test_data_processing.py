@@ -5,6 +5,37 @@ sys.path.append("./src")
 
 from api import DataProcessing
 
+# Helper
+def round_equal_dict(a: dict, b: dict, round_digits=2) -> bool:
+    """
+    Check if two nested dictionaries are the same considering rounding numeric values.
+    Two leaf values are considered equal if they are exactly the same or are numerically "round_equal".
+    Caution when nested dictionaries contain list of not exactly same elements. This is NOT EQUAL here
+    """
+    if a == b:  # save the effort if they are exactly the same
+        return True
+
+    for (k_a, v_a), (k_b, v_b) in zip(sorted(a.items()), sorted(b.items())):
+        if k_a != k_b:  # when keys are not the same
+            return False
+        if v_a == v_b:
+            continue  # save the effort if values are the same (especially when non-numeric)
+
+        if isinstance(v_a, dict) and isinstance(
+            v_b, dict
+        ):  # recursion when values are dicts
+            if not round_equal_dict(v_a, v_b, round_digits):
+                return False
+            continue
+        try:  # in case a non-numeric value still exists here
+            if round(v_a, round_digits) != round(
+                v_b, round_digits
+            ):  # check numeric value
+                return False
+        except:
+            return False
+    return True
+
 
 class TestDataProcessing(unittest.TestCase):
     def test_constructor_empty(self):
@@ -295,32 +326,9 @@ class TestDataProcessing(unittest.TestCase):
         filep = "./tests/api/data/data_complete.csv"
         dp = DataProcessing(data_path=filep, data_source="EnergyPlus")
         results = dp.summary()
-        assert (
-            results["number_of_data_points"]
-            == expected_results["number_of_data_points"]
-        )
-        assert (
-            results["average_resolution_in_second"]
-            == expected_results["average_resolution_in_second"]
-        )
-        assert len(results["variables_summary"]) == len(
-            expected_results["variables_summary"]
-        )
-        for v in results["variables_summary"]:
-            assert round(results["variables_summary"][v]["minimum"], 2) == round(
-                expected_results["variables_summary"][v]["minimum"], 2
-            )
-            assert round(results["variables_summary"][v]["maximum"], 2) == round(
-                expected_results["variables_summary"][v]["maximum"], 2
-            )
-            assert round(results["variables_summary"][v]["mean"], 2) == round(
-                expected_results["variables_summary"][v]["mean"], 2
-            )
-            assert round(
-                results["variables_summary"][v]["standard_deviation"], 2
-            ) == round(
-                expected_results["variables_summary"][v]["standard_deviation"], 2
-            )
+
+        flag = round_equal_dict(results, expected_results)
+        assert flag
 
     def test_concatenate(self):
         with self.assertLogs() as logobs:
