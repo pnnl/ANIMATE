@@ -473,11 +473,54 @@ class TestDataProcessing(unittest.TestCase):
                 f"ERROR:root:A list of variable names must be provided. The variables_name argument that was passed is <class 'str'>.",
                 logobs.output[2],
             )
-            dp.fill_missing_values(method="linear", variable_names=[])
+
+            incorrect_vars = list(dp.data.columns)
+            incorrect_vars[1] = "wrong var name"
+            dp.fill_missing_values(method="pad", variable_names=incorrect_vars)
             self.assertEqual(
-                f"ERROR:root:The list of variable names that was provided is empty.",
+                f"ERROR:root:Variable(s) {['wrong var name']} not included in the data.",
                 logobs.output[3],
             )
+
+        # fill some missing data
+        var_names = list(dp.data.columns)[:2]
+        assert dp.data[var_names].isnull().sum().sum() > 0
+        filled_df = dp.fill_missing_values(
+            method="pad", variable_names=var_names, inplace=False
+        )
+        assert filled_df[var_names].isnull().sum().sum() == 0
+        assert dp.data[var_names].isnull().sum().sum() > 0
+
+        # fill all missing data
+        filled_df = dp.fill_missing_values(method="linear", variable_names=[])
+        assert filled_df.isnull().sum().sum() == 0
+        assert dp.data.isnull().sum().sum() > 0
+
+        assert (
+            dp.check()["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"][
+                "number_of_missing_values"
+            ]
+            > 0
+        )
+        filled_df = dp.fill_missing_values(
+            method="pad",
+            variable_names=[
+                "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"
+            ],
+            inplace=False,
+        )
+        assert (
+            dp.check()["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"][
+                "number_of_missing_values"
+            ]
+            > 0
+        )
+        assert (
+            filled_df["Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)"]
+            .isnull()
+            .sum()
+            == 0
+        )
         dp.fill_missing_values(
             method="linear",
             variable_names=[

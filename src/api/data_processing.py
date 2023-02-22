@@ -318,7 +318,7 @@ class DataProcessing:
         """
         data_headers = list(self.data.columns)
         if len(data_headers) == 0:
-            logging.eror("The data does not include any hearders.")
+            logging.eror("The data does not include any headers.")
             return None
 
         check_summary = {}
@@ -342,14 +342,14 @@ class DataProcessing:
         return check_summary
 
     def fill_missing_values(
-        self, method: str = None, variable_names: list = None, inplace: bool = False
+        self, method: str = None, variable_names: list = [], inplace: bool = False
     ) -> Union[None, pd.DataFrame]:
         """Fill missing values (NaN) in `data`.
 
         Args:
             method (str): Method to use to fill the missing values: 'linear' (treat values as equally spaced) or 'pad' (use existing values).
-            variable_names (list): List of variable names that need missing values to be filled.
-            inplace (bool): Modify the dataset directly. Defaults to False.
+            variable_names (list, optional): List of variable names that need missing values to be filled. By default, fill all missing data in self.data
+            inplace (bool, optional): Modify the dataset directly. Defaults to False.
 
         Returns:
             pd.DataFrame: Modified dataset
@@ -368,20 +368,23 @@ class DataProcessing:
             return None
 
         if len(variable_names) == 0:
-            logging.error("The list of variable names that was provided is empty.")
+            variable_names = list(self.data.columns)
+
+        missing_vars = []
+        for v in variable_names:
+            if not v in list(self.data.columns):
+                missing_vars.append(v)
+        if len(missing_vars) > 0:
+            logging.error(f"Variable(s) {missing_vars} not included in the data.")
             return None
 
         d = copy.deepcopy(self.data)
         for v in variable_names:
-            if not v in list(self.data.columns):
-                logging.error(f"{v} is not included in the data.")
-            else:
-                if inplace:
-                    self.data[v].interpolate(method=method, inplace=True)
-                else:
-                    d[v].interpolate(method=method, inplace=True)
+            d[v].interpolate(method=method, inplace=True)
 
-        if not inplace:
+        if inplace:
+            self.data = d
+        else:
             return d
 
     def plot(
