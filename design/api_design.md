@@ -86,11 +86,11 @@ Generate a dictionary with predefined keys so that a library item
 
 ---
 
-- `get_required_datapoints_by_library_items(`_items=[]_`)`
+- [x] `get_required_datapoints_by_library_items(`_datapoints=[]_`)`
   Summarize datapoints that need to be used to support specified library items. Use this function with caution as it 1) requires aligned data points naming across all library items; 2) does not check the topological relationships between datapoints.
 
   - **Parameters**
-    - **items**: list of str, default []. Library items to summarize datapoints from. By default, summarize all library items loaded at instantiation.
+    - **datapoints**: list of str, default []. Library items to summarize datapoints from. By default, summarize all library items loaded at instantiation.
   - **Returns**: `Dict` with keys being the datapoint name and values being a sub `Dict` with the following keys:
     - `number_of_items_using_this_datapoint`: int, number of library items that use this datapoint.
     - `library_items_list`: List, of library item names that use this datapoint.

@@ -1,5 +1,5 @@
 import sys, logging, glob, json, inspect
-from typing import Dict
+from typing import Dict, List, Union
 
 sys.path.append("..")
 from library import *
@@ -100,3 +100,37 @@ class VerificationLibrary:
         }
 
         return item_dict
+
+    def get_required_datapoints_by_library_items(
+        self, datapoints: List = []
+    ) -> Union[Dict, None]:
+        """Summarize datapoints that need to be used to support specified library items. Use this function with caution as it 1) requires aligned data points naming across all library items; 2) does not check the topological relationships between datapoints.
+
+        Args:
+            items: list of str, default []. Library items to summarize datapoints from. By default, summarize all library items loaded at instantiation.
+
+        Returns:
+            Dict with keys being the datapoint name and values being a sub Dict with the following keys:
+                - number_of_items_using_this_datapoint: int, number of library items that use this datapoint.
+                - library_items_list: List, of library item names that use this datapoint.
+        """
+
+        if not isinstance(datapoints, List):
+            logging.error(
+                f"The `datapoints` argument type must be List, but {type(datapoints)} type is provided."
+            )
+            return None
+
+        req_datapionts_by_lib_items = {}
+        for datapoint in datapoints:
+            req_datapionts_by_lib_items[datapoint] = {
+                "number_of_items_using_this_datapoint": 0,
+                "library_items_list": [],
+            }
+            for item in self.lib_items.items():
+                if datapoint in item[1]["description_datapoints"].keys():
+                    req_datapoint_dict = req_datapionts_by_lib_items[datapoint]
+                    req_datapoint_dict["number_of_items_using_this_datapoint"] += 1
+                    req_datapoint_dict["library_items_list"].append(item[0])
+
+        return req_datapionts_by_lib_items

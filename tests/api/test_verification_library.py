@@ -53,6 +53,39 @@ class TestVerificationLibrary(unittest.TestCase):
                 logobs.output[0],
             )
 
+    def test_get_required_datapoints_by_library_items(self):
+        vl_obj = VerificationLibrary(lib_path)
+
+        req_datapoints_by_lib_items = vl_obj.get_required_datapoints_by_library_items(
+            ["T_sa_set", "oa_threshold"]
+        )
+        assert req_datapoints_by_lib_items == {
+            "T_sa_set": {
+                "number_of_items_using_this_datapoint": 1,
+                "library_items_list": ["SupplyAirTempReset"],
+            },
+            "oa_threshold": {
+                "number_of_items_using_this_datapoint": 3,
+                "library_items_list": [
+                    "EconomizerHighLimitA",
+                    "EconomizerHighLimitC",
+                    "EconomizerHighLimitD",
+                ],
+            },
+        }
+
+    def test_get_required_datapoints_by_library_items_invalid(self):
+        vl_obj = VerificationLibrary(lib_path)
+
+        with self.assertLogs() as logobs:
+            vl_obj.get_required_datapoints_by_library_items(
+                {"T_sa_set", "oa_threshold"}  # wrong datapoints type
+            )
+            self.assertEqual(
+                f"ERROR:root:The `datapoints` argument type must be List, but {type({'T_sa_set', 'oa_threshold'})} type is provided.",
+                logobs.output[0],
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
