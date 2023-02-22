@@ -310,7 +310,7 @@ class DataProcessing:
         """Perform a sanity check on the data.
 
         Returns:
-            Dict: Dictionary showing the number of missing values for each variables as well as the outliers.
+            Dict: Dictionary showing the number of missing values for each variable as well as the outliers.
         """
         data_headers = list(self.data.columns)
         if len(data_headers) == 0:
@@ -331,7 +331,7 @@ class DataProcessing:
                 ~data.apply(lambda v: np.abs(v - data.mean()) / data.std() < 3)
             ]
 
-            if len(outliers) == 0:
+            if len(outliers) == 0 or (data.std() == 0):
                 outliers = None
             check_summary[c]["outliers"] = outliers
 

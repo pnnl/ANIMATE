@@ -384,6 +384,7 @@ class TestDataProcessing(unittest.TestCase):
     def test_check(self):
         filep = "./tests/api/data/data_missing_outliers.csv"
         dp = DataProcessing(data_path=filep, data_source="EnergyPlus")
+        dp.add_parameter(name="Test Constant", value=0, inplace=True)
         expected_results = {
             "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)": {
                 "number_of_missing_values": 1,
@@ -408,6 +409,10 @@ class TestDataProcessing(unittest.TestCase):
             "PERIMETER_MID_ZN_1:Zone Air Temperature [C](Hourly)": {
                 "number_of_missing_values": 0,
                 "outliers": 250.0,
+            },
+            "Test Constant": {
+                "number_of_missing_values": 0,
+                "outliers": None,
             },
         }
 
