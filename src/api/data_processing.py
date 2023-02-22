@@ -389,14 +389,14 @@ class DataProcessing:
 
     def plot(
         self, variable_names: list = None, kind: str = None
-    ) -> matplotlib.axes.Axes:
+    ) -> Union[matplotlib.axes.Axes, None]:
         """Create plots of timesteries data, or scatter plot between two variables
 
         Args:
             variable_names (list): List of variables to plot. The variables must be in the data.
             kind (str): Type of chart to plot, either'timeseries', or 'scatter'.
             - If 'timeseries' is used, all variable names provided in `variable_names` will be plotted against the index timestamp from `data`
-            - If 'scatter' is used, the first variables provided in the list will be used as the x-axis, the other will be on the y-axis
+            - If 'scatter' is used, the first variable provided in the list will be used as the x-axis, the other will be on the y-axis
 
         Returns:
             matplotlib.axes.Axes: Matplotlib axes object
@@ -411,24 +411,27 @@ class DataProcessing:
             logging.error("The list of variable names that was provided is empty.")
             return None
 
+        if not kind in ["timeseries", "scatter"]:
+            logging.error(
+                f"The kind of plot should be either timeseries or scatter but not {kind}."
+            )
+            return None
+
         not_found_count = 0
+        found = 0
         for v in variable_names:
             if not v in list(self.data.columns):
                 logging.warning(f"{v} is not included in the data.")
                 not_found_count += 1
+            else:
+                found += 1
         if not_found_count == len(variable_names):
             logging.error(
                 "None of the specified variables were found in data, the plot cannot be generated."
             )
             return None
-        elif not_found_count < 2 and kind == "scatter":
+        elif found < 2 and kind == "scatter":
             logging.error("A scatter plot requires at least two variables.")
-            return None
-
-        if not kind in ["timeseries", "scatter"]:
-            logging.error(
-                f"The kind of plot should be either timeseries or scatter but not {kind}."
-            )
             return None
 
         # Create groups
@@ -450,6 +453,7 @@ class DataProcessing:
                     linestyle="",
                     alpha=1 / len(groups),
                 )
+                plt.xlabel('Timestamp')
             elif kind == "scatter":
                 ax.plot(
                     self.data[g[0]],
@@ -459,6 +463,7 @@ class DataProcessing:
                     linestyle="",
                     alpha=1 / len(groups),
                 )
+                plt.xlabel(g[0])
         ax.legend()
         plt.show()
         return ax

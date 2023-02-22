@@ -1,5 +1,6 @@
 import unittest, sys, datetime, copy
 
+import matplotlib
 
 sys.path.append("./src")
 
@@ -578,6 +579,16 @@ class TestDataProcessing(unittest.TestCase):
             self.assertEqual(
                 f"ERROR:root:A scatter plot requires at least two variables.",
                 logobs.output[5],
+            )
+
+            varnames = list(dp.data.columns)
+            assert isinstance(
+                dp.plot(variable_names=varnames[:3], kind="scatter"),
+                matplotlib.axes.Axes,
+            )
+            assert isinstance(
+                dp.plot(variable_names=varnames, kind="timeseries"),
+                matplotlib.axes.Axes,
             )
 
     def test_downsampling(self):
