@@ -247,10 +247,12 @@ class DataProcessing:
         self, datasets: list = None, axis: int = None, inplace: bool = False
     ) -> Union[None, pd.DataFrame]:
         """Concatenate datasets.
+        Duplicated columns (for horizontal concatenation) or rows (for vertical concatenation) are kept.
+        Column names (for vertical concatenation) or indexes (for horizontal concatenation) need to match exactly.
 
         Args:
             datasets (list): List of datasets (pd.DataFrame) to concatenate with `data`.
-            axis (int): 1 or 0. 1 performs a vertical concatenation and 0 performs an horizontal concatenation.
+            axis (int): 1 or 0. 1 performs a vertical concatenation and 0 performs a horizontal concatenation.
             inplace (bool, optional): Modify the dataset directly. Defaults to False.
 
         Returns:
@@ -270,7 +272,8 @@ class DataProcessing:
             logging.error("The axis argument should either be 1, or 0.")
             return None
 
-        datasets.append(self.data)
+        datasets = copy.deepcopy(datasets)
+        datasets.insert(0, self.data)
 
         if axis == 1:
             # argument validation
@@ -283,6 +286,7 @@ class DataProcessing:
             concatenated_datasets = datasets[0]
             for ds in datasets[1:]:
                 concatenated_datasets = concatenated_datasets.append(ds)
+            concatenated_datasets.sort_index(axis="index", inplace=True)
 
         else:  # axis == 0
             # argument validation

@@ -350,36 +350,61 @@ class TestDataProcessing(unittest.TestCase):
             dp.data = dp.slice(
                 datetime.datetime(2000, 1, 1, 11), datetime.datetime(2000, 1, 1, 13)
             )
-            dp.concatenate(datasets=[df_b], axis=3)
+            datasets_b = [df_b]
+            datasets_b_original = [df_b]
+            dp.concatenate(datasets=datasets_b, axis=3)
             self.assertEqual(
                 f"ERROR:root:The axis argument should either be 1, or 0.",
                 logobs.output[2],
             )
-            df_c = dp.concatenate(datasets=[df_b], axis=1)
+
+            df_c = dp.concatenate(datasets=datasets_b, axis=1)
             assert len(df_c) == 6
             dp.data["test"] = 12.0
-            df_d = dp.concatenate(datasets=[df_b], axis=1)
+            df_d = dp.concatenate(datasets=datasets_b, axis=1)
             self.assertEqual(
                 f"ERROR:root:The datasets must contain the same column headers.",
                 logobs.output[3],
             )
+            assert datasets_b == datasets_b_original
+
             df_e = copy.deepcopy(dp.data)
             dp.data.drop("test", axis=1, inplace=True)
-            df_f = dp.concatenate(datasets=[df_c], axis=0)
+
+            datasets_c = [df_c]
+            datasets_c_original = [df_c]
+            df_f = dp.concatenate(datasets=datasets_c, axis=0)
+            assert datasets_c == datasets_c_original
             self.assertEqual(
                 f"ERROR:root:The datasets must have the same indexes.",
                 logobs.output[4],
             )
-            df_g = dp.concatenate(datasets=[df_e["test"]], axis=0)
+
+            datasets_e = [df_e["test"]]
+            datasets_e_original = [df_e["test"]]
+            df_g = dp.concatenate(datasets=datasets_e, axis=0)
+            assert datasets_e == datasets_e_original
             assert len(df_g) == 3
+
             org_timestamps = df_e.index
             org_timestamps += datetime.timedelta(days=1)
-            df_e.set_index(org_timestamps)
-            df_h = dp.concatenate(datasets=[df_e["test"]], axis=0)
+            df_e.set_index(org_timestamps, inplace=True)
+            datasets_e = [df_e["test"]]
+            datasets_e_original = [df_e["test"]]
+            df_h = dp.concatenate(datasets=datasets_e, axis=0)
+            assert datasets_e == datasets_e_original
             self.assertEqual(
                 f"ERROR:root:The datasets must have the same indexes.",
-                logobs.output[4],
+                logobs.output[5],
             )
+
+            # vertical concatenation of the same dataset doubles number of rows
+            df_i = dp.concatenate(datasets=[dp.data], axis=1, inplace=False)
+            assert df_i.shape[0] == dp.data.shape[0] * 2
+
+            # horizontal concatenation of the same dataset doubles number of columns
+            df_i = dp.concatenate(datasets=[dp.data], axis=0, inplace=False)
+            assert df_i.shape[1] == dp.data.shape[1] * 2
 
     def test_check(self):
         filep = "./tests/api/data/data_missing_outliers.csv"
