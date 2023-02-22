@@ -1,0 +1,182 @@
+@prefix bacnet: <http://data.ashrae.org/bacnet/2020#> .
+@prefix bldg: <urn:bldg/> .
+@prefix brick: <https://brickschema.org/schema/Brick#> .
+@prefix ref: <https://brickschema.org/schema/Brick/ref#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+bldg:flo_sou a brick:HVAC_Zone . 
+
+bldg:flo_eas a brick:HVAC_Zone . 
+
+bldg:flo_nor a brick:HVAC_Zone . 
+
+bldg:flo_wes a brick:HVAC_Zone . 
+
+bldg:flo_cor a brick:HVAC_Zone . 
+
+bldg:hvac a brick:AHU .
+    brick:hasPart bldg:hvac_cooCoi,
+        bldg:hvac_heaCoi,
+        bldg:hvac_fanSup,
+        bldg:hvac_VAVBox[1],
+        bldg:hvac_VAVBox[2],
+        bldg:hvac_VAVBox[3],
+        bldg:hvac_VAVBox[4],
+        bldg:hvac_VAVBox[5],
+        bldg:hvav_damRet,
+        bldg:hvac_damOut ;
+    brick:hasPoint bldg:hvac_TSup_T,
+        bldg:hvac_dpSupDuc_dp ,
+        bldg:hvac_TRet_T , 
+        bldg:hvac_TMix_T . 
+
+bldg:hvac_cooCoi a brick:Cooling_Coil .
+    brick:hasPoint bldg:hvac_conAHU_yCooCoi .
+
+bldg:hvac_conAHU_yCooCoi a brick:Valve_Command .
+
+bldg:hvac_heaCoi a brick:Heating_Coil .
+    brick:hasPoint bldg:hvac_conAHU_yHeaCoi .
+
+bldg:hvac_conAHU_yHeaCoi a brick:Valve_Command .
+
+bldg:hvac_fanSup a brick:Supply_Fan .
+    brick:hasPoint bldg:hvac_senSupFlo_V_flow .
+
+bldg:hvac_senSupFlo_V_flow a brick:Supply_Air_Flow_Sensor .
+
+bldg:hvac_VAVBox[1] a brick:VAV .
+    brick:hasPart bldg:hvac_VAVBox[1]_terHea,
+        bldg:hvac_VAVBox[1]_vav ;
+    bldg:hasPoint bldg:hvac_TZonSet[1]_TCooSet,
+        bldg:hvac_TZonSet[1]_THeaSet ;
+    brick:feeds flo_sou .
+
+bldg:hvac_VAVBox[1]_terHea a brick:Reheat_Valve .
+    brick:hasPoint bldg:hvac_VAVBox[1]_yHea .
+
+bldg:hvac_VAVBox[1]_yHea a brick:Valve_Command .
+
+bldg:hvac_VAVBox[1]_vav a brick:Damper .
+    brick:hasPoint bldg:hvac_VAVBox[1]_yVAV .
+
+bldg:hvac_VAVBox[1]_yVAV a brick:Damper_Command .
+
+bldg:hvac_TZonSet[1]_TCooSet a brick:Zone_Air_Cooling_Temperature_Setpoint .
+
+bldg:hvac_TZonSet[1]_THeaSet a brick:Zone_Air_Heating_Temperature_Setpoint .
+
+bldg:hvac_VAVBox[2] a brick:VAV .
+    brick:hasPart bldg:hvac_VAVBox[2]_terHea,
+        bldg:hvac_VAVBox[2]_vav ;
+    bldg:hasPoint bldg:hvac_TZonSet[2]_TCooSet,
+        bldg:hvac_TZonSet[2]_THeaSet ;
+    brick:feeds flo_eas .
+
+bldg:hvac_VAVBox[2]_terHea a brick:Reheat_Valve .
+    brick:hasPoint bldg:hvac_VAVBox[2]_yHea .
+
+bldg:hvac_VAVBox[2]_yHea a brick:Valve_Command .
+
+bldg:hvac_VAVBox[2]_vav a brick:Damper .
+    brick:hasPoint bldg:hvac_VAVBox[2]_yVAV .
+
+bldg:hvac_VAVBox[2]_yVAV a brick:Damper_Command .
+
+bldg:hvac_TZonSet[2]_TCooSet a brick:Zone_Air_Cooling_Temperature_Setpoint .
+
+bldg:hvac_TZonSet[2]_THeaSet a brick:Zone_Air_Heating_Temperature_Setpoint .
+
+bldg:hvac_VAVBox[3] a brick:VAV .
+    brick:hasPart bldg:hvac_VAVBox[3]_terHea,
+        bldg:hvac_VAVBox[3]_vav ;
+    bldg:hasPoint bldg:hvac_TZonSet[3]_TCooSet,
+        bldg:hvac_TZonSet[3]_THeaSet ;
+    brick:feeds flo_nor .
+
+bldg:hvac_VAVBox[3]_terHea a brick:Reheat_Valve .
+    brick:hasPoint bldg:hvac_VAVBox[3]_yHea .
+
+bldg:hvac_VAVBox[3]_yHea a brick:Valve_Command .
+
+bldg:hvac_VAVBox[3]_vav a brick:Damper .
+    brick:hasPoint bldg:hvac_VAVBox[3]_yVAV .
+
+bldg:hvac_VAVBox[3]_yVAV a brick:Damper_Command .
+
+bldg:hvac_TZonSet[3]_TCooSet a brick:Zone_Air_Cooling_Temperature_Setpoint .
+
+bldg:hvac_TZonSet[3]_THeaSet a brick:Zone_Air_Heating_Temperature_Setpoint .
+
+bldg:hvac_VAVBox[4] a brick:VAV .
+    brick:hasPart bldg:hvac_VAVBox[4]_terHea,
+        bldg:hvac_VAVBox[4]_vav ;
+    bldg:hasPoint bldg:hvac_TZonSet[4]_TCooSet,
+        bldg:hvac_TZonSet[4]_THeaSet ;
+    brick:feeds flo_wes .
+
+bldg:hvac_VAVBox[4]_terHea a brick:Reheat_Valve .
+    brick:hasPoint bldg:hvac_VAVBox[4]_yHea .
+
+bldg:hvac_VAVBox[4]_yHea a brick:Valve_Command .
+
+bldg:hvac_VAVBox[4]_vav a brick:Damper .
+    brick:hasPoint bldg:hvac_VAVBox[4]_yVAV .
+
+bldg:hvac_VAVBox[4]_yVAV a brick:Damper_Command .
+
+bldg:hvac_TZonSet[4]_TCooSet a brick:Zone_Air_Cooling_Temperature_Setpoint .
+
+bldg:hvac_TZonSet[4]_THeaSet a brick:Zone_Air_Heating_Temperature_Setpoint .
+
+bldg:hvac_VAVBox[5] a brick:VAV .
+    brick:hasPart bldg:hvac_VAVBox[5]_terHea,
+        bldg:hvac_VAVBox[5]_vav ;
+    bldg:hasPoint bldg:hvac_TZonSet[5]_TCooSet,
+        bldg:hvac_TZonSet[5]_THeaSet ;
+    brick:feeds flo_cor .
+
+bldg:hvac_VAVBox[5]_terHea a brick:Reheat_Valve .
+    brick:hasPoint bldg:hvac_VAVBox[5]_yHea .
+
+bldg:hvac_VAVBox[5]_yHea a brick:Valve_Command .
+
+bldg:hvac_VAVBox[5]_vav a brick:Damper .
+    brick:hasPoint bldg:hvac_VAVBox[5]_yVAV .
+
+bldg:hvac_VAVBox[5]_yVAV a brick:Damper_Command .
+
+bldg:hvac_TZonSet[5]_TCooSet a brick:Zone_Air_Cooling_Temperature_Setpoint .
+
+bldg:hvac_TZonSet[5]_THeaSet a brick:Zone_Air_Heating_Temperature_Setpoint .
+
+bldg:hvac_TSup_T a brick:Supply_Air_Temperature_Sensor .
+
+bldg:hvac_dpSupDuc_dp a brick:Supply_Air_Differential_Pressure_Sensor .
+
+bldg:hvac_TRet_T a brick:Return_Air_Temperature_Sensor .
+
+bldg:hvac_TMix_T a brick:Mixed_Air_Temperature_Sensor .
+
+bldg:hvav_damRet a brick:Return_Damper .
+    brick:hasPoint bldg:hvac_damRet_y ,
+        bldg:hvac_damRet_m_flow,
+        bldg:hvac_damRet_dp .
+
+bldg:hvac_damRet_y a brick:Damper_Command .
+
+bldg:hvac_damRet_m_flow a brick:Return_Air_Flow_Sensor .
+
+bldg:hvac_damRet_dp a brick:Return_Air_Differential_Pressure_Sensor .
+
+bldg:hvav_damOut a brick:Outside_Damper .
+    brick:hasPoint bldg:hvac_damOut_y ,
+        bldg:hvac_damOut_m_flow,
+        bldg:hvac_damOut_dp .
+
+bldg:hvac_damOut_y a brick:Damper_Command .
+
+bldg:hvac_damOut_m_flow a brick:Outside_Air_Flow_Sensor .
+
+bldg:hvac_damOut_dp a brick:Air_Differential_Pressure_Sensor .
+
