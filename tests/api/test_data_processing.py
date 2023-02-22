@@ -151,13 +151,17 @@ class TestDataProcessing(unittest.TestCase):
                 f"ERROR:root:The variable name list is empty.",
                 logobs.output[len(logobs.output) - 1],
             )
-            dp.apply_function(["VariableNotInDataset"])
-            self.assertEqual(
-                f"WARNING:root:The variable VariableNotInDataset is not in the dataset.",
-                logobs.output[len(logobs.output) - 2],
+            dp.apply_function(
+                variable_names=[
+                    "VariableNotInDataset",
+                    "Environment:Site Outdoor Air Drybulb Temperature [C](Hourly)",
+                    "CORE_BOTTOM:Zone Air Temperature [C](Hourly)",
+                ],
+                new_variable_name="subset mean",
+                function_to_apply="mean",
             )
             self.assertEqual(
-                f"ERROR:root:None of the variables passed in the variable name list argument are actually in the dataset.",
+                f"ERROR:root:Variable name(s) {['VariableNotInDataset']} not in the dataset.",
                 logobs.output[len(logobs.output) - 1],
             )
             dp.apply_function(variable_names={})

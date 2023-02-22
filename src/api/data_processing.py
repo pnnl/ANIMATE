@@ -124,7 +124,7 @@ class DataProcessing:
         Args:
             name (str): Name of the parameter
             value (float): Value of the parameter.
-            inplace (bool): Modify the dataset directly. Defaults to False.
+            inplace (bool, optional): Modify the dataset directly. Defaults to False.
 
         Returns:
             pd.DataFrame: Modified dataset
@@ -156,10 +156,10 @@ class DataProcessing:
         """Apply an aggregation function to a list of variables from the dataset.
 
         Args:
-            variable_names (str): List of variables used as input to the function.
+            variable_names (str): List of variables used as input to the function. All elements in variable_names need to be in self.data.columns
             new_variable_name (str): Name of the new variable containing the result of the function for each time stamp.
-            function_to_apply (str): Name of the function to apply. Choices are: `sum`, `min`, `max`or `average`.
-            inplace (bool): Modify the dataset directly. Defaults to False.
+            function_to_apply (str): Name of the function to apply. Choices are: `sum`, `min`, `max`or `average` (or 'mean').
+            inplace (bool, optional): Modify the dataset directly. Defaults to False.
 
         Returns:
             pd.DataFrame: Modified dataset
@@ -171,17 +171,16 @@ class DataProcessing:
             if len(variable_names) == 0:
                 logging.error("The variable name list is empty.")
                 return None
-            else:
-                for v in variable_names:
-                    missing_variables = 0
-                    if not v in list(self.data.columns):
-                        logging.warning(f"The variable {v} is not in the dataset.")
-                        missing_variables += 1
-                    if missing_variables == len(variable_names):
-                        logging.error(
-                            "None of the variables passed in the variable name list argument are actually in the dataset."
-                        )
-                        return None
+
+            missing_variables = []
+            for v in variable_names:
+                if not v in list(self.data.columns):
+                    missing_variables.append(v)
+            if len(missing_variables) > 0:
+                logging.error(
+                    f"Variable name(s) {missing_variables} not in the dataset."
+                )
+                return None
         else:
             logging.error(
                 f"A list of variable names should be passed as an argument not a {type(variable_names)}."
@@ -198,16 +197,21 @@ class DataProcessing:
             )
             return None
 
+        str_to_func = {
+            "sum": sum,
+            "min": min,
+            "max": max,
+            "average": np.mean,
+            "mean": np.mean,
+        }
+
         agg = self.data.loc[:, variable_names].apply(
-            lambda r: eval(
-                f"{function_to_apply.lower().replace('average', 'sum(r)/len')}(r)"
-            ),
-            axis=1,
+            str_to_func[function_to_apply.lower()], axis=1
         )
         if inplace:
             self.data[new_variable_name] = agg
         else:
-            d = self.data
+            d = self.data.copy(deep=True)
             d[new_variable_name] = agg
             return d
 
