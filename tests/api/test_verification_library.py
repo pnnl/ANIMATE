@@ -72,10 +72,19 @@ class TestVerificationLibrary(unittest.TestCase):
     def test_get_library_items_invalid(self):
         vl_obj = VerificationLibrary(lib_path)
 
+        # check `items` arg type
         with self.assertLogs() as logobs:
             vl_obj.get_library_items({"AutomaticShutdown"})  # wrong items type
             self.assertEqual(
                 "ERROR:root:items' type must be List. It can't be <class 'set'>.",
+                logobs.output[0],
+            )
+
+        # check when `items` is empty
+        with self.assertLogs() as logobs:
+            vl_obj.get_library_items([])  # wrong items type
+            self.assertEqual(
+                "ERROR:root:items' arg is empty. Please provide with verification item(s).",
                 logobs.output[0],
             )
 

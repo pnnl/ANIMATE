@@ -120,6 +120,13 @@ class VerificationLibrary:
             logging.error(f"items' type must be List. It can't be {type(items)}.")
             return None
 
+        # cause an error when `items` arg is empty
+        if not items:
+            logging.error(
+                f"items' arg is empty. Please provide with verification item(s)."
+            )
+            return None
+
         # get each lib item's summary info
         item_list = []
         for item in items:
