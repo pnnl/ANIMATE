@@ -80,7 +80,7 @@ class VerificationLibrary:
 
         Returns:
             Dict: Library item information with four specific keys:
-                - `library_item_name`: unique str name of the library item
+                - `library_item_name`: unique str name of the library item.
                 - `library_json`: library item json definition in the library json file.
                 - `library_json_path`: path of the library json file that contains this library item.
                 - `library_python_path`: path of the python file that contains the python implementation of this library item.
@@ -108,7 +108,11 @@ class VerificationLibrary:
             items:  list of str, default []. Library items to get. By default, get all library items loaded at instantiation.
 
         Returns:
-            Dict that contains summary information of library items.
+            list of `Dict` with four specific keys:
+                - `library_item_name`: unique str name of the library item.
+                - `library_json`: library item json definition in the library json file.
+                - `library_json_path`: path of the library json file that contains this library item.
+                - `library_python_path`: path of the python file that contains the python implementation of this library item.
         """
 
         # check `items` arg type
