@@ -805,7 +805,7 @@
                     "height_z": 3.05,
                     "v_outdoor_per_zone": 0.000395372,
                     "tol_occ": 0.05,
-                    "tol_m": 0.0003
+                    "tol_oa_flow": 0.0003
                 }
             },
             "verification_class": "GuestRoomControlVent"
