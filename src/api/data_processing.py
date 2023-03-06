@@ -27,11 +27,11 @@ class DataProcessing:
 
         self.data = None
 
-        if data_path == None:
+        if data_path is None:
             logging.error("A `data_path` argument should be provided.")
             return None
 
-        if data_source == None:
+        if data_source is None:
             logging.error("A `data_source` argument should be provided.")
             return None
 
