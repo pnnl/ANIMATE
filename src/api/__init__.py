@@ -1,4 +1,5 @@
-from .verification_case import *
 from .verification_library import *
+from .verification_case import *
+from .data_processing import *
 
-__all__ = ["VerificationCase", "VerificationLibrary"]
+__all__ = ["VerificationLibrary", "DataProcessing", "VerificationCase"]
