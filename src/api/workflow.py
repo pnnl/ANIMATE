@@ -64,7 +64,7 @@ class Workflow:
     def run_state(self, state_dict):
         type = state_dict["Type"]
         state_call = {"MethodCall": MethodCall}
-        self.payload = state_call[type](state_dict).run(self.payload)
+        self.payload = state_call[type](state_dict).run().get_payloads(self.payload)
 
     def run_workflow(self):
         current_state_name = self.start_state_name
@@ -95,9 +95,14 @@ class Workflow:
         }
 
 
-class State(ABC):
+class MethodCall(ABC):
+    def __init__(self, state_dict):
+        self.parameters = {}
+        self.state_dict = state_dict
+        self.dollar = None
+        self.build_parameters(state_dict)
 
-    parameters = {}
+
 
     def build_parameters(self, state_dict):
         for k, v in state_dict["Parameters"].items():
@@ -106,7 +111,8 @@ class State(ABC):
     def build_param_value(self, v):
         if isinstance(v, dict):
             # if parameter value is a dict, then it needs to be an embedded method call style
-            return True  # @JXL place holder for embedded method call
+            new_v = self.embedded_call(v)
+            return new_v
 
         if isinstance(v, int) or isinstance(v, float):
             return v
@@ -119,21 +125,27 @@ class State(ABC):
 
             return v
 
-
-class MethodCall(State):
-    def __init__(self, state_dict):
-        self.state_dict = state_dict
-        self.build_parameters(state_dict)
-        self.dollar = None
-
-    def run(self, payloads):
+    def run(self):
         method_call = eval(self.state_dict["MethodCall"])
         self.dollar = method_call(**self.parameters)
+        return self
 
+    def get_method_return(self):
+        return self.dollar
+
+    def get_payloads(self, payloads):
         for k, v in self.state_dict["Payloads"].items():
             payloads[k] = eval(v.replace("$", "self.dollar"))
-
         return payloads
+
+    def embedded_call(self, embedded_case_dict):
+        if embedded_case_dict["Type"] != "Embedded MethodCall":
+            logging.error(
+                "Expecting 'Embedded MethodCall is a json object is showing up within the parameters value of a state."
+            )
+            return None
+
+        MethodCall(embedded_case_dict).run().get_method_return()
 
 
 def main():

@@ -20,14 +20,15 @@
         "data_source": "EnergyPlus"
       },
       "Payloads": {
-        "data": "$.data"
+        "data": "$.data",
+        "data_processing_obj": "$"
       },
       "Next": "Slice data",
       "Start": "True"
     },
     "Slice data": {
       "Type": "MethodCall",
-      "MethodCall": "Payloads['data'].slice",
+      "MethodCall": "Payloads['data_processing_obj'].slice",
       "Parameters": {
         "start_time": {
           "Type": "Embedded MethodCall",
