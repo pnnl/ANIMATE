@@ -32,17 +32,23 @@
       "Parameters": {
         "start_time": {
           "Type": "Embedded MethodCall",
-          "MethodCall": "datetime.date.fromisoformat",
-          "Parameters": {
-            "fromisoformat": "20221001"
-          }
+          "MethodCall": "datetime.datetime",
+          "Parameters": [
+            2000,
+            1,
+            1,
+            12
+          ]
         },
         "end_time": {
           "Type": "Embedded MethodCall",
-          "MethodCall": "datetime.date.fromisoformat",
-          "Parameters": {
-            "fromisoformat": "20230101"
-          }
+          "MethodCall": "datetime.datetime",
+          "Parameters": [
+            2000,
+            1,
+            1,
+            13
+          ]
         }
       },
       "Payloads": {

@@ -20,7 +20,7 @@ class Workflow:
         # }
         self.end_state_name = None
         self.start_state_name = None
-        self.payload = {}
+        self.payloads = {}
         self.states = {}
         self.workflow_dict = {}
         self.running_sequence = []
@@ -64,7 +64,7 @@ class Workflow:
     def run_state(self, state_dict):
         type = state_dict["Type"]
         state_call = {"MethodCall": MethodCall}
-        self.payload = state_call[type](state_dict).run().get_payloads(self.payload)
+        self.payloads = state_call[type](state_dict, self.payloads).run().get_payloads()
 
     def run_workflow(self):
         current_state_name = self.start_state_name
@@ -95,18 +95,23 @@ class Workflow:
         }
 
 
-class MethodCall(ABC):
-    def __init__(self, state_dict):
+class MethodCall:
+    def __init__(self, state_dict, payloads):
+        self.payloads = payloads
         self.parameters = {}
         self.state_dict = state_dict
         self.dollar = None
         self.build_parameters(state_dict)
 
-
-
     def build_parameters(self, state_dict):
-        for k, v in state_dict["Parameters"].items():
-            self.parameters[k] = self.build_param_value(v)
+        if isinstance(state_dict["Parameters"], dict):
+            for k, v in state_dict["Parameters"].items():
+                self.parameters[k] = self.build_param_value(v)
+        if isinstance(state_dict["Parameters"], list):
+            # some python built-in methods only accept positional arguments
+            self.parameters = [
+                self.build_param_value(x) for x in state_dict["Parameters"]
+            ]
 
     def build_param_value(self, v):
         if isinstance(v, dict):
@@ -126,26 +131,30 @@ class MethodCall(ABC):
             return v
 
     def run(self):
+        Payloads = self.payloads
         method_call = eval(self.state_dict["MethodCall"])
-        self.dollar = method_call(**self.parameters)
+        if isinstance(self.parameters, dict):
+            self.dollar = method_call(**self.parameters)
+        if isinstance(self.parameters, list):
+            self.dollar = method_call(*self.parameters)
         return self
 
     def get_method_return(self):
         return self.dollar
 
-    def get_payloads(self, payloads):
+    def get_payloads(self):
         for k, v in self.state_dict["Payloads"].items():
-            payloads[k] = eval(v.replace("$", "self.dollar"))
-        return payloads
+            self.payloads[k] = eval(v.replace("$", "self.dollar"))
+        return self.payloads
 
     def embedded_call(self, embedded_case_dict):
         if embedded_case_dict["Type"] != "Embedded MethodCall":
             logging.error(
-                "Expecting 'Embedded MethodCall is a json object is showing up within the parameters value of a state."
+                f"If parameter value is a dict, it needs to be of type 'Embedded MethodCall'. Problematic state definition: {embedded_case_dict}"
             )
             return None
 
-        MethodCall(embedded_case_dict).run().get_method_return()
+        return MethodCall(embedded_case_dict, self.payloads).run().get_method_return()
 
 
 def main():
