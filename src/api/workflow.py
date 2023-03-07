@@ -100,11 +100,19 @@ class WorkflowEngine:
         if isinstance(workflow, dict):
             self.workflow_dict = workflow
 
+        self.import_package()
         self.load_states()
         self.run_workflow()
 
     def import_package(self):
-        # @JXL TODO: import packages specified in workflow
+        import_list = []
+        if "imports" in self.workflow_dict:
+            import_list = self.workflow_dict["imports"]
+        for line in import_list:
+            cp = line
+            if " as " in line:
+                cp = line.split(" as ")[-1]
+            exec(f"import {line}", globals())
 
     def load_workflow_json(self, workflow_path):
         with open(workflow_path) as f:
@@ -317,7 +325,7 @@ class Choice:
 
 
 def main():
-    Workflow("./tests/api/data/testworkflow.json")
+    WorkflowEngine("./tests/api/data/testworkflow.json")
 
 
 if __name__ == "__main__":
