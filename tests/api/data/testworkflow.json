@@ -58,11 +58,11 @@
     },
     "Data Length Check": {
       "Type": "Choice",
-      "Choice": {
-        "Variable": "len(Payloads['sliced_data']) > 1",
-        "BooleanEquals": "True",
+      "Choices": [{
+        "Value": "len(Payloads['sliced_data']) > 1",
+        "Equals": "True",
         "Next": "Initialize verification object"
-      }
+      }]
     },
     "Initialize verification object": {
       "Type": "MethodCall",

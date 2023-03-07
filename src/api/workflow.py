@@ -61,24 +61,32 @@ class Workflow:
                     f"State [{state_name} is not an End state and it has no Next state. This is NOT allowed."
                 )
 
-    def run_state(self, state_dict):
+    def run_state(self, state_name):
+        state_dict = self.states["state_name"]
         type = state_dict["Type"]
-        state_call = {"MethodCall": MethodCall}
-        self.payloads = state_call[type](state_dict, self.payloads).run().get_payloads()
+
+        state_call = {"MethodCall": MethodCall, "Choice": Choice}
+        if type == "MethodCall":
+            self.payloads = (
+                state_call[type](state_dict, self.payloads).run().get_payloads()
+            )
+
+        if type == "Choice":
+            pass
+            # TODO: JXL no payload change, just point to the next step
+
+        if state_name != self.end_state_name:
+            return state_dict["Next"]
+        else:
+            return None
 
     def run_workflow(self):
         current_state_name = self.start_state_name
         next_state_name = self.states[current_state_name]["Next"]
 
         while current_state_name is not None:
-            current_state_dict = self.states[current_state_name]
-            self.run_state(current_state_dict)
             self.running_sequence.append(current_state_name)
-
-            if current_state_name != self.end_state_name:
-                current_state_name = current_state_dict["Next"]
-            else:
-                current_state_name = None
+            current_state_name = self.run_state(current_state_name)
 
     def summarize_workflow_run(self):
         print(
@@ -155,6 +163,47 @@ class MethodCall:
             return None
 
         return MethodCall(embedded_case_dict, self.payloads).run().get_method_return()
+
+
+class Choice:
+    def __init__(self, state_dict, payloads):
+        self.payloads = payloads
+        self.state_dict = state_dict
+
+    def check_choices(self):
+        for choice in self.state_dict["Choices"]:
+            choice_return = self.check_choice(choice)
+            if isinstance(choice_return, str):
+                return choice_return
+            # if current choice does not give a next step, then check the next one
+            continue
+
+    def check_choice(self, choice):
+        if not isinstance(choice, dict):
+            logging.error("choice has to be a dict")
+            return None
+        if "Value" not in choice:
+            # when 'Value' is not in choice, a logical expression key is expected
+            if "AND" in choice:
+                pass  # placeholder to get and implemented
+                choice_value = None
+            # placeholder to get other logical relationships implemented.
+        else:
+            # 'leaf' choice implementation
+            choice_value = self.get_choice_value(choice)
+
+        if choice_value:
+            return choice["Next"]
+        else:
+            return False
+
+    def get_choice_value(self, choice):
+        left = eval(choice["Variable"])
+        right = eval(choice["Equals"])
+        if left == right:
+            return True
+        else:
+            return False
 
 
 def main():
