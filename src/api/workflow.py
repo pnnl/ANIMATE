@@ -56,34 +56,31 @@ class Workflow:
                 self.end_state_name = state_name
                 continue
 
-            if "Next" not in state_dict:
+            if (state_dict["Type"] != "Choice") and ("Next" not in state_dict):
                 logging.error(
-                    f"State [{state_name} is not an End state and it has no Next state. This is NOT allowed."
+                    f"Non-Choice state [{state_name} is not an End state and it has no Next state. This is NOT allowed."
                 )
 
     def run_state(self, state_name):
-        state_dict = self.states["state_name"]
-        type = state_dict["Type"]
+        state_dict = self.states[state_name]
+        state_type = state_dict["Type"]
+        next_state = None
 
-        state_call = {"MethodCall": MethodCall, "Choice": Choice}
-        if type == "MethodCall":
-            self.payloads = (
-                state_call[type](state_dict, self.payloads).run().get_payloads()
-            )
+        if state_type == "MethodCall":
+            self.payloads = MethodCall(state_dict, self.payloads).run().get_payloads()
+            if "Next" in state_dict:
+                next_state = state_dict["Next"]
 
-        if type == "Choice":
-            pass
-            # TODO: JXL no payload change, just point to the next step
+        if state_type == "Choice":
+            next_state = Choice(state_dict, self.payloads).check_choices()
 
-        if state_name != self.end_state_name:
-            return state_dict["Next"]
+        if (state_name != self.end_state_name) and (next_state is not None):
+            return next_state
         else:
             return None
 
     def run_workflow(self):
         current_state_name = self.start_state_name
-        next_state_name = self.states[current_state_name]["Next"]
-
         while current_state_name is not None:
             self.running_sequence.append(current_state_name)
             current_state_name = self.run_state(current_state_name)
@@ -178,6 +175,13 @@ class Choice:
             # if current choice does not give a next step, then check the next one
             continue
 
+        # no valid next step has been identified. check if there is a default state, if not, log error
+        if "Default" in self.state_dict:
+            return self.state_dict["Default"]
+        else:
+            logging.error("Among all choices, no valid next step identified. Abort!")
+            return None
+
     def check_choice(self, choice):
         if not isinstance(choice, dict):
             logging.error("choice has to be a dict")
@@ -198,7 +202,8 @@ class Choice:
             return False
 
     def get_choice_value(self, choice):
-        left = eval(choice["Variable"])
+        Payloads = self.payloads
+        left = eval(choice["Value"])
         right = eval(choice["Equals"])
         if left == right:
             return True
