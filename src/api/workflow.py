@@ -1,14 +1,91 @@
-import datetime
-import sys, logging, glob, json, inspect
-from typing import Dict
+import sys, logging, json
+from typing import Union
 
 sys.path.append("./src")
 sys.path.append("..")
-from library import *
 from api import VerificationLibrary, DataProcessing, VerificationCase
 
 
 class Workflow:
+    def __init__(self, workflow_path: str = None, workflow_dict: dict = None):
+        """Instantiate a Workflow class object and load specified workflow as a `dict` in `self.workflow`
+
+        Args:
+            workflow_path (str, optional): path to the workflow definition json file. Defaults to None.
+            workflow_dict (dict, optional): dict of the workflow. Defaults to None.
+        """
+        pass
+
+    @staticmethod
+    def get_workflow_template() -> dict:
+        """Provide a `Dict` template of workflow definition with descriptions of fields to be filled
+
+        Returns:
+            dict: workflow definition template
+        """
+        pass
+
+    @staticmethod
+    def list_existing_workflows(workflow_dir: str = None) -> dict:
+        """List existing workflows (defined as json files) under a specific directory path.
+
+        Args:
+            workflow_dir (str, optional): path to the directory containing workflow definitions (including sub directories). By default, point to the path of the example folder. @JXL TODO example folder to be specified
+
+        Returns:
+            dict: `dict` with keys being workflow names and values being a `Dict` with the following keys:
+                - `workflow_json_path`: path to the file of the workflow
+                - `workflow`: `Dict` of the workflow, loaded from the workflow json definition
+        """
+        pass
+
+    @staticmethod
+    def validate_workflow_definition(workflow: Union[str, dict]) -> dict:
+        """Validate a workflow definition.
+
+        Args:
+            workflow (Union[str, dict]): If str, this is assumed to be the path to the workflow definition json file; If dict, this is assumed to be loaded from the workflow json definition.
+
+        Returns:
+            dict: `dict` with the following keys:
+                - `workflow_validity`: bool flag of the validity of the workflow definition
+                - `detail`: detailed info about the validity check.
+        """
+        pass
+
+    def validate(self) -> dict:
+        """Validate `self.workflow`
+
+        Returns:
+            dict: `dict` with the following keys:
+                - `workflow_validity`: bool flag of the validity of the workflow definition
+                - `detail`: detailed info about the validity check.
+        """
+        return self.validate_workflow_definition(self.workflow)
+
+    def save(self, json_path: str = None) -> None:
+        """Save the workflow as a json file.
+
+        Args:
+            json_path (str, optional): path to the file to be saved. Defaults to None.
+        """
+
+        pass
+
+    def run_workflow(self, verbose: bool = False) -> bool:
+        """Execute the workflow defined in self.workflow
+
+        Args:
+            verbose (bool, optional): bool. Wether to output detailed information. Defaults to False.
+
+        Returns:
+            bool: Whether the run is successful or not.
+
+        """
+        pass
+
+
+class WorkflowEngine:
     def __init__(self, workflow):
         self.end_state_name = None
         self.start_state_name = None
@@ -26,8 +103,10 @@ class Workflow:
         self.load_states()
         self.run_workflow()
 
-    def load_workflow_json(self, workflow_path):
+    def import_package(self):
+        # @JXL TODO: import packages specified in workflow
 
+    def load_workflow_json(self, workflow_path):
         with open(workflow_path) as f:
             self.workflow_dict = json.load(f)
 
