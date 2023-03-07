@@ -5,19 +5,11 @@ from typing import Dict
 sys.path.append("./src")
 sys.path.append("..")
 from library import *
-from api import DataProcessing
-from abc import ABC, abstractmethod
+from api import VerificationLibrary, DataProcessing, VerificationCase
 
 
 class Workflow:
     def __init__(self, workflow):
-        # self.workflow_name = ""
-        # self.meta = {
-        #     "author": "",
-        #     "date": datetime.datetime.now().strftime("%m/%d/%Y, %H:%M"),
-        #     "version": "",
-        #     "description": "",
-        # }
         self.end_state_name = None
         self.start_state_name = None
         self.payloads = {}
@@ -79,11 +71,15 @@ class Workflow:
         else:
             return None
 
-    def run_workflow(self):
+    def run_workflow(self, max_states=1000):
         current_state_name = self.start_state_name
+        state_count = 0
         while current_state_name is not None:
             self.running_sequence.append(current_state_name)
             current_state_name = self.run_state(current_state_name)
+            state_count += 1
+            if state_count > max_states:
+                break
 
     def summarize_workflow_run(self):
         print(
@@ -130,10 +126,11 @@ class MethodCall:
         if isinstance(v, str):
             # special string treatment
             if v.split("[")[0] == "Payloads":
-                # expecting Payloads['xx']
-                return  # @JXL place holder for doing Payloads value
-
-            return v
+                # only in this case we eval
+                return eval(v)
+            else:
+                # in all other string param value, we consider it is a string. This is for clarity and security. More complicated parameter should use embedded methodcall
+                return v
 
     def run(self):
         Payloads = self.payloads
@@ -149,7 +146,11 @@ class MethodCall:
 
     def get_payloads(self):
         for k, v in self.state_dict["Payloads"].items():
-            self.payloads[k] = eval(v.replace("$", "self.dollar"))
+            if isinstance(v, str):
+                # only eval if v is string
+                self.payloads[k] = eval(v.replace("$", "self.dollar"))
+            else:
+                self.payloads[k] = v
         return self.payloads
 
     def embedded_call(self, embedded_case_dict):
@@ -188,10 +189,28 @@ class Choice:
             return None
         if "Value" not in choice:
             # when 'Value' is not in choice, a logical expression key is expected
-            if "AND" in choice:
-                pass  # placeholder to get and implemented
-                choice_value = None
-            # placeholder to get other logical relationships implemented.
+            # check only one logic expression in the key
+            eligible_logic = ["ALL", "ANY", "NONE"]
+            keycheck_flag = [(ek in choice) for ek in eligible_logic]
+            if sum(keycheck_flag) != 1:
+                logging.error(
+                    "For logical expression choices state, there needs to be exactly one key of either 'ALL', or 'ANY', or 'NONE'."
+                )
+                return None
+
+            if "ALL" in choice:
+                flag_list = [self.get_choice_value(x) for x in choice["AND"]]
+                choice_value = all(flag_list)
+            if "NONE" in choice:
+                flag_list = [self.get_choice_value(x) for x in choice["NONE"]]
+                choice_value = not any(flag_list)
+            if "ANY" in choice:
+                choice_value = False
+                for subchoice in choice["ANY"]:
+                    if self.get_choice_value(subchoice):
+                        choice_value = True
+                        break
+
         else:
             # 'leaf' choice implementation
             choice_value = self.get_choice_value(choice)
@@ -203,8 +222,15 @@ class Choice:
 
     def get_choice_value(self, choice):
         Payloads = self.payloads
-        left = eval(choice["Value"])
-        right = eval(choice["Equals"])
+        left = choice["Value"]
+        right = choice["Equals"]
+
+        # only eval when it is a string
+        if isinstance(left, str):
+            left = eval(choice["Value"])
+        if isinstance(right, str):
+            right = eval(choice["Equals"])
+
         if left == right:
             return True
         else:
