@@ -5,6 +5,7 @@ from typing import Dict
 sys.path.append("./src")
 sys.path.append("..")
 from library import *
+from api import DataProcessing
 from abc import ABC, abstractmethod
 
 
@@ -63,21 +64,21 @@ class Workflow:
     def run_state(self, state_dict):
         type = state_dict["Type"]
         state_call = {"MethodCall": MethodCall}
-        self.payload = state_call[type](state_dict)
+        self.payload = state_call[type](state_dict).run(self.payload)
 
     def run_workflow(self):
         current_state_name = self.start_state_name
         next_state_name = self.states[current_state_name]["Next"]
 
-        while next_state_name is not None:
+        while current_state_name is not None:
             current_state_dict = self.states[current_state_name]
             self.run_state(current_state_dict)
             self.running_sequence.append(current_state_name)
 
             if current_state_name != self.end_state_name:
-                next_state_name = current_state_dict["Next"]
+                current_state_name = current_state_dict["Next"]
             else:
-                next_state_name = None
+                current_state_name = None
 
     def summarize_workflow_run(self):
         print(
@@ -94,17 +95,45 @@ class Workflow:
         }
 
 
-#
-# class State(ABC):
-#
-#     def __init__(self, state_dict):
-#         self.type = state_dict['type']
-#
+class State(ABC):
+
+    parameters = {}
+
+    def build_parameters(self, state_dict):
+        for k, v in state_dict["Parameters"].items():
+            self.parameters[k] = self.build_param_value(v)
+
+    def build_param_value(self, v):
+        if isinstance(v, dict):
+            # if parameter value is a dict, then it needs to be an embedded method call style
+            return True  # @JXL place holder for embedded method call
+
+        if isinstance(v, int) or isinstance(v, float):
+            return v
+
+        if isinstance(v, str):
+            # special string treatment
+            if v.split("[")[0] == "Payloads":
+                # expecting Payloads['xx']
+                return  # @JXL place holder for doing Payloads value
+
+            return v
 
 
-class MethodCall:
+class MethodCall(State):
     def __init__(self, state_dict):
-        pass
+        self.state_dict = state_dict
+        self.build_parameters(state_dict)
+        self.dollar = None
+
+    def run(self, payloads):
+        method_call = eval(self.state_dict["MethodCall"])
+        self.dollar = method_call(**self.parameters)
+
+        for k, v in self.state_dict["Payloads"].items():
+            payloads[k] = eval(v.replace("$", "self.dollar"))
+
+        return payloads
 
 
 def main():

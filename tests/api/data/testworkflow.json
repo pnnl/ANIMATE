@@ -16,7 +16,8 @@
       "Type": "MethodCall",
       "MethodCall": "DataProcessing",
       "Parameters": {
-        "data": "xx.csv"
+        "data_path": "./tests/api/data/data_eplus.csv",
+        "data_source": "EnergyPlus"
       },
       "Payloads": {
         "data": "$.data"
