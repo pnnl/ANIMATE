@@ -127,7 +127,6 @@ class VerificationLibrary:
             logging.error(f"items needs to be list. It cannot be a {type(items)}.")
             return None
 
-        # validate lib
         validity_info = pd.DataFrame(
             columns=[
                 "library_item_id",
