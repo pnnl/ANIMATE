@@ -6,6 +6,18 @@ sys.path.append("..")
 from library import *
 
 
+library_schema = {
+    "library_item_id": (int, str, float),
+    "description_brief": str,
+    "description_detail": str,
+    "description_index": list,
+    "description_datapoints": dict,
+    "description_assertions": list,
+    "description_verification_type": str,
+    "assertions_type": str,
+}
+
+
 class VerificationLibrary:
     def __init__(self, lib_path: str = None):
         """Instantiate a verification library class object and load specified library items as `self.lib_items`.
@@ -63,9 +75,7 @@ class VerificationLibrary:
             for lib_name, lib_content in v.items():
                 self.lib_items_json_path[lib_name] = k
                 if lib_name in globals().keys():
-                    python_path = inspect.getfile(
-                        globals()["AutomaticShutdown"].__class__
-                    )
+                    python_path = inspect.getfile(globals()[lib_name])
                 else:
                     python_path = "Not Found"
                     logging.warning(
@@ -113,14 +123,68 @@ class VerificationLibrary:
         """
 
         # check `items` type
-        if not isinstance(items, List):
-            # TODO add err msg
+        if not isinstance(items, list):
+            logging.error(f"items needs to be list. It cannot be a {type(items)}.")
             return None
 
         # validate lib
-        validity_info = pd.DataFrame()
-        for lib_item in self.lib_items.keys():
-            # TODO validate item using recursion
-            break
+        validity_info = pd.DataFrame(
+            columns=[
+                "library_item_id",
+                "description_brief",
+                "description_detail",
+                "description_index",
+                "description_datapoints",
+                "description_assertions",
+                "description_verification_type",
+                "assertions_type",
+                "datapoints_match",
+            ]
+        )
+        for item in items:
+            validity_info_data = []
+
+            # verify the library.json file
+            for lib_key in library_schema.keys():
+                # check if lib keys exist. "description_detail" key is optional
+                if lib_key not in ["description_detail"] and not self.lib_items[
+                    item
+                ].get(lib_key):
+                    logging.error(
+                        f"{lib_key} doesn't exist. Please make sure to have {lib_key}."
+                    )
+                    return None
+
+                # check if key is in the correct type
+                try:
+                    if not isinstance(
+                        self.lib_items[item][lib_key], library_schema[lib_key]
+                    ):
+                        logging.error(
+                            f"The type of `{lib_key}` key needs to be {str(library_schema[lib_key])}. It cannot be a {type(self.lib_items[item][lib_key])}."
+                        )
+                        return None
+
+                    else:
+                        validity_info_data.append(type(self.lib_items[item][lib_key]))
+
+                except KeyError:
+                    # # if `description_detail` key doesn't exist, output a warning.
+                    validity_info_data.append(None)
+                    logging.warning(f"{lib_key} doesn't exist.")
+
+            # check if datapoints in library file and class are identical
+            if (
+                list(self.lib_items[item]["description_datapoints"].keys())
+                != globals()[item].points
+            ):
+                logging.error(
+                    f"{item}'s points in {self.lib_items_json_path[item].split('/')[-1]} and {self.lib_items_python_path[item].split(chr(92))[-1]} are not identical."
+                )  # chr(92) is '\\. This is used b/c using '\\' not allowed in f-string.
+                return None
+            else:
+                validity_info_data.append(True)
+
+            validity_info.loc[item] = validity_info_data
 
         return validity_info
