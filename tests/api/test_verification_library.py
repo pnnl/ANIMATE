@@ -111,7 +111,7 @@ class TestVerificationLibrary(unittest.TestCase):
                 ["AutomaticShutdown", "VAVStaticPressureSensorLocation"]
             )
             self.assertEqual(
-                "ERROR:root:AutomaticShutdown's points in library.json and automatic_shutdown.py are not identical.",
+                "ERROR:root:AutomaticShutdown's points in the library file and class implementation are not identical.",
                 logobs.output[1],
             )
 

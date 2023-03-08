@@ -179,8 +179,8 @@ class VerificationLibrary:
                 != globals()[item].points
             ):
                 logging.error(
-                    f"{item}'s points in {self.lib_items_json_path[item].split('/')[-1]} and {self.lib_items_python_path[item].split(chr(92))[-1]} are not identical."
-                )  # chr(92) is '\\. This is used b/c using '\\' not allowed in f-string.
+                    f"{item}'s points in the library file and class implementation are not identical."
+                )
                 return None
             else:
                 validity_info_data.append(True)
