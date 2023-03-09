@@ -1,5 +1,5 @@
 """
-This file contains the runner of verification cases to be called by the user with the spply of an item and plotting option
+This file contains the runner of verification cases to be called by the user with the supply of an item and plotting option
 """
 # %% Import packages
 from workflowsteps import *
@@ -8,7 +8,13 @@ from datetimeep import DateTimeEP
 import sys, os
 
 
-def run_libcase(item_dict, plot_option="all-compact"):
+def run_libcase(
+    item_dict,
+    plot_option="all-compact",
+    output_path="./",
+    fig_size=(6.4, 4.8),
+    produce_outputs=False,
+):
     """Library case runner
 
     Args:
@@ -63,7 +69,7 @@ def run_libcase(item_dict, plot_option="all-compact"):
             )
         else:
             run_simulation(idfpath=run_idf_path, weatherpath=weather_path)
-        print("simulation done")
+        print("Simulation done")
 
     if run_sim:
         df = DateTimeEP(
@@ -88,8 +94,14 @@ def run_libcase(item_dict, plot_option="all-compact"):
         else None
     )
     verification_obj = cls(df, parameters, f"{run_path}")
-    outcome = verification_obj.get_checks
-    verification_obj.plot(plot_option)
+    if produce_outputs:
+        md_content = verification_obj.add_md(
+            None, output_path, "./", item_dict, plot_option, fig_size
+        )
+        return {int(item_dict["no"]): md_content}
+    else:
+        outcome = verification_obj.get_checks
+        verification_obj.plot(plot_option)
 
 
 def main():
