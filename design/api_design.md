@@ -8,7 +8,7 @@ Date Modified: 01/21/2023
 
 ## Intro
 
-The ANIMATE application programming iterfaces (APIs) are a collection of functions for performing common tasks with ANIMATE. These APIs are Python methods implementations with stable and well-documented interface. These methods are organized into different API categories (as Python classes) based on their functionalities and subjects.
+The ANIMATE application programming interfaces (APIs) are a collection of functions for performing common tasks with ANIMATE. These APIs are Python methods implementations with stable and well-documented interface. These methods are organized into different API categories (as Python classes) based on their functionalities and subjects.
 
 ## Verification Library API
 
@@ -110,15 +110,17 @@ This API loads datasets and manipulate data before feeding it to the verificatio
 
 `class DataProcessing`
 
-- `__init__(`_data: str_`)`
+- [x] `__init__(`_data_path: str_, data_source: str, timestamp_column_name: str`)`
 
   Class object initialization.
 
   - **parameters**:
-    - **data**: Path to the data (CSV format) to be loaded for processing. Data will be stored in a `pandas.DataFrame()` object.
+    - **data_path**: Path to the data (CSV format) to be loaded for processing. Data will be stored in a `pandas.DataFrame()` object.
+    - **data_source**: Data source name. Use `EnergyPlus` or `Other`.
+    - **timestamp_column_name**: Name of the column header that contains the time series timestamps.
   - **Returns**: class object with `self.data` loaded with a `pandas.DataFrame`.
 
-- `slice(`_start_time: datetime, end_time: datetime object_, inplace=False`)`
+- [x] `slice(`_start_time: datetime object, end_time: datetime object_, inplace=False`)`
 
   Discard any data in `self.data` before or after _start_time_ and _end_time_
 
@@ -128,7 +130,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _inplace_: bool, whether to do inplace modification of the data. By default, False.
   - **return**: `pandas.DataFrame()` that only contain a slice of the original `self.data`
 
-- `add_parameter(`_name: str, value: float_, inplace=False`)`
+- [x] `add_parameter(`_name: str, value: float_, inplace=False`)`
 
   Add a parameter to `self.data`. The parameter will be added as a constant value for all index of `self.data`
 
@@ -136,29 +138,30 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _name_: name of the parameter to add
     - _value_: value of the parameter
 
-- `concatenate(`\*datasets: list(pandas.DataFrame), inplace=False`)`
+- [x] `concatenate(`\*datasets: list(pandas.DataFrame), axis = None, inplace=False`)`
 
   Concatenate datasets with `self.data`
 
   - **parameters**:
     - _datasets_: list of datasets to concatenate with `self.data`
-    - inplace:
     - axis: 1: concatenate vertical (timestamp / row); 0: concatenate horizontally (datapoint / column).
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
       - when 1: check if all datasets have same columns, if not, break;
       - when 0: check if all datasets have same datetime index, if not, break.
     - **return**: `pandas.DataFrame` that contains the concatenated datasets
 
-- `apply_func(`_var_names: list(str), new_var_name: str, function: str_`)`
+- [x] `apply_function(`variable_names: list(str), new_var_name: str, function_to_apply: str_, inplace=False`)`
 
-  Apply a basic aggregate function to a list of variables from `self.data`
+  Apply an aggregation function to a list of variables from the dataset
 
   - **parameters**:
-    - _var_names_: list of variables from `self.data` to be used for the aggregation function
-    - _new_var_name_: name of the new variable that will contain the aggregated data
-    - _function_: one of the following aggregate function 'sum', 'max', 'min', or 'average'
+    - _variable_names_: list of variables from `self.data` to be used for the aggregation function
+    - _new_variable_name_: name of the new variable that will contain the aggregated data
+    - _function_to_apply_: one of the following aggregate function 'sum', 'max', 'min', or 'average'
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
     - **return**: `pandas.DataFrame` containing all existing and a newly computed column.
 
-- `check()`
+- [x] `check()`
 
   Perform a sanity check on the data.
 
@@ -168,9 +171,9 @@ This API loads datasets and manipulate data before feeding it to the verificatio
 
 **for data sanity check, once we link the data with datapoint type through verification case, we can check data validity against different rules of different data types. e.g. sat should not be < -30**
 
-- `summary()`
+- [x] `summary()`
 
-  Provide a summary of the data
+  Provide a summary of the dataset
 
   - **return**: dict showing the following information
     - Number of data points
@@ -181,7 +184,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
       - Mean
       - Standard deviation
 
-- `plot(`_variable_names: list(str), kind= str_`)`
+- [x] `plot(`_variable_names: list(str), kind= str_`)`
 
   Create plots of timesteries data, or scatter plot between two variables
 
@@ -190,20 +193,24 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _kind_: 'timeseries', or 'scatter'; If 'timeseries' is used, all variable names provided in `variable_names` will be plotted against the index timestamp from `self.data`; If 'scatter' is used, the first variables provided in the list will be used as the x-axis, the other will be on the y-axis
   - **return**: `matplotlib.axes.Axes`
 
-- `downsample(`_rule: str_`)`
+- [x] `downsample(`_rule: str_, inplace=False`)`
 
   Downsample `self.data` according to a user provided rule
 
   - **parameters**:
-    - _rule_: follows the same convention as [pandas.DataFrame.resample](https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects)
+    - _frew_: follows the same convention as [pandas.DataFrame.resample](https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects)
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
+    - **return**: `pandas.DataFrame` that contains the downsampled data
 
-- `interpolate(`\*method: str, variable_names: list`)`
+- [x] `fill_missing_values(`\*method: str, variable_names: list, inplace=False`)`
 
-  Interpolate missing values (NaN) in `self.data` following a user specified method
+  Fill missing values (NaN) in `self.data` following a user specified method
 
   - **parameters**:
     - _method_: 'linear', 'pad' as described [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.interpolate.html)
     - _variable_names_: list of variable names used for interpolation of missing values
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
+    - **return**: `pandas.DataFrame` containing all existing and a newly computed column.
 
 - `check_for_verif(`_verification_case_`)`
 
@@ -246,7 +253,7 @@ dp.plot(variable_names=["Zone 1 Temp", "Zone 2 Temp"])
 dp.plot(variable_names=["Outdoor Air Temp", "Mixed Air Temp"])
 
 # Interpolate missing data
-dp.interpolate(method='linear', variable_names=['Outdoor Air Temperature])
+dp.interpolate(method='linear', variable_names=['Outdoor Air Temperature'])
 
 # Downsampling
 dp.downsampling(rule='1H')

@@ -19,7 +19,7 @@ class VerificationLibrary:
         self.lib_items_python_path = {}
 
         # check argument
-        if lib_path == None:
+        if lib_path is None:
             logging.error(
                 "'lib_path' was not provided when instantiating the Verificationlibrary class object!"
             )
