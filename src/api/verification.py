@@ -11,20 +11,20 @@ from libcases import *
 
 
 class Verification:
-    def __init__(self, verification: VerificationCase = None):
+    def __init__(self, verifications: VerificationCase = None):
         self.cases = None
-        if verification is None:
+        if verifications is None:
             logging.error("A verification should be provided.")
         else:
-            if isinstance(verification, VerificationCase):
-                if len(verification.case_suite) == 0:
-                    logging.error(f"The verification case suite is empty.")
+            if isinstance(verifications, VerificationCase):
+                if len(verifications.case_suite) == 0:
+                    logging.error("The verification case suite is empty.")
                     return None
                 else:
-                    self.cases = verification.case_suite
+                    self.cases = verifications.case_suite
             else:
                 logging.error(
-                    f"A VerificationCase should be provided not a {type(verification)}."
+                    f"A VerificationCase should be provided not a {type(verifications)}."
                 )
                 return None
 
@@ -36,11 +36,27 @@ class Verification:
         fig_size: tuple = None,
         num_threads: int = 1,
     ) -> None:
+        """Configure verification environment.
+
+        Args:
+            output_path (str): Verification results output path.
+            lib_items_path (str): Verification library path (include name of the file with extension).
+            plot_option (str): Type of plots to include. It should either be all-compact, all-expand, day-compact, or day-expand. It can also be None, which will plot all types.
+            fig_size (tuple): Tuple of integers (length, height) describing the size of the figure to plot.
+            num_threads (int): Number of threads to run verifications in parallel. Defaults to 1.
+        """
         if self.cases is None or len(self.cases) == 0:
             logging.error(
                 "The verification case suite is empty, there is nothing to configure."
             )
             return None
+        if output_path is None:
+            logging.error("An output_path argument should be specified.")
+            return None
+        elif not os.path.isdir(output_path):
+            logging.error("The specificed output directory does not exist.")
+            return None
+
         if lib_items_path is None:
             logging.error(
                 "A path to the library of verification cases should be provided."
@@ -51,6 +67,9 @@ class Verification:
             return None
         elif not os.path.isfile(lib_items_path):
             logging.error("The path to the library of verification cases is not valid.")
+            return None
+        elif "json" != lib_items_path.split(".")[-1].lower():
+            logging.error("The library should be a JSON file.")
             return None
 
         if not plot_option in [
@@ -90,7 +109,21 @@ class Verification:
         self.fig_size = fig_size
         self.num_threads = num_threads
 
-    def run_single_verification(self, case):
+    def run_single_verification(self, case: dict = None) -> None:
+        """Run a single verification and generate a markdown report of the results
+
+        Args:
+            case (dict): Verification case dictionary.
+        """
+        # Input validation
+        if case is None:
+            logging.error("A case must be passed as an argument.")
+
+        if not isinstance(case, dict):
+            logging.error(
+                f"A case dictionary must be passed as an argument, not a {type(case)}."
+            )
+
         # Run verification
         items = assemble_verification_items(
             cases=case, lib_items_path=self.lib_items_path
@@ -109,12 +142,13 @@ class Verification:
             fw.write(results[list(results.keys())[0]]["md_content"])
 
     def run(self) -> None:
+        """Run verification and generate a markdown report of the results."""
         # Input validation
         if self.output_path is None:
             self.output_path = ""
         if self.cases is None or len(self.cases) == 0:
             logging.error(
-                "The verification case suite is empty, there is nothing to configure."
+                "The verification case suite is empty, there is nothing to run."
             )
             return None
 

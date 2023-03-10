@@ -35,18 +35,15 @@ def run_libcase(
         need_injection = False
     run_sim = item.item["run_simulation"]
 
-    if need_injection and run_sim:
+    if need_injection:
         original_idf_path = item.item["simulation_IO"]["idf"].strip()
         idd_path = item.item["simulation_IO"]["idd"].strip()
-        # run_path = f"{original_idf_path.split('.idf')[0]}"
         if ".idf" in original_idf_path.lower():
             run_path = f"{original_idf_path[:-4]}"
         elif ".epjson" in original_idf_path.lower():
             run_path = f"{original_idf_path[:-7]}"
         else:
             run_path = original_idf_path
-
-    if need_injection:
         instrumented_idf_path = f"{original_idf_path.split('.idf')[0]}_injected_VerificationNo{item_dict['no']}.idf"
         run_path = f"{run_path}_injected_VerificationNo{item_dict['no']}"
         inject_idf(
@@ -83,7 +80,7 @@ def run_libcase(
     else:
         df = DateTimeEP(
             item.read_points_values(
-                csv_path=f"../resources/{item.item['simulation_IO']['output']}"
+                csv_path=f"{instrumented_idf_path.replace('.idf', '')}/{item.item['simulation_IO']['output']}"
             )
         ).transform()
     verification_class = item.item["verification_class"]
