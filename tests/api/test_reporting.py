@@ -49,7 +49,7 @@ class TestReporting(unittest.TestCase):
         self.assertTrue(os.path.isfile(result_md_path))
         os.remove(result_md_path)
 
-    def test_report_multiple_cases_invalid(self):
+    def test_report_multiple_cases_wrong_arg_type(self):
         reporting_obj = Reporting(verification_json, result_md_path, report_format)
 
         # wrong `item_names` type
@@ -61,6 +61,9 @@ class TestReporting(unittest.TestCase):
                 "ERROR:root:The type of the `item_names` arg needs to be List. It cannot be <class 'set'>.",
                 logobs.output[0],
             )
+
+    def test_report_multiple_cases_wrong_verification_name(self):
+        reporting_obj = Reporting(verification_json, result_md_path, report_format)
 
         # wrong verification item name
         with self.assertLogs() as logobs:
