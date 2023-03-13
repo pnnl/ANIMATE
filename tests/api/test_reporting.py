@@ -5,7 +5,7 @@ import unittest
 sys.path.append("./src")
 from api import Reporting
 
-verification_json = "./tests/api/data/*_md.json"
+verification_json = "./tests/api/data/reporting_data/*_md.json"
 result_md_path = "./tests/api/result/testing.md"
 report_format = "markdown"
 
