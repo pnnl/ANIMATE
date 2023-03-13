@@ -568,15 +568,18 @@ verif.run()
   Class initialization
 
   - **parameters**:
-    - **verification_md**: Path to the result markdown files after verifications to be loaded for reporting.
-    - **result_md_path**: Path where the summarized markdown file is saved. the default path is (`./results`)
-    - **report_format**: File format to be output (focus on markdown, later we can consider html, pdf, csv, etc.)
+    - **verification_md**: str or List, Path to the result json files after verifications to be loaded for reporting. The string type is used when one JSON file is used or all the JSON files (e.g., *_md.json) are used. The list type is used when multiple JSON files (e.g., [file1.json, file2.json]) are used.
+    - **result_md_path**: str, Path to the directory where result file will be saved.
+    - **report_format**: str, File format to be output. For now, only `markdown` format is available. More formats (e.g., html, pdf, csv, etc.) will be added in future releases.   
 
-- `report_multiple_cases(case_ids)`
+- `report_multiple_cases(`_item_names: List_`)`
+  
+  Report/summarize multiple verification results.
 
   - **Parameters**
-    - **case_ids**: List, of unique verification case ids. **Note, we need to assign unique verification case ids at case creation and check for verification case id uniqueness in case suite**
-      Report multiple case result by implementing `summarize_md.py`
+    - **case_ids**: List, of unique verification case names.  If the `item_names` argument is empty, all the verification results in the `verification_json` argument are reported.    
+                    **Note, we need to assign unique verification case ids at case creation and check for verification case id uniqueness in case suite**
+
 
 ### Reporting API Examples
 
@@ -584,13 +587,10 @@ verif.run()
 import animate as an
 
 # Initiate the Reporting class
-result_md = an.Reporting("./results/*.md", "./results", "markdown")
-
-# report single case
-result_md.report_single_case()
+result_md = an.Reporting("./results/*_md.json", "./results/testing.md", "markdown")
 
 # report multiple cases
-result_md.report_multiple_cases()
+result_md.report_multiple_cases(["SupplyAirTempReset", "AutomaticShutdown"])
 ```
 
 ## Utilities API

@@ -15,11 +15,10 @@ class Reporting:
         report_format: str = "markdown",
     ) -> None:
         """
-
         Args:
-            verification_json (str or List): Path to the result json files after verifications to be loaded for reporting. The string type is used when one JSON file is used or all the JSON files (e.g., *_md.json) are used. The list type is used when a multiple json files (e.g., [file1.json, file2.json]) are used.
+            verification_json (str or List): Path to the result json files after verifications to be loaded for reporting. The string type is used when one JSON file is used or all the JSON files (e.g., *_md.json) are used. The list type is used when multiple JSON files (e.g., [file1.json, file2.json]) are used.
             result_md_path (str): Path to the directory where result file will be saved.
-            report_format (str): File format to be output. For now, only `markdown` format is available. More formats will be added in future releases.
+            report_format (str): File format to be output. For now, only `markdown` format  is available. More formats (e.g., html, pdf, csv, etc.) will be added in future releases.
         """
 
         self.verification_json = verification_json
@@ -104,6 +103,12 @@ class Reporting:
         if item_names:
             # when only a selective verification results are read
             for item_name in item_names:
+                if item_name not in self.verification_item_case_id_mappting:
+                    logging.error(
+                        f"{item_name} is not included in the `verification_json` argument."
+                    )
+                    return None
+
                 for caseid in self.verification_item_case_id_mappting[item_name]:
                     self._result_collector_helper(caseid)
         else:

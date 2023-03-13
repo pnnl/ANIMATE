@@ -6,7 +6,7 @@ sys.path.append("./src")
 from api import Reporting
 
 verification_json = "./results/*_md.json"
-result_md_path = "./results/testingtesting.md"
+result_md_path = "./results/testing.md"
 report_format = "markdown"
 
 
@@ -47,7 +47,7 @@ class TestReporting(unittest.TestCase):
         # report all the results
         reporting_obj.report_multiple_cases(item_names=[])
         self.assertTrue(os.path.isfile(result_md_path))
-        # os.remove(result_md_path)
+        os.remove(result_md_path)
 
     def test_report_multiple_cases_invalid(self):
         reporting_obj = Reporting(verification_json, result_md_path, report_format)
@@ -61,6 +61,16 @@ class TestReporting(unittest.TestCase):
                 "ERROR:root:The type of the `item_names` arg needs to be List. It cannot be <class 'set'>.",
                 logobs.output[0],
             )
+
+            # wrong `item_names` type
+            with self.assertLogs() as logobs:
+                reporting_obj.report_multiple_cases(
+                    ["not_existing_verification_item"]
+                )
+                self.assertEqual(
+                    "ERROR:root:not_existing_verification_item is not included in the `verification_json` argument.",
+                    logobs.output[0],
+                )
 
 
 if __name__ == "__main__":
