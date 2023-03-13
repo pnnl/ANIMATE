@@ -64,9 +64,7 @@ class TestReporting(unittest.TestCase):
 
         # wrong verification item name
         with self.assertLogs() as logobs:
-            reporting_obj.report_multiple_cases(
-                ["not_existing_verification_item"]
-            )
+            reporting_obj.report_multiple_cases(["not_existing_verification_item"])
             self.assertEqual(
                 "ERROR:root:not_existing_verification_item is not included in the `verification_json` argument.",
                 logobs.output[0],
