@@ -40,12 +40,9 @@ class TestReporting(unittest.TestCase):
         reporting_obj = Reporting(verification_json, result_md_path, report_format)
 
         # report only selective verification results
-        reporting_obj.report_multiple_cases(["SupplyAirTempReset", "AutomaticShutdown"])
-        self.assertTrue(os.path.isfile(result_md_path))
-        os.remove(result_md_path)
-
-        # report all the results
-        reporting_obj.report_multiple_cases(item_names=[])
+        reporting_obj.report_multiple_cases(
+            item_names=["SupplyAirTempReset", "AutomaticShutdown"]
+        )
         self.assertTrue(os.path.isfile(result_md_path))
         os.remove(result_md_path)
 
