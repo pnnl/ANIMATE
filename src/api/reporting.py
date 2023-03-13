@@ -104,9 +104,7 @@ class Reporting:
             # when only a selective verification results are read
             for item_name in item_names:
                 if item_name not in self.verification_item_case_id_mappting:
-                    logging.error(
-                        f"{item_name} is not included in the `verification_json` argument."
-                    )
+                    logging.error(f"{item_name} is not part of the read files.")
                     return None
 
                 for caseid in self.verification_item_case_id_mappting[item_name]:

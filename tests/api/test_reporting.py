@@ -5,8 +5,8 @@ import unittest
 sys.path.append("./src")
 from api import Reporting
 
-verification_json = "./results/*_md.json"
-result_md_path = "./results/testing.md"
+verification_json = "./tests/api/data/*_md.json"
+result_md_path = "./tests/api/result/testing.md"
 report_format = "markdown"
 
 
@@ -41,8 +41,13 @@ class TestReporting(unittest.TestCase):
 
         # report only selective verification results
         reporting_obj.report_multiple_cases(
-            item_names=["SupplyAirTempReset", "AutomaticShutdown"]
+            item_names=["SupplyAirTempReset", "NightCycleOperation"]
         )
+        self.assertTrue(os.path.isfile(result_md_path))
+        os.remove(result_md_path)
+
+        # report all the verification results
+        reporting_obj.report_multiple_cases(item_names=[])
         self.assertTrue(os.path.isfile(result_md_path))
         os.remove(result_md_path)
 
@@ -66,7 +71,7 @@ class TestReporting(unittest.TestCase):
         with self.assertLogs() as logobs:
             reporting_obj.report_multiple_cases(["not_existing_verification_item"])
             self.assertEqual(
-                "ERROR:root:not_existing_verification_item is not included in the `verification_json` argument.",
+                "ERROR:root:not_existing_verification_item is not part of the read files.",
                 logobs.output[0],
             )
 
