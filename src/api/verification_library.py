@@ -112,7 +112,7 @@ class VerificationLibrary:
 
         return item_dict
 
-    def validate_library(self, items: List = []) -> pd.DataFrame:
+    def validate_library(self, items: List[str] = []) -> pd.DataFrame:
         """Check the validity of library items definition. This validity check includes checking the completeness of json specification (against library json schema) and Python verification class definition (against library class interface) and the match between the json and python implementation.
 
         Args:
