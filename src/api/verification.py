@@ -153,5 +153,5 @@ class Verification:
             return None
 
         # Run verifications
-        with multiprocessing.Pool(len(self.cases)) as c:
+        with multiprocessing.Pool(self.num_threads) as c:
             c.map(self.run_single_verification, self.cases.values())

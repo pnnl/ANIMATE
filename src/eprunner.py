@@ -54,7 +54,8 @@ class EPRunner:
         # copy weather file to the simulation output folder to allow simulations in parallel
         Path(self.output_path).mkdir(parents=True, exist_ok=True)
         shutil.copyfile(
-            self.weather_path, self.output_path + "/" + self.weather_path.split("/")[-1]
+            self.weather_path,
+            "".join(self.output_path, "/", self.weather_path.split("/")[-1]),
         )  # weather_path should perhaps be renamed
         self.weather_path = self.output_path + "/" + self.weather_path.split("/")[-1]
 
