@@ -102,7 +102,7 @@ class VerificationLibrary:
         return item_dict
 
     def get_required_datapoints_by_library_items(
-        self, datapoints: List = []
+        self, datapoints: List[str] = []
     ) -> Union[Dict, None]:
         """Summarize datapoints that need to be used to support specified library items. Use this function with caution as it 1) requires aligned data points naming across all library items; 2) does not check the topological relationships between datapoints.
 
