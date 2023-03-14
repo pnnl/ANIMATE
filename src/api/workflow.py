@@ -104,7 +104,18 @@ class WorkflowEngine:
         self.load_states()
         self.run_workflow()
 
-    def import_package(self):
+    def import_package(self) -> None:
+        """Import third party packages based on the "imports" element values of the workflow json.
+        E.g.: {
+        ...
+        "imports": [
+            "numpy as np",
+            "pandas as pd",
+            "datetime"
+        ],
+        ...
+        }
+        """
         import_list = []
         if "imports" in self.workflow_dict:
             import_list = self.workflow_dict["imports"]
@@ -114,11 +125,17 @@ class WorkflowEngine:
                 cp = line.split(" as ")[-1]
             exec(f"import {line}", globals())
 
-    def load_workflow_json(self, workflow_path):
+    def load_workflow_json(self, workflow_path: str) -> None:
+        """Load workflow from a json workflow definition.
+
+        Args:
+            workflow_path (str): path to the workflow json file.
+        """
         with open(workflow_path) as f:
             self.workflow_dict = json.load(f)
 
-    def load_states(self):
+    def load_states(self) -> None:
+        """load states from the workflow definition with some sanity checks."""
         for state_name, state_dict in self.workflow_dict["states"].items():
             # there should be no duplicate names
             if state_name in self.states:
@@ -140,7 +157,15 @@ class WorkflowEngine:
                     f"Non-Choice state [{state_name} is not an End state and it has no Next state. This is NOT allowed."
                 )
 
-    def run_state(self, state_name):
+    def run_state(self, state_name: str) -> Union[None, str]:
+        """Run a specific states by state_name. This is not a external facing method and is only supposed to be called by run_workflow.
+
+        Args:
+            state_name (str): name of the state to execute.
+
+        Returns:
+            Union[None, str]: name of the next state to run or None if there is no next state.
+        """
         state_dict = self.states[state_name]
         state_type = state_dict["Type"]
         next_state = None
@@ -158,7 +183,12 @@ class WorkflowEngine:
         else:
             return None
 
-    def run_workflow(self, max_states=1000):
+    def run_workflow(self, max_states: int = 1000) -> None:
+        """Workflow runner with a maximum steps allowed setting.
+
+        Args:
+            max_states (int, optional): Maximum number of states to run allowed. Defaults to 1000.
+        """
         current_state_name = self.start_state_name
         state_count = 0
         while current_state_name is not None:
@@ -168,7 +198,12 @@ class WorkflowEngine:
             if state_count > max_states:
                 break
 
-    def summarize_workflow_run(self):
+    def summarize_workflow_run(self) -> dict:
+        """Summarize the states running sequence after a workflow is executed.
+
+        Returns:
+            dict: a summary dictionary with two keys: `total_states_executed` and `state_running_sequence`.
+        """
         print(
             f"A total of {len(self.running_sequence)} states were executed with the following sequence:"
         )
@@ -184,11 +219,15 @@ class WorkflowEngine:
 
 
 class MethodCall:
+    """The MethodCall State class. This class also covers the `Embedded MethodCall` state type.
+    A typical use case of execute a MethodCall state would be: `self.payloads = MethodCall(state_dict, self.payloads).run().get_payloads()`
+    """
+
     def __init__(self, state_dict, payloads):
-        self.payloads = payloads
+        self.payloads = payloads  # self.payloads takes in the input payloads, add key-value pairs contents based on state_dict['Payloads'], and will be available by self.get_payloads()
         self.parameters = {}
         self.state_dict = state_dict
-        self.dollar = None
+        self.dollar = None  # the return of the current method call will be stored in this variable.
         self.build_parameters(state_dict)
 
     def build_parameters(self, state_dict):
@@ -212,6 +251,9 @@ class MethodCall:
 
         if isinstance(v, str):
             # special string treatment
+            Payloads = (
+                self.payloads
+            )  # to be used by "...Payloads['xxx']... in parameter value" TODO:JXL to be tested.
             if v.split("[")[0] == "Payloads":
                 # only in this case we eval
                 return eval(v)
@@ -220,7 +262,9 @@ class MethodCall:
                 return v
 
     def run(self):
-        Payloads = self.payloads
+        Payloads = (
+            self.payloads
+        )  # to be used by "...Payloads['xxx']... in self.state_dict["MethodCall"]"
         method_call = eval(self.state_dict["MethodCall"])
         if isinstance(self.parameters, dict):
             self.dollar = method_call(**self.parameters)
@@ -251,6 +295,10 @@ class MethodCall:
 
 
 class Choice:
+    """The Choice state that check conditions to decide next step.
+    A typical use case of execute a Choice state would be: `next_state = Choice(state_dict, self.payloads).check_choices()`
+    """
+
     def __init__(self, state_dict, payloads):
         self.payloads = payloads
         self.state_dict = state_dict
@@ -308,7 +356,7 @@ class Choice:
             return False
 
     def get_choice_value(self, choice):
-        Payloads = self.payloads
+        Payloads = self.payloads  # to be used by "...Payloads['xxx']... in choice dict"
         left = choice["Value"]
         right = choice["Equals"]
 
