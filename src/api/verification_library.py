@@ -101,7 +101,7 @@ class VerificationLibrary:
 
         return item_dict
 
-    def get_library_items(self, items: List = []) -> Union[List, None]:
+    def get_library_items(self, items: List[str] = []) -> Union[List, None]:
         """Get the json definition and meta information of a list of specific library items.
 
         Args:
