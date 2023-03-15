@@ -24,7 +24,6 @@ class Reporting:
         # TODO:
         #  - this class is largely duplicate of summarize_md.py. Need to merge the two (while not losing the other file as we are still using it for large scale runs.
 
-
         self.verification_json = verification_json
         self.result_md_path = result_md_path
         self.report_format = report_format
