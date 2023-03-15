@@ -1,4 +1,4 @@
-import sys, logging, json
+import sys, logging, json, os
 from typing import Union
 
 sys.path.append("./src")
@@ -7,14 +7,42 @@ from api import VerificationLibrary, DataProcessing, VerificationCase
 
 
 class Workflow:
-    def __init__(self, workflow_path: str = None, workflow_dict: dict = None):
+    def __init__(self, workflow: Union[str, dict] = None):
         """Instantiate a Workflow class object and load specified workflow as a `dict` in `self.workflow`
 
         Args:
-            workflow_path (str, optional): path to the workflow definition json file. Defaults to None.
-            workflow_dict (dict, optional): dict of the workflow. Defaults to None.
+            workflow (Union[str, dict], optional): str path to the workflow definition json file or dict of the actual workflow definition. Defaults to None.
         """
-        pass
+        self.workflow_engine = None
+
+        if workflow is None:
+            logging.warning(
+                "Workflow is not provided at time of initialization. self.workflow_engine is set to None. Workflow can be added later by calling self.load_workflow(workflow)"
+            )
+        else:
+            self.load_workflow(workflow)
+
+    def load_workflow(self, workflow) -> None:
+        if self.workflow_engine is not None:
+            logging.warning(
+                "self.workflow_engine is not None, load_workflow will overwrite it with a new workflow."
+            )
+        self.workflow_engine = self.create_workflow_engine(workflow)
+
+    @staticmethod
+    def create_workflow_engine(
+        workflow: Union[str, dict]
+    ) -> Union[None, WorkflowEngine]:
+        if (isinstance(workflow, str) and os.path.isfile(workflow)) or isinstance(
+            workflow, dict
+        ):
+            workflow_engine = Workflow(workflow)
+        else:
+            logging.error(
+                "workflow needs to be either a str path to the workflow json file or a dict of the workflow definition."
+            )
+            workflow_engine = None
+        return workflow_engine
 
     @staticmethod
     def get_workflow_template() -> dict:
@@ -51,7 +79,9 @@ class Workflow:
                 - `workflow_validity`: bool flag of the validity of the workflow definition
                 - `detail`: detailed info about the validity check.
         """
-        pass
+
+        temp_workflow_engine = Workflow.create_workflow_engine(workflow)
+        return temp_workflow_engine.validate()
 
     def validate(self) -> dict:
         """Validate `self.workflow`
@@ -61,7 +91,7 @@ class Workflow:
                 - `workflow_validity`: bool flag of the validity of the workflow definition
                 - `detail`: detailed info about the validity check.
         """
-        return self.validate_workflow_definition(self.workflow)
+        return self.workflow_engine.validate()
 
     def save(self, json_path: str = None) -> None:
         """Save the workflow as a json file.
@@ -70,7 +100,13 @@ class Workflow:
             json_path (str, optional): path to the file to be saved. Defaults to None.
         """
 
-        pass
+        if self.workflow_engine is None:
+            logging.warning("self.workflow_engine is None, there is nothing to save.")
+        else:
+            if isinstance(json_path, str):
+                self.workflow_engine.save_workflow(json_path)
+            else:
+                logging.error("json_path needs to be str")
 
     def run_workflow(self, verbose: bool = False) -> bool:
         """Execute the workflow defined in self.workflow
@@ -82,11 +118,11 @@ class Workflow:
             bool: Whether the run is successful or not.
 
         """
-        pass
+        self.workflow_engine.run_workflow(verbose)
 
 
 class WorkflowEngine:
-    def __init__(self, workflow):
+    def __init__(self, workflow, run_workflow_now=False):
         self.end_state_name = None
         self.start_state_name = None
         self.payloads = {}
@@ -94,15 +130,21 @@ class WorkflowEngine:
         self.workflow_dict = {}
         self.running_sequence = []
 
+        # checking workflow validity is handed over to the API method.
         if isinstance(workflow, str):
             self.load_workflow_json(workflow)
 
         if isinstance(workflow, dict):
             self.workflow_dict = workflow
 
-        self.import_package()
         self.load_states()
-        self.run_workflow()
+
+        if run_workflow_now:
+            self.run_workflow()
+
+    def validate(self) -> bool:
+        """function to be implemented to check for validity of the workflow definition"""
+        return True  # place holder
 
     def import_package(self) -> None:
         """Import third party packages based on the "imports" element values of the workflow json.
@@ -183,12 +225,13 @@ class WorkflowEngine:
         else:
             return None
 
-    def run_workflow(self, max_states: int = 1000) -> None:
+    def run_workflow(self, verbose=True, max_states: int = 1000) -> None:
         """Workflow runner with a maximum steps allowed setting.
 
         Args:
             max_states (int, optional): Maximum number of states to run allowed. Defaults to 1000.
         """
+        self.import_package()
         current_state_name = self.start_state_name
         state_count = 0
         while current_state_name is not None:
