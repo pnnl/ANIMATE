@@ -53,7 +53,7 @@ class Reporting:
             return None
 
         self.md_dict_dump = {}
-        self.verification_item_case_id_mappting = {}
+        self.verification_item_case_id_mapping = {}
         for json_file in glob.glob(verification_json):
             with open(json_file) as fr:
                 md_dict = json.load(fr)
@@ -61,20 +61,25 @@ class Reporting:
             self.md_dict_dump.update(md_dict_intkey)
             self.caseids_sorted = sorted(self.md_dict_dump)
 
-            md_dict_intkey_verification_class = list(md_dict_intkey.items())[0][1][
-                "verification_class"
-            ]
-            if (
-                md_dict_intkey_verification_class
-                not in self.verification_item_case_id_mappting
-            ):
-                self.verification_item_case_id_mappting[
+            # md_dict_intkey_verification_class = list(md_dict_intkey.items())[0][1][
+            #     "verification_class"
+            # ]
+            for case_id, case_md_dict in md_dict_intkey.items():
+                md_dict_intkey_verification_class = case_md_dict["verification_class"]
+
+                if (
                     md_dict_intkey_verification_class
-                ] = []
-            self.verification_item_case_id_mappting[
-                md_dict_intkey_verification_class
-            ].append(list(md_dict_intkey.keys())[0])
-            self.verification_item_case_id_mappting[
+                    not in self.verification_item_case_id_mapping
+                ):
+                    self.verification_item_case_id_mapping[
+                        md_dict_intkey_verification_class
+                    ] = []
+
+                self.verification_item_case_id_mapping[
+                    md_dict_intkey_verification_class
+                ].append(case_id)
+
+            self.verification_item_case_id_mapping[
                 md_dict_intkey_verification_class
             ].sort()
 
@@ -103,11 +108,11 @@ class Reporting:
         if item_names:
             # when only a selective verification results are read
             for item_name in item_names:
-                if item_name not in self.verification_item_case_id_mappting:
+                if item_name not in self.verification_item_case_id_mapping:
                     logging.error(f"{item_name} is not part of the read files.")
                     return None
 
-                for caseid in self.verification_item_case_id_mappting[item_name]:
+                for caseid in self.verification_item_case_id_mapping[item_name]:
                     self._result_collector_helper(caseid)
         else:
             # when `item_no` is empty -> all the results are read
