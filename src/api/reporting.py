@@ -110,14 +110,20 @@ class Reporting:
                 for caseid in self.verification_item_case_id_mappting[item_name]:
                     self._result_collector_helper(caseid)
         else:
-            # when `item_names` is empty -> all the results are read
-            for item_name in self.caseids_sorted:
-                self._result_collector_helper(item_name)
+            # when `item_no` is empty -> all the results are read
+            for item_no in self.caseids_sorted:
+                self._result_collector_helper(item_no)
 
         with open(self.result_md_path, "w") as fw:
             fw.write(self.md_full_string0)
 
-    def _result_collector_helper(self, caseid):
+    def _result_collector_helper(self, caseid: int) -> None:
+        """helper method for the `report_multiple_cases` method.
+
+        Args:
+            caseid: id number of the given verification item.
+        """
+
         case_dict = self.md_dict_dump[caseid]
         outcome = case_dict["outcome_notes"]
         model_file = case_dict["model_file"]
