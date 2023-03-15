@@ -118,7 +118,7 @@ class Item:
         self.pointnamelist = [i for i in self.pointnamelist if i]
         self.buildpoints = [i for i in self.buildpoints if i]
 
-    def read_output_variables(self, csv_path):
+    def read_output_variables(self, csv_path=None, df=None):
         """helper: read idf output variable csv
 
 
@@ -130,11 +130,12 @@ class Item:
 
         """
 
-        if csv_path is None:
-            return None
+        if not csv_path is None:
+            csv = CSVReader(csv_path)
+            self.df = csv.getseries(list(self.idf_variables_dict.keys()))
+        elif not df is None:
+            self.df = df
 
-        csv = CSVReader(csv_path)
-        self.df = csv.getseries(list(self.idf_variables_dict.keys()))
         self.df = self.df.rename(columns=self.idf_variables_dict)
         self.timeserieslength = self.df.shape[0]
         for point in self.buildpoints:
@@ -169,12 +170,7 @@ class Item:
                 )
                 self.df[point.name] = point.value
 
-    def read_points_values(
-        self,
-        csv_path=None,
-        idf_path=None,
-        idd_path=None,
-    ):
+    def read_points_values(self, csv_path=None, idf_path=None, idd_path=None, df=None):
         """method for user to read all types of simulation i/o data
 
         Args:
@@ -186,9 +182,12 @@ class Item:
             pandas dataframe containing all data queried
 
         """
-        self.read_output_variables(csv_path)
+        self.read_output_variables(csv_path, df)
         self.read_idf_obj_values(idf_path, idd_path)
-        self.df = DateTimeEP(self.df, self.DF_YEAR).transform()
+        if df is None:
+            # Only when working with a CSV, assumes that the df was run
+            # through the DataProcessing API first
+            self.df = DateTimeEP(self.df, self.DF_YEAR).transform()
         fillna_opt = None
         dropna_opt = True
         if "data_processing" in self.item.keys():

@@ -1,4 +1,5 @@
 import sys, logging, multiprocessing, os
+import pandas as pd
 
 from typing import Dict, List, Tuple, Union
 
@@ -41,6 +42,7 @@ class Verification:
         plot_option: str = None,
         fig_size: tuple = None,
         num_threads: int = 1,
+        preprocessed_data: pd.DataFrame = None,
     ) -> None:
         """Configure verification environment.
 
@@ -50,6 +52,7 @@ class Verification:
             plot_option (str): Type of plots to include. It should either be all-compact, all-expand, day-compact, or day-expand. It can also be None, which will plot all types.
             fig_size (tuple): Tuple of integers (length, height) describing the size of the figure to plot.
             num_threads (int): Number of threads to run verifications in parallel. Defaults to 1.
+            preprocessed_data (pd.DataFrame, optional): Pre-processed data stored in the data frame. Optional.
         """
         if self.cases is None or len(self.cases) == 0:
             logging.error(
@@ -109,11 +112,20 @@ class Verification:
         ):
             logging.error("The number of threads should be an integer greater than 1.")
 
+        if (
+            not isinstance(preprocessed_data, pd.DataFrame)
+            and not preprocessed_data is None
+        ):
+            logging.error(
+                f"A Pandas DataFrame should be passed as the `preprocessed_data` argument, not a {type(preprocessed_data)}."
+            )
+
         self.output_path = output_path
         self.lib_items_path = lib_items_path
         self.plot_option = plot_option
         self.fig_size = fig_size
         self.num_threads = num_threads
+        self.preprocessed_data = preprocessed_data
 
     def run_single_verification(self, case: dict = None) -> None:
         """Run a single verification and generate a markdown report of the results
@@ -140,6 +152,7 @@ class Verification:
             output_path=self.output_path,
             fig_size=self.fig_size,
             produce_outputs=True,
+            preprocessed_data=self.preprocessed_data,
         )
 
         # Output case summary
