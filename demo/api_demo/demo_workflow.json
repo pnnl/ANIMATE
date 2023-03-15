@@ -109,7 +109,8 @@
                 "lib_items_path": "./schema/library.json",
                 "plot_option": "+x None",
                 "fig_size": "+x (6, 5)",
-                "num_threads": 1
+                "num_threads": 1,
+                "preprocessed_data": "Payloads['sliced_data']"
             },
             "Payloads": {},
             "Next": "run verification"
