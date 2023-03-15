@@ -1,3 +1,4 @@
+import glob
 import sys, logging, json, os, datetime
 from typing import Union
 
@@ -263,7 +264,12 @@ class Workflow:
         else:
             self.load_workflow(workflow)
 
-    def load_workflow(self, workflow) -> None:
+    def load_workflow(self, workflow: Union[str, dict]) -> None:
+        """Load workflow definition from a json file or dict to `self.workflow`.
+
+        Args:
+            workflow (Union[str, dict]): str path to the workflow definition json file or dict of the actual workflow definition.
+        """
         if self.workflow_engine is not None:
             logging.warning(
                 "self.workflow_engine is not None, load_workflow will overwrite it with a new workflow."
@@ -274,6 +280,14 @@ class Workflow:
     def create_workflow_engine(
         workflow: Union[str, dict]
     ) -> Union[None, WorkflowEngine]:
+        """Instantiate a WorkflowEngine object with specified workflow definition.
+
+        Args:
+            workflow (Union[str, dict]): str path to the workflow definition json file or dict of the actual workflow definition. Defaults to None.
+
+        Returns:
+            Union[None, WorkflowEngine]: Instantiated WorkflowEngine object if provided workflow is valid; None otherwise.
+        """
         if (isinstance(workflow, str) and os.path.isfile(workflow)) or isinstance(
             workflow, dict
         ):
@@ -295,18 +309,40 @@ class Workflow:
         pass
 
     @staticmethod
-    def list_existing_workflows(workflow_dir: str = None) -> dict:
+    def list_existing_workflows(workflow_dir: str = None) -> Union[dict, None]:
         """List existing workflows (defined as json files) under a specific directory path.
 
         Args:
             workflow_dir (str, optional): path to the directory containing workflow definitions (including sub directories). By default, point to the path of the example folder. @JXL TODO example folder to be specified
 
         Returns:
-            dict: `dict` with keys being workflow names and values being a `Dict` with the following keys:
+            Union[dict, None]: `dict` with keys being workflow names and values being a `Dict` with the following keys:
                 - `workflow_json_path`: path to the file of the workflow
                 - `workflow`: `Dict` of the workflow, loaded from the workflow json definition
         """
-        pass
+        if isinstance(workflow_dir, str) and os.path.isfile(workflow_dir):
+            if workflow_dir[-1] != "/":
+                workflow_dir = workflow_dir + "/"
+            found_files = glob.glob(f"{workflow_dir}**/*.json", recursive=True)
+        else:
+            logging.error("workflow_dir needs to point to a valid path containing potential workflow json files.")
+            return None
+
+        num_found_files = len(found_files)
+
+        if num_found_files == 0:
+            logging.warning(f"There is no json file in {workflow_dir}")
+            return None
+
+        workflows = {}
+        for json_file_path in found_files:
+            temp_wfe = WorkflowEngine(json_file_path)
+            if temp_wfe.validate():
+                workflows[temp_wfe.workflow_dict['workflow_name']] = {
+                    'workflow_json_path': json_file_path,
+                    'workflow': temp_wfe.workflow_dict
+                }
+
 
     @staticmethod
     def validate_workflow_definition(workflow: Union[str, dict], verbose=False) -> dict:
