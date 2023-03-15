@@ -21,6 +21,10 @@ class Reporting:
             report_format (str): File format to be output. For now, only `markdown` format  is available. More formats (e.g., html, pdf, csv, etc.) will be added in future releases.
         """
 
+        # TODO:
+        #  - this class is largely duplicate of summarize_md.py. Need to merge the two (while not losing the other file as we are still using it for large scale runs.
+
+
         self.verification_json = verification_json
         self.result_md_path = result_md_path
         self.report_format = report_format
@@ -54,6 +58,8 @@ class Reporting:
 
         self.md_dict_dump = {}
         self.verification_item_case_id_mapping = {}
+
+        # TODO: refactor below to make mapping creation more efficient
         for json_file in glob.glob(verification_json):
             with open(json_file) as fr:
                 md_dict = json.load(fr)
@@ -61,9 +67,6 @@ class Reporting:
             self.md_dict_dump.update(md_dict_intkey)
             self.caseids_sorted = sorted(self.md_dict_dump)
 
-            # md_dict_intkey_verification_class = list(md_dict_intkey.items())[0][1][
-            #     "verification_class"
-            # ]
             for case_id, case_md_dict in md_dict_intkey.items():
                 md_dict_intkey_verification_class = case_md_dict["verification_class"]
 
@@ -105,7 +108,7 @@ class Reporting:
             return None
 
         # collect verification results
-        if item_names:
+        if len(item_names) > 0:
             # when only a selective verification results are read
             for item_name in item_names:
                 if item_name not in self.verification_item_case_id_mapping:
