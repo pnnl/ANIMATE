@@ -117,7 +117,8 @@
         "run verification": {
             "Type": "MethodCall",
             "MethodCall": "Payloads['verification_obj'].run",
-            "Parameters": {}
+            "Parameters": {},
+            "Next": "check results"
         },
         "check results": {
             "Type": "MethodCall",
