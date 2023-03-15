@@ -572,7 +572,7 @@ verif.run()
     - **result_md_path**: str, Path to the directory where result file will be saved.
     - **report_format**: str, File format to be output. For now, only `markdown` format is available. More formats (e.g., html, pdf, csv, etc.) will be added in future releases.   
 
-- `report_multiple_cases(`_item_names: List_`)`
+- [x] `report_multiple_cases(`_item_names: List_`)`
   
   Report/summarize multiple verification results.
 
