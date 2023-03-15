@@ -74,7 +74,7 @@
         },
         "validate cases": {
             "Type": "Choice",
-            "Choices"[
+            "Choices": [
                 {
                     "Value": "Payloads['verification_case_obj'].validate()",
                     "Equals": "True",
@@ -86,7 +86,7 @@
         "setup verification": {
             "Type": "MethodCall",
             "MethodCall": "Verification",
-            "Parameters"{
+            "Parameters": {
                 "verification_cases": "Payloads['verification_case_obj']"
             },
             "Payloads": {
@@ -97,7 +97,7 @@
         "run verification": {
             "Type": "MethodCall",
             "MethodCall": "Payloads['verification_obj'].run",
-            "Parameters"{}
+            "Parameters": {}
         },
         "check results": {
             "Type": "MethodCall",
@@ -112,7 +112,7 @@
         },
         "check number of markdown result files": {
             "Type": "Choice",
-            "Choices"[
+            "Choices": [
                 {
                     "Value": "len(Payloads['length_of_md'])",
                     "Equals": "3",
