@@ -479,7 +479,7 @@ SAT_case = {
 }
 
 # define VerificationCase object
-verification_instnace = an.VerificationCase(case=SAT_case, file_path=None)
+verification_instance = an.VerificationCase(cases=[SAT_case], file_path=None)
 
 # load existing verification case
 if sat_case_validity:
@@ -514,49 +514,129 @@ verification_instance.save_case_suite_to_json("./schema/new_library_verification
 
 `class Verification`
 
-- `__init__(`_verification: verification object_`)`
+- [x] `__init__(`_verification: verification object_`)`
 
   Class initialization
 
   - **parameters**:
     - **verification**: ANIMATE verification object
 
-- `configure(`_output_path: str_`)`
+- [x] `configure(`_output_path: str_, _plot_option: str_, _fig_size: tuple_, _num_threads: int_, _lib_path:str_`)`
 
-  Configure verification environnement
+  Configure verification environment
 
   - **parameters**:
     - _output_path_: path to the output directory used to store the markdown verification summary file
-    - potential other configuration options
-      - verbose
-      - plot options
-      - multiprocessing (num_threads)
-
-- `run(`_plotting_option: str, fig_size= list_`)`
-
-  Run verification
-
-  - **parameters**:
-    - _plotting_option_: 'all-compact', 'all-expand', 'day-compact', 'day-expand'
+    - _plot_option_: 'all-compact', 'all-expand', 'day-compact', 'day-expand'
     - _fig_size_: list that provides the height and width of the figures
-    - **maybe we can move these options to the configure parameters**
-  - **return**: dict that includes the verification results
+    - _num_threads_: number of thread to use to run verification in parallel
+    - _lib_path_: path the the verification library
+
+- [x] `run()`
+
+  Run verification and generate a markdown report of the results
 
 ### Verification API Examples
-
-### API Examples
 
 ```python
 import animate as an
 
+# create verification items in suite
+cases = [{
+            "no": 1,
+            "run_simulation": True,
+            "simulation_IO": {
+                "idf": "./test_cases/doe_prototype_cases/ASHRAE901_OfficeMedium_STD2019_Atlanta.idf",
+                "idd": "./resources/Energy+V9_0_1.idd",
+                "weather": "./weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "o": {
+                        "subject": "BLDG_OCC_SCH_WO_SB",
+                        "variable": "Schedule Value",
+                        "frequency": "TimeStep"
+                    },
+                    "m_oa": {
+                        "subject": "CORE_BOTTOM VAV BOX COMPONENT",
+                        "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
+                        "frequency": "TimeStep"
+                    },
+                    "m_ea": {
+                        "subject": "CORE_MID VAV BOX COMPONENT",
+                        "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
+                        "frequency": "TimeStep"
+                    },
+                    "eco_onoff": {
+                        "subject": "PACU_VAV_BOT",
+                        "variable": "Air System Outdoor Air Economizer Status",
+                        "frequency": "TimeStep"
+                    }
+                },
+                "parameters": {
+                    "tol_o": 0.03,
+                    "tol_m_ea": 50,
+                    "tol_m_oa": 50,
+                }
+            },
+            "verification_class": "AutomaticOADamperControl"
+        },
+        {
+            "no": 2,
+            "run_simulation": True,
+            "simulation_IO": {
+                "idf": "./test_cases/doe_prototype_cases/ASHRAE901_OfficeMedium_STD2019_Atlanta.idf",
+                "idd": "./resources/Energy+V9_0_1.idd",
+                "weather": "./weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "o": {
+                        "subject": "BLDG_OCC_SCH_WO_SB",
+                        "variable": "Schedule Value",
+                        "frequency": "TimeStep"
+                    },
+                    "m_oa": {
+                        "subject": "CORE_MID VAV BOX COMPONENT",
+                        "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
+                        "frequency": "TimeStep"
+                    },
+                    "m_ea": {
+                        "subject": "CORE_TOP VAV BOX COMPONENT",
+                        "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
+                        "frequency": "TimeStep"
+                    },
+                    "eco_onoff": {
+                        "subject": "PACU_VAV_MID",
+                        "variable": "Air System Outdoor Air Economizer Status",
+                        "frequency": "TimeStep"
+                    }
+                },
+                "parameters": {
+                    "tol_o": 0.03,
+                    "tol_m_ea": 50,
+                    "tol_m_oa": 50,
+                }
+            },
+            "verification_class": "AutomaticOADamperControl"
+        }
+      ]
+
 # Load verfication case
-verif = an.Verification("./verification_case.json")
+VC = an.VerificationCase(cases=cases)
+v = an.Verification(VC)
 
 # Configure verification
-verif.configure()
+v.configure(output_path='./results', lib_items_path='./schema/library.json', plot_option=None, num_threads = 2, fig_size= (10,2.4))
 
 # Run verification
-verif.run()
+v.run()
 ```
 
 ## Reporting API
