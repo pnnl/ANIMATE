@@ -14,6 +14,7 @@ def run_libcase(
     output_path="./",
     fig_size=(6.4, 4.8),
     produce_outputs=False,
+    preprocessed_data=None,
 ):
     """Library case runner
 
@@ -68,7 +69,11 @@ def run_libcase(
             run_simulation(idfpath=run_idf_path, weatherpath=weather_path)
         print("Simulation done")
 
-    if run_sim:
+    if not preprocessed_data is None:
+        df = item.read_points_values(
+            idf_path=run_idf_path, idd_path=idd_path, df=preprocessed_data
+        )
+    elif run_sim:
         df = DateTimeEP(
             item.read_points_values(
                 csv_path=f"{run_path}/eplusout.csv",

@@ -3,6 +3,7 @@ import unittest, sys, os
 sys.path.append("./src")
 from api import VerificationCase
 from api import Verification
+from api import DataProcessing
 
 
 class TestVerification(unittest.TestCase):
@@ -211,18 +212,36 @@ class TestVerification(unittest.TestCase):
                 logobs.output[9],
             )
 
-            # Correct usage
+            # Valid preprocessed data
+            df = {}
             v_obj.configure(
                 output_path="./",
                 lib_items_path="./schema/library.json",
                 plot_option=None,
                 fig_size=(6, 5),
                 num_threads=1,
+                preprocessed_data=df,
             )
-            assert len(logobs.output) == 10
+            self.assertEqual(
+                "ERROR:root:A Pandas DataFrame should be passed as the `preprocessed_data` argument, not a <class 'dict'>.",
+                logobs.output[10],
+            )
+
+            # Correct usage
+            filep = "./tests/api/data/data_eplus.csv"
+            df = DataProcessing(data_path=filep, data_source="EnergyPlus")
+            v_obj.configure(
+                output_path="./",
+                lib_items_path="./schema/library.json",
+                plot_option=None,
+                fig_size=(6, 5),
+                num_threads=1,
+                preprocessed_data=df.data,
+            )
+            assert len(logobs.output) == 11
 
     def test_run_single_verification(self):
-        # single verification
+        # Single verification
         vc = VerificationCase(cases=self.cases)
         v_obj = Verification(verifications=vc)
         v_obj.configure(
@@ -231,6 +250,33 @@ class TestVerification(unittest.TestCase):
             plot_option=None,
             fig_size=(6, 5),
             num_threads=1,
+        )
+        v_obj.run_single_verification(case=v_obj.cases[list(v_obj.cases.keys())[0]])
+        assert os.path.isfile("./tests/api/1.md")
+
+    def test_run_single_verification_wit_preprocessed_data(self):
+        # Load verification cases and built verification
+        vc = VerificationCase(cases=self.cases)
+        v_obj = Verification(verifications=vc)
+
+        # Load pre-processed data
+        filep = "./tests/api/data/ASHRAE901_OfficeMedium_STD2019_Atlanta_injected_VerificationNo1/eplusout.csv"
+        df = DataProcessing(data_path=filep, data_source="EnergyPlus")
+        df.add_parameter(name="tol_o", value=0.03, inplace=True)
+        df.add_parameter(name="tol_m_ea", value=50, inplace=True)
+        df.add_parameter(name="tol_m_oa", value=50, inplace=True)
+
+        # Remove unecessary strings from headers
+        new_cols = [c.split(" [")[0] for c in df.data.columns]
+        df.data.columns = new_cols
+
+        v_obj.configure(
+            output_path="./tests/api",
+            lib_items_path="./schema/library.json",
+            plot_option=None,
+            fig_size=(6, 5),
+            num_threads=1,
+            preprocessed_data=df.data,
         )
         v_obj.run_single_verification(case=v_obj.cases[list(v_obj.cases.keys())[0]])
         assert os.path.isfile("./tests/api/1.md")
