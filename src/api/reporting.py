@@ -85,7 +85,7 @@ class Reporting:
 | ---------------------- | ------------------------------------------ | ------------------ | -------- | ------ | ------ | -------------------- |
 """
 
-    def report_multiple_cases(self, item_names: List = []) -> None:
+    def report_multiple_cases(self, item_names: List[str] = []) -> None:
         """Report/summarize multiple verification results.
 
         Args:
