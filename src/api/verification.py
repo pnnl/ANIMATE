@@ -13,6 +13,12 @@ from libcases import *
 class Verification:
     def __init__(self, verifications: VerificationCase = None):
         self.cases = None
+        self.output_path = None
+        self.lib_items_path = None
+        self.plot_option = None
+        self.fig_size = None
+        self.num_threads = None
+
         if verifications is None:
             logging.error("A verification should be provided.")
         else:
@@ -153,5 +159,7 @@ class Verification:
             return None
 
         # Run verifications
-        with multiprocessing.Pool(self.num_threads) as c:
-            c.map(self.run_single_verification, self.cases.values())
+        # with multiprocessing.Pool(self.num_threads) as c:
+        #     c.map(self.run_single_verification, self.cases.values())
+        for case in self.cases.values():
+            self.run_single_verification(case)

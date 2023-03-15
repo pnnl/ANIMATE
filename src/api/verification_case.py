@@ -287,11 +287,11 @@ class VerificationCase:
             "no": int,
             "run_simulation": bool,
             "simulation_IO": {
-                "idf": str,
-                "idd": str,
-                "weather": str,
-                "output": str,
-                "ep_path": str,
+                # "idf": str,
+                # "idd": str,
+                # "weather": str,
+                "output": str, # all other are optional when data is already there.
+                # "ep_path": str,
             },
             "expected_result": str,
             "datapoints_source": {

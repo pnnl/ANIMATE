@@ -94,11 +94,24 @@
             "Type": "MethodCall",
             "MethodCall": "Verification",
             "Parameters": {
-                "verification_cases": "Payloads['verification_case_obj']"
+                "verifications": "Payloads['verification_case_obj']"
             },
             "Payloads": {
                 "verification_obj": "$"
             },
+            "Next": "configure verification runner"
+        },
+        "configure verification runner": {
+            "Type": "MethodCall",
+            "MethodCall": "Payloads['verification_obj'].configure",
+            "Parameters": {
+                "output_path": "./",
+                "lib_items_path": "./schema/library.json",
+                "plot_option": "+x None",
+                "fig_size": "+x (6, 5)",
+                "num_threads": 1
+            },
+            "Payloads": {},
             "Next": "run verification"
         },
         "run verification": {
@@ -137,6 +150,7 @@
             "End": "True"
         },
         "Report Error in workflow": {
+            "Type": "MethodCall",
             "MethodCall": "logging.error",
             "Parameters": [
                 "Something is wrong in the workflow execution"

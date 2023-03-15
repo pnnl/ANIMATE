@@ -4,7 +4,7 @@ from typing import Union
 
 sys.path.append("./src")
 sys.path.append("..")
-from api import VerificationLibrary, DataProcessing, VerificationCase
+from api import VerificationLibrary, DataProcessing, VerificationCase, Verification
 
 
 # helper
@@ -325,7 +325,9 @@ class Workflow:
                 workflow_dir = workflow_dir + "/"
             found_files = glob.glob(f"{workflow_dir}**/*.json", recursive=True)
         else:
-            logging.error("workflow_dir needs to point to a valid path containing potential workflow json files.")
+            logging.error(
+                "workflow_dir needs to point to a valid path containing potential workflow json files."
+            )
             return None
 
         num_found_files = len(found_files)
@@ -338,11 +340,10 @@ class Workflow:
         for json_file_path in found_files:
             temp_wfe = WorkflowEngine(json_file_path)
             if temp_wfe.validate():
-                workflows[temp_wfe.workflow_dict['workflow_name']] = {
-                    'workflow_json_path': json_file_path,
-                    'workflow': temp_wfe.workflow_dict
+                workflows[temp_wfe.workflow_dict["workflow_name"]] = {
+                    "workflow_json_path": json_file_path,
+                    "workflow": temp_wfe.workflow_dict,
                 }
-
 
     @staticmethod
     def validate_workflow_definition(workflow: Union[str, dict], verbose=False) -> dict:
@@ -441,6 +442,8 @@ class MethodCall:
             if v.split("[")[0] == "Payloads":
                 # only in this case we eval
                 return eval(v)
+            elif v[:3] == "+x ":  # unique prefix for evaluate the rest of the string
+                return eval(v[3:])
             else:
                 # in all other string param value, we consider it is a string. This is for clarity and security. More complicated parameter should use embedded methodcall
                 return v
@@ -450,6 +453,7 @@ class MethodCall:
             self.payloads
         )  # to be used by "...Payloads['xxx']... in self.state_dict["MethodCall"]"
         method_call = eval(self.state_dict["MethodCall"])
+        # TODO JXL: handle non-method calls, maybe just (self.dollar = method_call)? Need tests
         if isinstance(self.parameters, dict):
             self.dollar = method_call(**self.parameters)
         if isinstance(self.parameters, list):
@@ -460,6 +464,7 @@ class MethodCall:
         return self.dollar
 
     def get_payloads(self):
+        Payloads = self.payloads
         for k, v in self.state_dict["Payloads"].items():
             if isinstance(v, str):
                 # only eval if v is string
