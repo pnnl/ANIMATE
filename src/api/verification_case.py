@@ -305,6 +305,7 @@ class VerificationCase:
         return _validate_case_structure_helper(case_schema, case, verbose)
     
     def validate(self):
+        """Validate all verification cases in self.case_suite with validation logic in VerificationCase.validate_verification_case_structure()"""
         for k, v in self.case_suite.items():
             if not self.validate_verification_case_structure(v):
                 return False
