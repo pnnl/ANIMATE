@@ -303,6 +303,12 @@ class VerificationCase:
             "verification_class": str,
         }
         return _validate_case_structure_helper(case_schema, case, verbose)
+    
+    def validate(self):
+        for k, v in self.case_suite.items():
+            if not self.validate_verification_case_structure(v):
+                return False
+        return True
 
     @staticmethod
     def save_verification_cases_to_json(

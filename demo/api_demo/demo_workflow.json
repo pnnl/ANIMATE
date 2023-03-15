@@ -1,0 +1,140 @@
+{
+    "workflow_name": "Demo workflow",
+    "imports": [
+        "numpy as np",
+        "pandas as pd",
+        "datetime",
+        "glob"
+    ],
+    "states": {
+        "load data": {
+            "Type": "MethodCall",
+            "MethodCall": "DataProcessing",
+            "Parameters": {
+                "data_path": "./demo/api_demo/demo_dataset.csv",
+                "data_source": "EnergyPlus"
+            },
+            "Payloads": {
+                "data_processing_obj": "$"
+            },
+            "Next": "slice data to get the first two months"
+        },
+        "slice data to get the first two months": {
+            "Type": "MethodCall",
+            "MethodCall": "Payloads['data_processing_obj'].slice",
+            "Parameters": {
+                "start_time": {
+                    "Type": "Embedded MethodCall",
+                    "MethodCall": "datetime.datetime",
+                    "Parameters": [
+                        2000,
+                        1,
+                        1,
+                        0
+                    ]
+                },
+                "end_time": {
+                    "Type": "Embedded MethodCall",
+                    "MethodCall": "datetime.datetime",
+                    "Parameters": [
+                        2000,
+                        3,
+                        1,
+                        0
+                    ]
+                }
+            },
+            "Payloads": {
+                "sliced_data": "$"
+            },
+            "Next": "load original verification case"
+        },
+        "load original verification case": {
+            "Type": "MethodCall",
+            "MethodCall": "VerificationCase",
+            "Parameters": {
+                "json_case_path": "./demo/api_demo/original_demo_verification_case.json"
+            },
+            "Payloads": {
+                "verification_case_obj": "$",
+                "original_case_keys": "$.case_suite.keys()"
+            },
+            "Next": "check original case length"
+        },
+        "check original case length": {
+            "Type": "Choice",
+            "Choices": [
+                {
+                    "Value": "len(Payloads['original_case_keys']) == 3",
+                    "Equals": "True",
+                    "Next": "validate cases"
+                }
+            ],
+            "Default": "Report Error in workflow"
+        },
+        "validate cases": {
+            "Type": "Choice",
+            "Choices"[
+                {
+                    "Value": "Payloads['verification_case_obj'].validate()",
+                    "Equals": "True",
+                    "Next": "setup verification"
+                }
+            ],
+            "Default": "Report Error in workflow"
+        },
+        "setup verification": {
+            "Type": "MethodCall",
+            "MethodCall": "Verification",
+            "Parameters"{
+                "verification_cases": "Payloads['verification_case_obj']"
+            },
+            "Payloads": {
+                "verification_obj": "$"
+            },
+            "Next": "run verification"
+        },
+        "run verification": {
+            "Type": "MethodCall",
+            "MethodCall": "Payloads['verification_obj'].run",
+            "Parameters"{}
+        },
+        "check results": {
+            "Type": "MethodCall",
+            "MethodCall": "glob.glob",
+            "Parameters": [
+                "./*.md"
+            ],
+            "Payloads": {
+                "length_of_md": "len($)"
+            },
+            "Next": "check number of markdown result files"
+        },
+        "check number of markdown result files": {
+            "Type": "Choice",
+            "Choices"[
+                {
+                    "Value": "len(Payloads['length_of_md'])",
+                    "Equals": "3",
+                    "Next": "Success"
+                }
+            ],
+            "Default": "Report Error in workflow"
+        },
+        "Success": {
+            "Type": "MethodCall",
+            "MethodCall": "print",
+            "Parameters": [
+                "Congratulations! the demo workflow is executed with expected results and no error!"
+            ],
+            "End": "True"
+        },
+        "Report Error in workflow": {
+            "MethodCall": "logging.error",
+            "Parameters": [
+                "Something is wrong in the workflow execution"
+            ],
+            "End": "True"
+        }
+    }
+}
