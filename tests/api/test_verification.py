@@ -266,10 +266,6 @@ class TestVerification(unittest.TestCase):
         df.add_parameter(name="tol_m_ea", value=50, inplace=True)
         df.add_parameter(name="tol_m_oa", value=50, inplace=True)
 
-        # Remove unecessary strings from headers
-        new_cols = [c.split(" [")[0] for c in df.data.columns]
-        df.data.columns = new_cols
-
         v_obj.configure(
             output_path="./tests/api",
             lib_items_path="./schema/library.json",

@@ -132,9 +132,10 @@ class Item:
 
         if not csv_path is None:
             csv = CSVReader(csv_path)
-            self.df = csv.getseries(list(self.idf_variables_dict.keys()))
         elif not df is None:
-            self.df = df
+            csv = CSVReader(csv_file=None)
+            csv.df = df
+        self.df = csv.getseries(list(self.idf_variables_dict.keys()))
 
         self.df = self.df.rename(columns=self.idf_variables_dict)
         self.timeserieslength = self.df.shape[0]
