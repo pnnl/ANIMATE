@@ -99,7 +99,7 @@ class TestVerification(unittest.TestCase):
             # Empty constructor
             v_obj = Verification()
             self.assertEqual(
-                "ERROR:root:A verification should be provided.",
+                "ERROR:root:A VerificationCase object should be provided to `verifications`.",
                 logobs.output[0],
             )
 
@@ -173,7 +173,7 @@ class TestVerification(unittest.TestCase):
                 plot_option="test",
             )
             self.assertEqual(
-                "ERROR:root:The plot_option argument should either be all-compact, all-expand, day-compact, or day-expand, not test.",
+                "ERROR:root:The plot_option argument should either be all-compact, all-expand, day-compact, day-expand, or None, not test.",
                 logobs.output[6],
             )
 

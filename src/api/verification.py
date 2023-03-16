@@ -15,7 +15,9 @@ class Verification:
     def __init__(self, verifications: VerificationCase = None):
         self.cases = None
         if verifications is None:
-            logging.error("A verification should be provided.")
+            logging.error(
+                "A VerificationCase object should be provided to `verifications`."
+            )
         else:
             if isinstance(verifications, VerificationCase):
                 if len(verifications.case_suite) == 0:
@@ -43,10 +45,10 @@ class Verification:
         Args:
             output_path (str): Verification results output path.
             lib_items_path (str): Verification library path (include name of the file with extension).
-            plot_option (str): Type of plots to include. It should either be all-compact, all-expand, day-compact, or day-expand. It can also be None, which will plot all types.
+            plot_option (str, optional): Type of plots to include. It should either be all-compact, all-expand, day-compact, or day-expand. It can also be None, which will plot all types. Default to None.
             fig_size (tuple): Tuple of integers (length, height) describing the size of the figure to plot.
-            num_threads (int): Number of threads to run verifications in parallel. Defaults to 1.
-            preprocessed_data (pd.DataFrame, optional): Pre-processed data stored in the data frame. Optional.
+            num_threads (int, optional): Number of threads to run verifications in parallel. Defaults to 1.
+            preprocessed_data (pd.DataFrame, optional): Pre-processed data stored in the data frame. Default to None.
         """
         if self.cases is None or len(self.cases) == 0:
             logging.error(
@@ -83,8 +85,9 @@ class Verification:
             "day-expand",
         ]:
             logging.error(
-                f"The plot_option argument should either be all-compact, all-expand, day-compact, or day-expand, not {plot_option}."
+                f"The plot_option argument should either be all-compact, all-expand, day-compact, day-expand, or None, not {plot_option}."
             )
+            return None
 
         if isinstance(fig_size, tuple):
             if not (
@@ -105,6 +108,7 @@ class Verification:
             not isinstance(num_threads, int)
         ):
             logging.error("The number of threads should be an integer greater than 1.")
+            return None
 
         if (
             not isinstance(preprocessed_data, pd.DataFrame)
@@ -113,6 +117,7 @@ class Verification:
             logging.error(
                 f"A Pandas DataFrame should be passed as the `preprocessed_data` argument, not a {type(preprocessed_data)}."
             )
+            return None
 
         self.output_path = output_path
         self.lib_items_path = lib_items_path
