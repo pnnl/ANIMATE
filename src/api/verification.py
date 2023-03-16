@@ -36,7 +36,7 @@ class Verification:
         output_path: str = None,
         lib_items_path: str = None,
         plot_option: str = None,
-        fig_size: tuple = None,
+        fig_size: tuple = (6.4, 4.8),
         num_threads: int = 1,
         preprocessed_data: pd.DataFrame = None,
     ) -> None:
@@ -46,7 +46,7 @@ class Verification:
             output_path (str): Verification results output path.
             lib_items_path (str): Verification library path (include name of the file with extension).
             plot_option (str, optional): Type of plots to include. It should either be all-compact, all-expand, day-compact, or day-expand. It can also be None, which will plot all types. Default to None.
-            fig_size (tuple): Tuple of integers (length, height) describing the size of the figure to plot.
+            fig_size (tuple, optional): Tuple of integers (length, height) describing the size of the figure to plot. Defaults to (6.4, 4.8).
             num_threads (int, optional): Number of threads to run verifications in parallel. Defaults to 1.
             preprocessed_data (pd.DataFrame, optional): Pre-processed data stored in the data frame. Default to None.
         """
@@ -98,7 +98,7 @@ class Verification:
                     "The fig_size argument should be a tuple of integers or floats."
                 )
                 return None
-        elif not fig_size is None:
+        else:
             logging.error(
                 f"The fig_size argument should be a tuple of integers or floats. Here is the variable type that was passed {type(fig_size)}."
             )
