@@ -290,7 +290,7 @@ class VerificationCase:
                 # "idf": str,
                 # "idd": str,
                 # "weather": str,
-                "output": str, # all other are optional when data is already there.
+                "output": str,  # all other are optional when data is already there.
                 # "ep_path": str,
             },
             "expected_result": str,
@@ -303,7 +303,7 @@ class VerificationCase:
             "verification_class": str,
         }
         return _validate_case_structure_helper(case_schema, case, verbose)
-    
+
     def validate(self):
         """Validate all verification cases in self.case_suite with validation logic in VerificationCase.validate_verification_case_structure()"""
         for k, v in self.case_suite.items():

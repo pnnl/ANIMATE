@@ -105,7 +105,7 @@
             "Type": "MethodCall",
             "MethodCall": "Payloads['verification_obj'].configure",
             "Parameters": {
-                "output_path": "./",
+                "output_path": "./demo/api_demo",
                 "lib_items_path": "./schema/library.json",
                 "plot_option": "+x None",
                 "fig_size": "+x (6, 5)",
@@ -126,7 +126,7 @@
             "Type": "MethodCall",
             "MethodCall": "glob.glob",
             "Parameters": [
-                "./*.md"
+                "./demo/api_demo/*.md"
             ],
             "Payloads": {
                 "length_of_md": "len($)"
