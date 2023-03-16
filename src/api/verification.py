@@ -155,6 +155,7 @@ class Verification:
             preprocessed_data=self.preprocessed_data,
         )
 
+        # TODO: JXL to make this compatible with reporting API, save md json instead of md files directly.
         # Output case summary
         cases_file = f"{self.output_path}/{case['no']}.md"
         with open(cases_file, "w") as fw:
