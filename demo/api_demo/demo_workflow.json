@@ -119,6 +119,7 @@
             "Type": "MethodCall",
             "MethodCall": "Payloads['verification_obj'].run",
             "Parameters": {},
+            "Payloads": {"verification_return": "$"},
             "Next": "check results"
         },
         "check results": {
@@ -136,7 +137,7 @@
             "Type": "Choice",
             "Choices": [
                 {
-                    "Value": "len(Payloads['length_of_md'])",
+                    "Value": "Payloads['length_of_md']",
                     "Equals": "3",
                     "Next": "Success"
                 }

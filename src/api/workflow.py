@@ -465,12 +465,13 @@ class MethodCall:
 
     def get_payloads(self):
         Payloads = self.payloads
-        for k, v in self.state_dict["Payloads"].items():
-            if isinstance(v, str):
-                # only eval if v is string
-                self.payloads[k] = eval(v.replace("$", "self.dollar"))
-            else:
-                self.payloads[k] = v
+        if "Payloads" in self.state_dict:
+            for k, v in self.state_dict["Payloads"].items():
+                if isinstance(v, str):
+                    # only eval if v is string
+                    self.payloads[k] = eval(v.replace("$", "self.dollar"))
+                else:
+                    self.payloads[k] = v
         return self.payloads
 
     def embedded_call(self, embedded_case_dict):

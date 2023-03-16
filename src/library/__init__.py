@@ -10,6 +10,7 @@ from .heat_rejection_fan_var_flow_controls_cells import *
 from .vav_static_pressure_sensor_location import *
 from .ventilation_fan_controls import *
 from .wlhp_loop_heat_rejection_controls import *
+from .supply_air_temp_reset import *
 
 __all__ = [
     "AutomaticOADamperControl",
@@ -27,4 +28,5 @@ __all__ = [
     "VAVStaticPressureSensorLocation",
     "VentilationFanControl",
     "WLHPLoopHeatRejectionControl",
+    "SupplyAirTempReset",
 ]
