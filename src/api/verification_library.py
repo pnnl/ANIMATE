@@ -124,7 +124,7 @@ class VerificationLibrary:
         # check if `datapoints` is an empty list
         if not datapoints:
             logging.error(
-                f"datapoints' is an empty list. Please provide with datapoint names."
+                f"`datapoints' is an empty list. Please provide with datapoint names."
             )
             return None
 
