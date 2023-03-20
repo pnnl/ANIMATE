@@ -121,6 +121,13 @@ class VerificationLibrary:
             )
             return None
 
+        # check if `datapoints` is an empty list
+        if not datapoints:
+            logging.error(
+                f"datapoints' is an empty list. Please provide with datapoint names."
+            )
+            return None
+
         req_datapionts_by_lib_items = {}
         for datapoint in datapoints:
             req_datapionts_by_lib_items[datapoint] = {

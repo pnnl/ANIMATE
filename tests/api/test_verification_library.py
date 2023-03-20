@@ -86,6 +86,13 @@ class TestVerificationLibrary(unittest.TestCase):
                 logobs.output[0],
             )
 
+        with self.assertLogs() as logobs:
+            vl_obj.get_required_datapoints_by_library_items([])  # empty datapoints list
+            self.assertEqual(
+                f"ERROR:root:datapoints' is an empty list. Please provide with datapoint names.",
+                logobs.output[0],
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
