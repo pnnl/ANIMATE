@@ -120,6 +120,13 @@ class VerificationLibrary:
             )
             return None
 
+        # check if `datapoints` is an empty list
+        if not datapoints:
+            logging.error(
+                f"datapoints' is an empty list. Please provide with datapoint names."
+            )
+            return None
+
         # check the type of elements in `datapoints`
         for datapoint in datapoints:
             if not isinstance(datapoint, str):
