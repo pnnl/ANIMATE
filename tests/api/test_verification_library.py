@@ -55,11 +55,13 @@ class TestVerificationLibrary(unittest.TestCase):
 
     def test_validate_library(self):
         vl_obj = VerificationLibrary(lib_path)
+
+        # test if the returned dataframe (validity_info) is in the correct format
         validity_info = vl_obj.validate_library(
             ["AutomaticShutdown", "VAVStaticPressureSensorLocation"]
         )
         self.assertEqual(
-            list(validity_info.columns),
+            list(validity_info["AutomaticShutdown"].keys()),
             [
                 "library_item_id",
                 "description_brief",
@@ -73,6 +75,15 @@ class TestVerificationLibrary(unittest.TestCase):
             ],
         )
 
+        # test if the datapoints in the library and class implementation are identical
+        vl_obj.validate_library(["AutomaticShutdown"])
+        self.assertEqual(
+            list(
+                vl_obj.lib_items["AutomaticShutdown"]["description_datapoints"].keys()
+            ),
+            ["hvac_set"],
+        )
+
     def test_validate_library_invalid(self):
         vl_obj = VerificationLibrary(lib_path)
 
@@ -83,6 +94,14 @@ class TestVerificationLibrary(unittest.TestCase):
             )
             self.assertEqual(
                 "ERROR:root:items needs to be list. It cannot be a <class 'set'>.",
+                logobs.output[0],
+            )
+
+        # test when an empty `items` is provided.
+        with self.assertLogs() as logobs:
+            vl_obj.validate_library([])
+            self.assertEqual(
+                "ERROR:root:items is an empty list. Please provide with verification item names.",
                 logobs.output[0],
             )
 

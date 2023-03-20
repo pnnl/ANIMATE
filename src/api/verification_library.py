@@ -1,10 +1,12 @@
-import sys, logging, glob, json, inspect
+import glob
+import inspect
+import json
+import logging
+import sys
 from typing import Dict, List
-import pandas as pd
 
 sys.path.append("..")
 from library import *
-
 
 library_schema = {
     "library_item_id": (int, str, float),
@@ -112,14 +114,14 @@ class VerificationLibrary:
 
         return item_dict
 
-    def validate_library(self, items: List[str] = []) -> pd.DataFrame:
+    def validate_library(self, items: List[str] = None) -> Dict:
         """Check the validity of library items definition. This validity check includes checking the completeness of json specification (against library json schema) and Python verification class definition (against library class interface) and the match between the json and python implementation.
 
         Args:
-            items: list of str, default []. Library items to validate. By default, summarize all library items loaded at instantiation.
+            items: list of str, default []. Library items to validate. `items` must be filled with valid verification item(s). If not, an error occurs.
 
         Returns:
-            pandas.DataFrame that contains validity information of library items.
+            Dict that contains validity information of library items.
         """
 
         # check `items` type
@@ -127,21 +129,16 @@ class VerificationLibrary:
             logging.error(f"items needs to be list. It cannot be a {type(items)}.")
             return None
 
-        validity_info = pd.DataFrame(
-            columns=[
-                "library_item_id",
-                "description_brief",
-                "description_detail",
-                "description_index",
-                "description_datapoints",
-                "description_assertions",
-                "description_verification_type",
-                "assertions_type",
-                "datapoints_match",
-            ]
-        )
+        # check if `items` is an empty list
+        if not items:
+            logging.error(
+                f"items is an empty list. Please provide with verification item names."
+            )
+            return None
+
+        validity_info = {}
         for item in items:
-            validity_info_data = []
+            validity_info[item] = {}
 
             # verify the library.json file
             for lib_key in library_schema.keys():
@@ -165,11 +162,13 @@ class VerificationLibrary:
                         return None
 
                     else:
-                        validity_info_data.append(type(self.lib_items[item][lib_key]))
+                        validity_info[item][lib_key] = type(
+                            self.lib_items[item][lib_key]
+                        )
 
                 except KeyError:
-                    # # if `description_detail` key doesn't exist, output a warning.
-                    validity_info_data.append(None)
+                    # if `description_detail` key doesn't exist, output a warning.
+                    validity_info[item][lib_key] = None
                     logging.warning(f"{lib_key} doesn't exist.")
 
             # check if datapoints in library file and class are identical
@@ -182,8 +181,6 @@ class VerificationLibrary:
                 )
                 return None
             else:
-                validity_info_data.append(True)
-
-            validity_info.loc[item] = validity_info_data
+                validity_info[item]["datapoints_match"] = True
 
         return validity_info
