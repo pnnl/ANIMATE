@@ -1,5 +1,5 @@
 """
-This file contains the runner of verification cases to be called by the user with the spply of an item and plotting option
+This file contains the runner of verification cases to be called by the user with the supply of an item and plotting option
 """
 # %% Import packages
 from workflowsteps import *
@@ -8,7 +8,14 @@ from datetimeep import DateTimeEP
 import sys, os
 
 
-def run_libcase(item_dict, plot_option="all-compact"):
+def run_libcase(
+    item_dict,
+    plot_option="all-compact",
+    output_path="./",
+    fig_size=(6.4, 4.8),
+    produce_outputs=False,
+    preprocessed_data=None,
+):
     """Library case runner
 
     Args:
@@ -29,18 +36,15 @@ def run_libcase(item_dict, plot_option="all-compact"):
         need_injection = False
     run_sim = item.item["run_simulation"]
 
-    if need_injection and run_sim:
+    if need_injection:
         original_idf_path = item.item["simulation_IO"]["idf"].strip()
         idd_path = item.item["simulation_IO"]["idd"].strip()
-        # run_path = f"{original_idf_path.split('.idf')[0]}"
         if ".idf" in original_idf_path.lower():
             run_path = f"{original_idf_path[:-4]}"
         elif ".epjson" in original_idf_path.lower():
             run_path = f"{original_idf_path[:-7]}"
         else:
             run_path = original_idf_path
-
-    if need_injection:
         instrumented_idf_path = f"{original_idf_path.split('.idf')[0]}_injected_VerificationNo{item_dict['no']}.idf"
         run_path = f"{run_path}_injected_VerificationNo{item_dict['no']}"
         inject_idf(
@@ -63,9 +67,13 @@ def run_libcase(item_dict, plot_option="all-compact"):
             )
         else:
             run_simulation(idfpath=run_idf_path, weatherpath=weather_path)
-        print("simulation done")
+        print("Simulation done")
 
-    if run_sim:
+    if not preprocessed_data is None:
+        df = item.read_points_values(
+            idf_path=run_idf_path, idd_path=idd_path, df=preprocessed_data
+        )
+    elif run_sim:
         df = DateTimeEP(
             item.read_points_values(
                 csv_path=f"{run_path}/eplusout.csv",
@@ -77,7 +85,7 @@ def run_libcase(item_dict, plot_option="all-compact"):
     else:
         df = DateTimeEP(
             item.read_points_values(
-                csv_path=f"../resources/{item.item['simulation_IO']['output']}"
+                csv_path=f"{instrumented_idf_path.replace('.idf', '')}/{item.item['simulation_IO']['output']}"
             )
         ).transform()
     verification_class = item.item["verification_class"]
@@ -88,8 +96,14 @@ def run_libcase(item_dict, plot_option="all-compact"):
         else None
     )
     verification_obj = cls(df, parameters, f"{run_path}")
-    outcome = verification_obj.get_checks
-    verification_obj.plot(plot_option)
+    if produce_outputs:
+        md_content = verification_obj.add_md(
+            None, output_path, "./", item_dict, plot_option, fig_size
+        )
+        return {int(item_dict["no"]): md_content}
+    else:
+        outcome = verification_obj.get_checks
+        verification_obj.plot(plot_option)
 
 
 def main():
