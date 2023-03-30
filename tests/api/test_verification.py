@@ -252,7 +252,7 @@ class TestVerification(unittest.TestCase):
             num_threads=1,
         )
         v_obj.run_single_verification(case=v_obj.cases[list(v_obj.cases.keys())[0]])
-        assert os.path.isfile("./tests/api/1.md")
+        assert os.path.isfile("./tests/api/1_md.json")
 
     def test_run_single_verification_wit_preprocessed_data(self):
         # Load verification cases and built verification
@@ -275,7 +275,7 @@ class TestVerification(unittest.TestCase):
             preprocessed_data=df.data,
         )
         v_obj.run_single_verification(case=v_obj.cases[list(v_obj.cases.keys())[0]])
-        assert os.path.isfile("./tests/api/1.md")
+        assert os.path.isfile("./tests/api/1_md.json")
 
     def test_run(self):
         # Multiple verification in parallel
@@ -289,5 +289,5 @@ class TestVerification(unittest.TestCase):
             num_threads=2,
         )
         v_obj.run()
-        assert os.path.isfile("./tests/api/1.md")
-        assert os.path.isfile("./tests/api/2.md")
+        assert os.path.isfile("./tests/api/1_md.json")
+        assert os.path.isfile("./tests/api/2_md.json")

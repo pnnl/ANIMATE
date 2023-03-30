@@ -155,9 +155,9 @@ class Verification:
         )
 
         # Output case summary
-        cases_file = f"{self.output_path}/{case['no']}.md"
+        cases_file = f"{self.output_path}/{case['no']}_md.json"
         with open(cases_file, "w") as fw:
-            fw.write(results[list(results.keys())[0]]["md_content"])
+            json.dump(results, fw)
 
     def run(self) -> None:
         """Run verification and generate a markdown report of the results."""
