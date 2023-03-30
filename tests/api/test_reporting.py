@@ -24,7 +24,7 @@ class TestReporting(unittest.TestCase):
         with self.assertLogs() as logobs:
             Reporting(verification_json, [result_md_path], report_format)
             self.assertEqual(
-                "ERROR:root:The type of the `result_md_path` arg needs to be either str or List. It cannot be <class 'list'>.",
+                "ERROR:root:The type of the `result_md_path` arg needs to be a str. It cannot be <class 'list'>.",
                 logobs.output[0],
             )
 
@@ -32,7 +32,7 @@ class TestReporting(unittest.TestCase):
         with self.assertLogs() as logobs:
             Reporting(verification_json, result_md_path, [report_format])
             self.assertEqual(
-                "ERROR:root:The type of the `report_format` arg needs to be either str or List. It cannot be <class 'list'>.",
+                "ERROR:root:The type of the `report_format` arg needs to be a str. It cannot be <class 'list'>.",
                 logobs.output[0],
             )
 

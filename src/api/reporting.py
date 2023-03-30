@@ -2,6 +2,7 @@ import glob
 import json
 import logging
 import sys
+import os
 from typing import List, Union
 
 sys.path.append("..")
@@ -17,7 +18,7 @@ class Reporting:
         """
         Args:
             verification_json (str or List): Path to the result json files after verifications to be loaded for reporting. The string type is used when one JSON file is used or all the JSON files (e.g., *_md.json) are used. The list type is used when multiple JSON files (e.g., [file1.json, file2.json]) are used.
-            result_md_path (str): Path to the directory where result file will be saved.
+            result_md_path (str): Path to the report summary markdown to be saved. Detailed markdown reports of verification cases will be created in the same directory.
             report_format (str): File format to be output. For now, only `markdown` format  is available. More formats (e.g., html, pdf, csv, etc.) will be added in future releases.
         """
 
@@ -39,13 +40,13 @@ class Reporting:
 
         if not isinstance(self.result_md_path, str):
             logging.error(
-                f"The type of the `result_md_path` arg needs to be either str or List. It cannot be {type(self.result_md_path)}."
+                f"The type of the `result_md_path` arg needs to be a str. It cannot be {type(self.result_md_path)}."
             )
             return None
 
         if not isinstance(self.report_format, str):
             logging.error(
-                f"The type of the `report_format` arg needs to be either str or List. It cannot be {type(self.report_format)}."
+                f"The type of the `report_format` arg needs to be a str. It cannot be {type(self.report_format)}."
             )
             return None
 
@@ -55,11 +56,12 @@ class Reporting:
             )
             return None
 
+        self.result_md_dir = os.path.dirname(self.result_md_path)
         self.md_dict_dump = {}
         self.verification_item_case_id_mapping = {}
 
         # TODO: refactor below to make mapping creation more efficient
-        for json_file in glob.glob(verification_json):
+        for json_file in glob.glob(self.verification_json):
             with open(json_file) as fr:
                 md_dict = json.load(fr)
             md_dict_intkey = {int(k): v for k, v in md_dict.items()}
@@ -141,5 +143,5 @@ class Reporting:
 
         md_section = case_dict["md_content"]
         md_section += "[Back](results.md)"
-        with open(f"./results/case-{caseid}.md", "w") as casew:
+        with open(f"{self.result_md_dir}/case-{caseid}.md", "w") as casew:
             casew.write(md_section)
