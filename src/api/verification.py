@@ -127,7 +127,7 @@ class Verification:
         self.preprocessed_data = preprocessed_data
 
     def run_single_verification(self, case: dict = None) -> None:
-        """Run a single verification and generate a markdown report of the results
+        """Run a single verification and generate a json file containing markdown report string and other results info.
 
         Args:
             case (dict): Verification case dictionary.
@@ -160,7 +160,7 @@ class Verification:
             json.dump(results, fw)
 
     def run(self) -> None:
-        """Run verification and generate a markdown report of the results."""
+        """Run all verification cases and generate json files containing results of all cases"""
         # Input validation
         if self.output_path is None:
             self.output_path = ""
