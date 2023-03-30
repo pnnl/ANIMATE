@@ -2,6 +2,7 @@
 
 import subprocess
 import shutil
+from pathlib import Path
 
 
 class EPRunner:
@@ -49,6 +50,15 @@ class EPRunner:
             precess run object, which contains all stdout/stderr, will be saved by the save_log method
 
         """
+
+        # copy weather file to the simulation output folder to allow simulations in parallel
+        Path(self.output_path).mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(
+            self.weather_path,
+            "".join(self.output_path, "/", self.weather_path.split("/")[-1]),
+        )  # weather_path should perhaps be renamed
+        self.weather_path = self.output_path + "/" + self.weather_path.split("/")[-1]
+
         command = [
             self.ep_path,
             "--weather",

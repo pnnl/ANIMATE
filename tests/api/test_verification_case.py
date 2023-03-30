@@ -163,7 +163,6 @@ class TestVerificaqtionCase(unittest.TestCase):
         json_case_path = "./tests/api/data/verification_case_unit_test.json"
         vc = VerificationCase(cases=[self.case], json_case_path=None)
         list_of_hash = vc.load_verification_cases_from_json(json_case_path)
-        print(list_of_hash)
         assert len(list_of_hash) == 1
         assert len(vc.case_suite) == 2
 
