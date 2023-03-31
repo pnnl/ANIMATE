@@ -32,7 +32,9 @@ class TestVerificaqtionCase(unittest.TestCase):
         "verification_class": "SupplyAirTempReset",
     }
 
-    json_case_path = "./tests/api/data/verification_case_unit_test.json"
+    json_case_path = (
+        "./tests/api/data/verification_case_unit_test/verification_case_unit_test.json"
+    )
 
     example_base_case = {
         "no": 1,
@@ -146,7 +148,7 @@ class TestVerificaqtionCase(unittest.TestCase):
 
     def test_constructor_dir_path(self):
         # test whether the json files in the given directory `json_case_path` are read correctly
-        json_case_path = "./tests/api/data/"
+        json_case_path = "./tests/api/data/verification_case_unit_test/"
         vc = VerificationCase(cases=None, json_case_path=json_case_path)
         assert len(vc.case_suite) == 4
 
@@ -160,7 +162,7 @@ class TestVerificaqtionCase(unittest.TestCase):
             )
 
     def test_load_verification_cases_from_json_with_duplicate_cases(self):
-        json_case_path = "./tests/api/data/verification_case_unit_test.json"
+        json_case_path = "./tests/api/data/verification_case_unit_test/verification_case_unit_test.json"
         vc = VerificationCase(cases=[self.case], json_case_path=None)
         list_of_hash = vc.load_verification_cases_from_json(json_case_path)
         assert len(list_of_hash) == 1
@@ -171,7 +173,7 @@ class TestVerificaqtionCase(unittest.TestCase):
         with self.assertLogs() as logobs:
             vc = VerificationCase(
                 cases=None,
-                json_case_path="./tests/api/data/verification_case_unit_test.json",
+                json_case_path="./tests/api/data/verification_case_unit_test/verification_case_unit_test.json",
             )
             vc.save_case_suite_to_json(["./not_existing_dir/testing.json"])
             self.assertEqual(
@@ -185,7 +187,7 @@ class TestVerificaqtionCase(unittest.TestCase):
         with self.assertLogs() as logobs:
             vc = VerificationCase(
                 cases=None,
-                json_case_path="./tests/api/data/verification_case_unit_test.json",
+                json_case_path="./tests/api/data/verification_case_unit_test/verification_case_unit_test.json",
             )
             vc.save_case_suite_to_json(
                 json_path="./testing.json", case_ids="this is wrong case_ids type"
@@ -201,7 +203,7 @@ class TestVerificaqtionCase(unittest.TestCase):
         saving_file_path = "./tests/api/result/from_test_save_case_suite_to_json_check_file_saving.json"
         vc = VerificationCase(
             cases=None,
-            json_case_path="./tests/api/data/verification_case_unit_test.json",
+            json_case_path="./tests/api/data/verification_case_unit_test/verification_case_unit_test.json",
         )
         vc.save_case_suite_to_json(saving_file_path)
         assert os.path.isfile(saving_file_path)
@@ -212,7 +214,7 @@ class TestVerificaqtionCase(unittest.TestCase):
         cases = [{"fake_case_key": f"fake_case_value_{i}"} for i in range(3)]
         vc = VerificationCase(
             cases=cases,
-            json_case_path="./tests/api/data/verification_case_unit_test.json",
+            json_case_path="./tests/api/data/verification_case_unit_test/verification_case_unit_test.json",
         )
         vc.save_case_suite_to_json(saving_file_path)
 
@@ -229,7 +231,7 @@ class TestVerificaqtionCase(unittest.TestCase):
         with self.assertLogs() as logobs:
             vc = VerificationCase(
                 cases=cases,
-                json_case_path="./tests/api/data/verification_case_unit_test.json",
+                json_case_path="./tests/api/data/verification_case_unit_test/verification_case_unit_test.json",
             )
             suite_keys = list(vc.case_suite.keys())
             partial_good_keys = suite_keys[:2] + ["wrong-key-1", 2]
