@@ -9,3 +9,7 @@ class TestWorkflow(unittest.TestCase):
     def test_run_workflow(self):
         workflow = Workflow(workflow="./demo/api_demo/demo_workflow.json")
         workflow.run_workflow(verbose=True)
+
+
+if __name__ == "__main__":
+    unittest.main()

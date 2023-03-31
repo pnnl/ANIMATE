@@ -306,15 +306,6 @@ class Workflow:
         return workflow_engine
 
     @staticmethod
-    def get_workflow_template() -> dict:
-        """Provide a `Dict` template of workflow definition with descriptions of fields to be filled
-
-        Returns:
-            dict: workflow definition template
-        """
-        pass
-
-    @staticmethod
     def list_existing_workflows(workflow_dir: str = None) -> Union[dict, None]:
         """List existing workflows (defined as json files) under a specific directory path.
 
