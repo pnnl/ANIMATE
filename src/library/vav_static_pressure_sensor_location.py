@@ -3,10 +3,10 @@ from datetime import date
 
 
 class VAVStaticPressureSensorLocation(RuleCheckBase):
-    points = ["p_fan_setpoint", "tol"]
+    points = ["p_fan_set", "tol_P_fan"]
 
     def verify(self):
-        self.result = self.df["p_fan_setpoint"] < 298.608 + self.df["tol"]
+        self.result = self.df["p_fan_set"] < 298.608 + self.df["tol_P_fan"]
 
     def calculate_plot_day(self):
         """over write method to select day for day plot"""

@@ -24,13 +24,13 @@
             "Table 6.5.1.1.3 in 90.1-2016"
         ],
         "description_datapoints": {
-            "oa_db": "OA dry bulb temperature",
+            "T_oa_db": "OA dry bulb temperature",
             "oa_threshold": "OA dry bulb threshold",
             "oa_min_flow": "OA minimum airflow setpoint",
             "oa_flow": "OA airflow"
         },
         "description_assertions": [
-            "(oa_flow > oa_min_flow) AND (oa_db > oa_threshold)"
+            "(oa_flow > oa_min_flow) AND (T_oa_db > oa_threshold)"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "fail"
@@ -43,13 +43,13 @@
             "Table 6.5.1.1.3 in 90.1-2016"
         ],
         "description_datapoints": {
-            "oa_db": "OA dry bulb temperature",
+            "T_oa_db": "OA dry bulb temperature",
             "ret_a_temp": "Retuan air temperature",
             "oa_min_flow": "OA minimum airflow setpoint",
             "oa_flow": "OA airflow"
         },
         "description_assertions": [
-            "(oa_flow > oa_min_flow) AND (ret_a_temp < oa_db)"
+            "(oa_flow > oa_min_flow) AND (ret_a_temp < T_oa_db)"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "fail"
@@ -62,7 +62,7 @@
             "Table 6.5.1.1.3 in 90.1-2016"
         ],
         "description_datapoints": {
-            "oa_db": "OA dry bulb temperature",
+            "T_oa_db": "OA dry bulb temperature",
             "oa_threshold": "OA dry bulb threshold",
             "oa_min_flow": "OA minimum airflow setpoint",
             "oa_flow": "OA airflow",
@@ -70,7 +70,7 @@
             "oa_enth_threshold": "OA enthalpy threshold"
         },
         "description_assertions": [
-            "(oa_flow > oa_min_flow) AND ((oa_db > oa_threshold) OR (oa_enth > oa_enth_threshold))"
+            "(oa_flow > oa_min_flow) AND ((T_oa_db > oa_threshold) OR (oa_enth > oa_enth_threshold))"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "fail"
@@ -83,7 +83,7 @@
             "Table 6.5.1.1.3 in 90.1-2016"
         ],
         "description_datapoints": {
-            "oa_db": "OA dry bulb temperature",
+            "T_oa_db": "OA dry bulb temperature",
             "oa_threshold": "OA dry bulb threshold",
             "oa_min_flow": "OA minimum airflow setpoint",
             "oa_flow": "OA airflow",
@@ -91,7 +91,7 @@
             "ret_a_enth": "Return air enthalpy"
         },
         "description_assertions": [
-            "oa_flow > oa_min_flow) AND ((ret_a_enth < oa_enth) OR (oa_db > oa_threshold))"
+            "oa_flow > oa_min_flow) AND ((ret_a_enth < oa_enth) OR (T_oa_db > oa_threshold))"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "fail"
@@ -122,12 +122,12 @@
             "Section 6.5.6.1 in 90.1-2016"
         ],
         "description_datapoints": {
-            "Eh_oa": "OA enthalpy",
-            "Eh_ra": "Return air enthalpy",
-            "Eh_oa2": "OA enthalpy after ERV"
+            "oa_enth": "OA enthalpy",
+            "ret_enth": "Return air enthalpy",
+            "oa_enth_ERV": "OA enthalpy after ERV"
         },
         "description_assertions": [
-            "(Eh_oa_2 - Eh_oa)/(Eh_ra - Eh_oa) > = 50%  happens at least once in winter design day"
+            "(oa_enth_ERV - oa_enth)/(ret_enth - oa_enth) > = 50%  happens at least once in winter design day"
         ],
         "description_verification_type": "procedure-based",
         "assertions_type": "pass"
@@ -140,11 +140,11 @@
             "Section 6.4.3.1.2 in 90.1-2016"
         ],
         "description_datapoints": {
-            "T_z_set_cool": "Zone cooling temperature setpoint",
-            "T_z_set_heat": "Zone heating temperature setpoint"
+            "T_set_cool": "Zone cooling temperature setpoint",
+            "T_set_heat": "Zone heating temperature setpoint"
         },
         "description_assertions": [
-            "T_z_set_cool - T_z_set_heat > 5F (2.77C)"
+            "T_set_cool - T_set_heat > 5F (2.77C)"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
@@ -162,11 +162,11 @@
             "T_oa_min": "OA dry-bulb lower threshold",
             "T_hw": "Hot water temp observed from the system node",
             "m_hw": "Hot water flow rate",
-            "T_hw_max_st": "Hot water maximum temp setpoint",
-            "T_hw_min_st": "Hot water minimum temp setpoint"
+            "T_hw_max_set": "Hot water maximum temp setpoint",
+            "T_hw_min_set": "Hot water minimum temp setpoint"
         },
         "description_assertions": [
-            "When m_hw > 0, T_hw <= T_hw_max_st and T_hw >= T_hw_min_st; When m_hw < 0, always pass"
+            "When m_hw > 0, T_hw <= T_hw_max_set and T_hw >= T_hw_min_set; When m_hw < 0, always pass"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
@@ -184,11 +184,11 @@
             "T_oa_min": "OA dry-bulb lower threshold",
             "T_chw": "Chilled water temp observed from the system node",
             "m_chw": "Chilled water flow rate",
-            "T_chw_max_st": "Chilled water maximum temp setpoint",
-            "T_chw_min_st": "Chilled water minimum temp setpoint"
+            "T_chw_max_set": "Chilled water maximum temp setpoint",
+            "T_chw_min_set": "Chilled water minimum temp setpoint"
         },
         "description_assertions": [
-            "When m_chw > 0, T_chw <= T_chw_max_st and T_chw >= T_chw_min_st; When m_chw <= 0 , always pass"
+            "When m_chw > 0, T_chw <= T_chw_max_set and T_chw >= T_chw_min_set; When m_chw <= 0 , always pass"
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
@@ -343,10 +343,10 @@
         "description_datapoints": {
             "ct_op_cells": "Number of operating cooling tower cells",
             "ct_cells": "Number of cooling tower cells",
-            "m": "Cooling tower mass flow rate",
-            "m_des": "Cooling tower design mass flow rate",
+            "ct_m": "Cooling tower mass flow rate",
+            "ct_m_des": "Cooling tower design mass flow rate",
             "min_flow_frac_per_cell": "Minimum flow fraction per cooling tower cell",
-            "P_fan_ct": "Cooling tower fan power"
+            "ct_P_fan": "Cooling tower fan power"
         },
         "description_assertions": [
             "if the number of operating cooling tower cells is equal to the maximum number of cooling tower cells then pass else fail"
@@ -376,8 +376,8 @@
             "Section 6.5.3.2.2 in 90.1-2016"
         ],
         "description_datapoints": {
-            "p_fan_setpoint": "Static pressure setpoint",
-            "tol": "Tolerance for VAV box static pressure sensor"
+            "p_fan_set": "Static pressure setpoint",
+            "tol_P_fan": "Tolerance for VAV box static pressure sensor"
         },
         "description_assertions": [
             "if static pressure setpoint is no greater than 1.2 in of water (298.608 Pa) then pass else fail"
@@ -462,10 +462,10 @@
             "Section 6.5.5.2.1 in 90.1-2016"
         ],
         "description_datapoints": {
-            "P_ct_fan": "Cooling Tower Fan Power",
-            "P_ct_fan_dsgn": "Cooling Tower Design Fan Power",
-            "m_ct_fan": "Cooling Tower Air Flow",
-            "m_ct_fan_dsgn": "Cooling Tower Design Air Flow"
+            "ct_P_fan": "Cooling Tower Fan Power",
+            "ct_P_fan_dsgn": "Cooling Tower Design Fan Power",
+            "ct_m_fan_ratio": "Cooling Tower Air Flow Rate Ratio",
+            "ct_m_fan_dsgn": "Cooling Tower Design Air Flow"
         },
         "description_assertions": [
             "Verify that at 5% flow, the cooling tower fan power is 30% of the design value. Since simulation results might not include that exact point, we use a regression based approach to determining if the code requirement is met"
@@ -518,14 +518,14 @@
         ],
         "description_datapoints": {
             "damper_sch": "Damper Schdule",
-            "m_z_oa_fraction": "Air System Outdoor Air Flow Fraction",
+            "m_oa_fraction": "Air System Outdoor Air Flow Fraction",
             "O_sch": "Occupant schedule",
-            "m_z_oa_heat_design": "Design Heating Air Flow Rate",
-            "m_z_oa_cool_design": "Design Cooling Air Flow Rate",
+            "m_oa_heat_design": "Design Heating Air Flow Rate",
+            "m_oa_cool_design": "Design Cooling Air Flow Rate",
             "volume": "Zone Volume",
             "v_outdoor_per_zone": "Outdoor Air Flow per Zone Floor Area",
             "tol_occ": "Tolerence for occupant Schedule",
-            "tol_m": "Tolerance for Outdoor Airflow"
+            "tol_oa_flow": "Tolerance for Outdoor Airflow"
         },
         "description_assertions": [
             "Check the two different airflow control logics when the room is/isn't rented out"
