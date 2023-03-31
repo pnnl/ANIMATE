@@ -291,3 +291,7 @@ class TestVerification(unittest.TestCase):
         v_obj.run()
         assert os.path.isfile("./tests/api/1_md.json")
         assert os.path.isfile("./tests/api/2_md.json")
+
+
+if __name__ == "__main__":
+    unittest.main()

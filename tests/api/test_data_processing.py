@@ -701,3 +701,7 @@ class TestDataProcessing(unittest.TestCase):
                 )
                 == 7.24
             )
+
+
+if __name__ == "__main__":
+    unittest.main()

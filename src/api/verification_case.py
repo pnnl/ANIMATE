@@ -287,11 +287,7 @@ class VerificationCase:
             "no": int,
             "run_simulation": bool,
             "simulation_IO": {
-                "idf": str,
-                "idd": str,
-                "weather": str,
-                "output": str,
-                "ep_path": str,
+                "output": str,  # all other are optional when data is already there.
             },
             "expected_result": str,
             "datapoints_source": {
@@ -303,6 +299,13 @@ class VerificationCase:
             "verification_class": str,
         }
         return _validate_case_structure_helper(case_schema, case, verbose)
+
+    def validate(self):
+        """Validate all verification cases in self.case_suite with validation logic in VerificationCase.validate_verification_case_structure()"""
+        for k, v in self.case_suite.items():
+            if not self.validate_verification_case_structure(v):
+                return False
+        return True
 
     @staticmethod
     def save_verification_cases_to_json(

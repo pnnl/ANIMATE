@@ -718,7 +718,7 @@ self.df = Utilities_instance.add_DST(self.df, 2017)
 
 The workflow API define a complete workflow of running ANIMATE verification job(s). It is designed to be an orchestration tool that coordinates the use of other categories of APIs.
 
-`class VerificationLibrary`
+`class Workflow`
 
 - `static` `get_workflow_template()`
   - **Returns** a `Dict` template of workflow definition with descriptions of fields to be filled.

@@ -18,7 +18,7 @@ class Reporting:
         """
         Args:
             verification_json (str): Path to the result json files after verifications to be loaded for reporting. It can be one JSON file or wildcard for multiple JSON files (e.g., *_md.json).
-            result_md_path (str): Name of the report summary markdown to be saved. All md reports will be created in the same directory as the verification result json files.
+            result_md_name (str): Name of the report summary markdown to be saved. All md reports will be created in the same directory as the verification result json files.
             report_format (str): File format to be output. For now, only `markdown` format  is available. More formats (e.g., html, pdf, csv, etc.) will be added in future releases.
         """
 

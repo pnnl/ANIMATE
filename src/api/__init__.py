@@ -3,7 +3,7 @@ from .data_processing import *
 from .verification_case import *
 from .verification import *
 from .reporting import *
-
+from .workflow import *
 
 __all__ = [
     "VerificationLibrary",
@@ -11,4 +11,5 @@ __all__ = [
     "VerificationCase",
     "Verification",
     "Reporting",
+    "Workflow",
 ]

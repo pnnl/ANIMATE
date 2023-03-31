@@ -14,6 +14,12 @@ from libcases import *
 class Verification:
     def __init__(self, verifications: VerificationCase = None):
         self.cases = None
+        self.output_path = None
+        self.lib_items_path = None
+        self.plot_option = None
+        self.fig_size = None
+        self.num_threads = None
+
         if verifications is None:
             logging.error(
                 "A VerificationCase object should be provided to `verifications`."
@@ -154,6 +160,7 @@ class Verification:
             preprocessed_data=self.preprocessed_data,
         )
 
+        # TODO: JXL to make this compatible with reporting API, save md json instead of md files directly.
         # Output case summary
         cases_file = f"{self.output_path}/{case['no']}_md.json"
         with open(cases_file, "w") as fw:
@@ -171,5 +178,7 @@ class Verification:
             return None
 
         # Run verifications
-        with multiprocessing.Pool(self.num_threads) as c:
-            c.map(self.run_single_verification, self.cases.values())
+        # with multiprocessing.Pool(self.num_threads) as c:
+        #     c.map(self.run_single_verification, self.cases.values())
+        for case in self.cases.values():
+            self.run_single_verification(case)
