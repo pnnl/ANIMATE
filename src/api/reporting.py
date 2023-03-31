@@ -29,9 +29,7 @@ class Reporting:
         self.result_md_name = result_md_name
         self.report_format = report_format
 
-        if not (
-            isinstance(self.verification_json, str)
-        ):
+        if not (isinstance(self.verification_json, str)):
             logging.error(
                 f"The type of the `verification_json` arg needs to be a str. It cannot be {type(self.verification_json)}."
             )

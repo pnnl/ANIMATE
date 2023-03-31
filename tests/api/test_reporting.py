@@ -17,7 +17,7 @@ class TestReporting(unittest.TestCase):
         with self.assertLogs() as logobs:
             Reporting({verification_json}, result_md_name, report_format)
             self.assertEqual(
-                "ERROR:root:The type of the `verification_json` arg needs to be either str or List. It cannot be <class 'set'>.",
+                "ERROR:root:The type of the `verification_json` arg needs to be a str. It cannot be <class 'set'>.",
                 logobs.output[0],
             )
 
@@ -25,7 +25,7 @@ class TestReporting(unittest.TestCase):
         with self.assertLogs() as logobs:
             Reporting(verification_json, [result_md_name], report_format)
             self.assertEqual(
-                "ERROR:root:The type of the `result_md_path` arg needs to be a str. It cannot be <class 'list'>.",
+                "ERROR:root:The type of the `result_md_name` arg needs to be a str. It cannot be <class 'list'>.",
                 logobs.output[0],
             )
 
@@ -41,9 +41,7 @@ class TestReporting(unittest.TestCase):
         reporting_obj = Reporting(verification_json, result_md_name, report_format)
 
         # report only selective verification results
-        reporting_obj.report_multiple_cases(
-            item_names=["AutomaticOADamperControl"]
-        )
+        reporting_obj.report_multiple_cases(item_names=["AutomaticOADamperControl"])
         self.assertTrue(os.path.isfile(result_md_path))
         os.remove(result_md_path)
 
