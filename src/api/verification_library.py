@@ -1,5 +1,5 @@
 import sys, logging, glob, json, inspect
-from typing import Dict, List
+from typing import Dict, List, Union
 
 sys.path.append("..")
 from library import *
@@ -19,7 +19,7 @@ class VerificationLibrary:
         self.lib_items_python_path = {}
 
         # check argument
-        if lib_path == None:
+        if lib_path is None:
             logging.error(
                 "'lib_path' was not provided when instantiating the Verificationlibrary class object!"
             )
@@ -80,7 +80,7 @@ class VerificationLibrary:
 
         Returns:
             Dict: Library item information with four specific keys:
-                - `library_item_name`: unique str name of the library item
+                - `library_item_name`: unique str name of the library item.
                 - `library_json`: library item json definition in the library json file.
                 - `library_json_path`: path of the library json file that contains this library item.
                 - `library_python_path`: path of the python file that contains the python implementation of this library item.
@@ -100,6 +100,39 @@ class VerificationLibrary:
         }
 
         return item_dict
+
+    def get_library_items(self, items: List[str] = []) -> Union[List, None]:
+        """Get the json definition and meta information of a list of specific library items.
+
+        Args:
+            items:  list of str, default []. Library items to get. By default, get all library items loaded at instantiation.
+
+        Returns:
+            list of `Dict` with four specific keys:
+                - `library_item_name`: unique str name of the library item.
+                - `library_json`: library item json definition in the library json file.
+                - `library_json_path`: path of the library json file that contains this library item.
+                - `library_python_path`: path of the python file that contains the python implementation of this library item.
+        """
+
+        # check `items` arg type
+        if not isinstance(items, List):
+            logging.error(f"items' type must be List. It can't be {type(items)}.")
+            return None
+
+        # cause an error when `items` arg is empty
+        if not items:
+            logging.error(
+                f"items' arg is empty. Please provide with verification item(s)."
+            )
+            return None
+
+        # get each lib item's summary info
+        item_list = []
+        for item in items:
+            item_list.append(self.get_library_item(item))
+
+        return item_list
 
     def get_applicable_library_items_by_datapoints(
         self, datapoints: List[str] = []

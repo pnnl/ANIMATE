@@ -10,7 +10,7 @@ from eprunner import EPRunner
 from testbuilder import Testbuilder
 import pandas as pd
 from datetime import datetime
-import json
+import json, logging
 
 
 def read_json_file(jsonpath: str) -> List[dict]:
@@ -150,7 +150,9 @@ def run_rules(item: Item, pointsdf: pd.DataFrame):
     return results, tester.df
 
 
-def assemble_verification_items(cases_path: str, lib_items_path: str) -> List:
+def assemble_verification_items(
+    cases_path: str = None, lib_items_path: str = None, cases: dict = None
+) -> List:
     """Assemble verification items from cases json and library item json.
 
     Args:
@@ -160,8 +162,16 @@ def assemble_verification_items(cases_path: str, lib_items_path: str) -> List:
     Returns:
         List: list of assembled verification items
     """
-    with open(cases_path) as cases_file:
-        cases_dict = json.load(cases_file)
+    if isinstance(cases_path, str):
+        with open(cases_path) as cases_file:
+            cases_dict = json.load(cases_file)
+    elif isinstance(cases, dict):
+        if len(cases) > 0:
+            cases_dict = {"cases": [cases]}
+        else:
+            logging.error("No item to assemble.")
+    else:
+        logging.error("No item to assemble.")
     with open(lib_items_path) as lib_items_file:
         lib_items_dict = json.load(lib_items_file)
 
