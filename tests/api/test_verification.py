@@ -99,7 +99,7 @@ class TestVerification(unittest.TestCase):
             # Empty constructor
             v_obj = Verification()
             self.assertEqual(
-                "ERROR:root:A verification should be provided.",
+                "ERROR:root:A VerificationCase object should be provided to `verifications`.",
                 logobs.output[0],
             )
 
@@ -173,7 +173,7 @@ class TestVerification(unittest.TestCase):
                 plot_option="test",
             )
             self.assertEqual(
-                "ERROR:root:The plot_option argument should either be all-compact, all-expand, day-compact, or day-expand, not test.",
+                "ERROR:root:The plot_option argument should either be all-compact, all-expand, day-compact, day-expand, or None, not test.",
                 logobs.output[6],
             )
 
@@ -252,7 +252,7 @@ class TestVerification(unittest.TestCase):
             num_threads=1,
         )
         v_obj.run_single_verification(case=v_obj.cases[list(v_obj.cases.keys())[0]])
-        assert os.path.isfile("./tests/api/1.md")
+        assert os.path.isfile("./tests/api/1_md.json")
 
     def test_run_single_verification_wit_preprocessed_data(self):
         # Load verification cases and built verification
@@ -275,7 +275,7 @@ class TestVerification(unittest.TestCase):
             preprocessed_data=df.data,
         )
         v_obj.run_single_verification(case=v_obj.cases[list(v_obj.cases.keys())[0]])
-        assert os.path.isfile("./tests/api/1.md")
+        assert os.path.isfile("./tests/api/1_md.json")
 
     def test_run(self):
         # Multiple verification in parallel
@@ -289,5 +289,5 @@ class TestVerification(unittest.TestCase):
             num_threads=2,
         )
         v_obj.run()
-        assert os.path.isfile("./tests/api/1.md")
-        assert os.path.isfile("./tests/api/2.md")
+        assert os.path.isfile("./tests/api/1_md.json")
+        assert os.path.isfile("./tests/api/2_md.json")

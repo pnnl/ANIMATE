@@ -2,6 +2,7 @@ import glob
 import json
 import logging
 import sys
+import os
 from typing import List, Union
 
 sys.path.append("..")
@@ -10,14 +11,14 @@ sys.path.append("..")
 class Reporting:
     def __init__(
         self,
-        verification_json: Union[str, List] = None,
-        result_md_path: str = None,
+        verification_json: str = None,
+        result_md_name: str = None,
         report_format: str = "markdown",
     ) -> None:
         """
         Args:
-            verification_json (str or List): Path to the result json files after verifications to be loaded for reporting. The string type is used when one JSON file is used or all the JSON files (e.g., *_md.json) are used. The list type is used when multiple JSON files (e.g., [file1.json, file2.json]) are used.
-            result_md_path (str): Path to the directory where result file will be saved.
+            verification_json (str): Path to the result json files after verifications to be loaded for reporting. It can be one JSON file or wildcard for multiple JSON files (e.g., *_md.json).
+            result_md_path (str): Name of the report summary markdown to be saved. All md reports will be created in the same directory as the verification result json files.
             report_format (str): File format to be output. For now, only `markdown` format  is available. More formats (e.g., html, pdf, csv, etc.) will be added in future releases.
         """
 
@@ -25,27 +26,24 @@ class Reporting:
         #  - this class is largely duplicate of summarize_md.py. Need to merge the two (while not losing the other file as we are still using it for large scale runs.
 
         self.verification_json = verification_json
-        self.result_md_path = result_md_path
+        self.result_md_name = result_md_name
         self.report_format = report_format
 
-        if not (
-            isinstance(self.verification_json, str)
-            or isinstance(self.verification_json, List)
-        ):
+        if not (isinstance(self.verification_json, str)):
             logging.error(
-                f"The type of the `verification_json` arg needs to be either str or List. It cannot be {type(self.verification_json)}."
+                f"The type of the `verification_json` arg needs to be a str. It cannot be {type(self.verification_json)}."
             )
             return None
 
-        if not isinstance(self.result_md_path, str):
+        if not isinstance(self.result_md_name, str):
             logging.error(
-                f"The type of the `result_md_path` arg needs to be either str or List. It cannot be {type(self.result_md_path)}."
+                f"The type of the `result_md_name` arg needs to be a str. It cannot be {type(self.result_md_name)}."
             )
             return None
 
         if not isinstance(self.report_format, str):
             logging.error(
-                f"The type of the `report_format` arg needs to be either str or List. It cannot be {type(self.report_format)}."
+                f"The type of the `report_format` arg needs to be a str. It cannot be {type(self.report_format)}."
             )
             return None
 
@@ -55,11 +53,13 @@ class Reporting:
             )
             return None
 
+        self.result_md_dir = os.path.dirname(self.verification_json)
+        self.result_md_path = f"{self.result_md_dir}/{self.result_md_name}"
         self.md_dict_dump = {}
         self.verification_item_case_id_mapping = {}
 
         # TODO: refactor below to make mapping creation more efficient
-        for json_file in glob.glob(verification_json):
+        for json_file in glob.glob(self.verification_json):
             with open(json_file) as fr:
                 md_dict = json.load(fr)
             md_dict_intkey = {int(k): v for k, v in md_dict.items()}
@@ -141,5 +141,5 @@ class Reporting:
 
         md_section = case_dict["md_content"]
         md_section += "[Back](results.md)"
-        with open(f"./results/case-{caseid}.md", "w") as casew:
+        with open(f"{self.result_md_dir}/case-{caseid}.md", "w") as casew:
             casew.write(md_section)
