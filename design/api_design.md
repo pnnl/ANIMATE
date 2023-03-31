@@ -8,7 +8,7 @@ Date Modified: 01/21/2023
 
 ## Intro
 
-The ANIMATE application programming iterfaces (APIs) are a collection of functions for performing common tasks with ANIMATE. These APIs are Python methods implementations with stable and well-documented interface. These methods are organized into different API categories (as Python classes) based on their functionalities and subjects.
+The ANIMATE application programming interfaces (APIs) are a collection of functions for performing common tasks with ANIMATE. These APIs are Python methods implementations with stable and well-documented interface. These methods are organized into different API categories (as Python classes) based on their functionalities and subjects.
 
 ## Verification Library API
 
@@ -32,20 +32,20 @@ Use this API to manage the verification items library
   - **Parameters**
     - **items**: str. Verification item name to get.
   - **Returns** `Dict` with four specific keys:
-    - `library_item_name`: unique str name of the library item
+    - `library_item_name`: unique str name of the library item.
     - `library_json`: library item json definition in the library json file.
     - `library_json_path`: path of the library json file that contains this library item.
     - `library_python_path`: path of the python file that contains the python implementation of this library item.
 
 ---
 
-- `get_library_items(`_items=[]_`)`
+- [x] `get_library_items(`_items=[]_`)`
   Get the json definition and meta information of a list of specific library items.
 
   - **Parameters**
     - **items**: list of str, default []. Library items to get. By default, get all library items loaded at instantiation.
   - **Returns** list of `Dict` with four specific keys:
-    - `library_item_name`: unique str name of the library item
+    - `library_item_name`: unique str name of the library item.
     - `library_json`: library item json definition in the library json file.
     - `library_json_path`: path of the library json file that contains this library item.
     - `library_python_path`: path of the python file that contains the python implementation of this library item.
@@ -77,7 +77,7 @@ Generate a dictionary with predefined keys so that a library item
 
 ---
 
-- `get_applicable_library_items_by_datapoints(`_datapoints_`)`
+- [x] `get_applicable_library_items_by_datapoints(`_datapoints_`)`
   Based on provided datapoints lists, identify potentially applicable library items from all loaded items. Use this function with caution as it 1) requires aligned data points naming across all library items; 2) does not check the topological relationships between datapoints.
 
   - **Parameters**
@@ -110,15 +110,17 @@ This API loads datasets and manipulate data before feeding it to the verificatio
 
 `class DataProcessing`
 
-- `__init__(`_data: str_`)`
+- [x] `__init__(`_data_path: str_, data_source: str, timestamp_column_name: str`)`
 
   Class object initialization.
 
   - **parameters**:
-    - **data**: Path to the data (CSV format) to be loaded for processing. Data will be stored in a `pandas.DataFrame()` object.
+    - **data_path**: Path to the data (CSV format) to be loaded for processing. Data will be stored in a `pandas.DataFrame()` object.
+    - **data_source**: Data source name. Use `EnergyPlus` or `Other`.
+    - **timestamp_column_name**: Name of the column header that contains the time series timestamps.
   - **Returns**: class object with `self.data` loaded with a `pandas.DataFrame`.
 
-- `slice(`_start_time: datetime, end_time: datetime object_, inplace=False`)`
+- [x] `slice(`_start_time: datetime object, end_time: datetime object_, inplace=False`)`
 
   Discard any data in `self.data` before or after _start_time_ and _end_time_
 
@@ -128,7 +130,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _inplace_: bool, whether to do inplace modification of the data. By default, False.
   - **return**: `pandas.DataFrame()` that only contain a slice of the original `self.data`
 
-- `add_parameter(`_name: str, value: float_, inplace=False`)`
+- [x] `add_parameter(`_name: str, value: float_, inplace=False`)`
 
   Add a parameter to `self.data`. The parameter will be added as a constant value for all index of `self.data`
 
@@ -136,29 +138,30 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _name_: name of the parameter to add
     - _value_: value of the parameter
 
-- `concatenate(`\*datasets: list(pandas.DataFrame), inplace=False`)`
+- [x] `concatenate(`\*datasets: list(pandas.DataFrame), axis = None, inplace=False`)`
 
   Concatenate datasets with `self.data`
 
   - **parameters**:
     - _datasets_: list of datasets to concatenate with `self.data`
-    - inplace:
     - axis: 1: concatenate vertical (timestamp / row); 0: concatenate horizontally (datapoint / column).
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
       - when 1: check if all datasets have same columns, if not, break;
       - when 0: check if all datasets have same datetime index, if not, break.
     - **return**: `pandas.DataFrame` that contains the concatenated datasets
 
-- `apply_func(`_var_names: list(str), new_var_name: str, function: str_`)`
+- [x] `apply_function(`variable_names: list(str), new_var_name: str, function_to_apply: str_, inplace=False`)`
 
-  Apply a basic aggregate function to a list of variables from `self.data`
+  Apply an aggregation function to a list of variables from the dataset
 
   - **parameters**:
-    - _var_names_: list of variables from `self.data` to be used for the aggregation function
-    - _new_var_name_: name of the new variable that will contain the aggregated data
-    - _function_: one of the following aggregate function 'sum', 'max', 'min', or 'average'
+    - _variable_names_: list of variables from `self.data` to be used for the aggregation function
+    - _new_variable_name_: name of the new variable that will contain the aggregated data
+    - _function_to_apply_: one of the following aggregate function 'sum', 'max', 'min', or 'average'
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
     - **return**: `pandas.DataFrame` containing all existing and a newly computed column.
 
-- `check()`
+- [x] `check()`
 
   Perform a sanity check on the data.
 
@@ -168,9 +171,9 @@ This API loads datasets and manipulate data before feeding it to the verificatio
 
 **for data sanity check, once we link the data with datapoint type through verification case, we can check data validity against different rules of different data types. e.g. sat should not be < -30**
 
-- `summary()`
+- [x] `summary()`
 
-  Provide a summary of the data
+  Provide a summary of the dataset
 
   - **return**: dict showing the following information
     - Number of data points
@@ -181,7 +184,7 @@ This API loads datasets and manipulate data before feeding it to the verificatio
       - Mean
       - Standard deviation
 
-- `plot(`_variable_names: list(str), kind= str_`)`
+- [x] `plot(`_variable_names: list(str), kind= str_`)`
 
   Create plots of timesteries data, or scatter plot between two variables
 
@@ -190,20 +193,24 @@ This API loads datasets and manipulate data before feeding it to the verificatio
     - _kind_: 'timeseries', or 'scatter'; If 'timeseries' is used, all variable names provided in `variable_names` will be plotted against the index timestamp from `self.data`; If 'scatter' is used, the first variables provided in the list will be used as the x-axis, the other will be on the y-axis
   - **return**: `matplotlib.axes.Axes`
 
-- `downsample(`_rule: str_`)`
+- [x] `downsample(`_rule: str_, inplace=False`)`
 
   Downsample `self.data` according to a user provided rule
 
   - **parameters**:
-    - _rule_: follows the same convention as [pandas.DataFrame.resample](https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects)
+    - _frew_: follows the same convention as [pandas.DataFrame.resample](https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#dateoffset-objects)
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
+    - **return**: `pandas.DataFrame` that contains the downsampled data
 
-- `interpolate(`\*method: str, variable_names: list`)`
+- [x] `fill_missing_values(`\*method: str, variable_names: list, inplace=False`)`
 
-  Interpolate missing values (NaN) in `self.data` following a user specified method
+  Fill missing values (NaN) in `self.data` following a user specified method
 
   - **parameters**:
     - _method_: 'linear', 'pad' as described [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.interpolate.html)
     - _variable_names_: list of variable names used for interpolation of missing values
+    - _inplace_: bool, whether to do inplace modification of the data. By default, False.
+    - **return**: `pandas.DataFrame` containing all existing and a newly computed column.
 
 - `check_for_verif(`_verification_case_`)`
 
@@ -246,7 +253,7 @@ dp.plot(variable_names=["Zone 1 Temp", "Zone 2 Temp"])
 dp.plot(variable_names=["Outdoor Air Temp", "Mixed Air Temp"])
 
 # Interpolate missing data
-dp.interpolate(method='linear', variable_names=['Outdoor Air Temperature])
+dp.interpolate(method='linear', variable_names=['Outdoor Air Temperature'])
 
 # Downsampling
 dp.downsampling(rule='1H')
@@ -472,7 +479,7 @@ SAT_case = {
 }
 
 # define VerificationCase object
-verification_instnace = an.VerificationCase(case=SAT_case, file_path=None)
+verification_instance = an.VerificationCase(cases=[SAT_case], file_path=None)
 
 # load existing verification case
 if sat_case_validity:
@@ -507,49 +514,129 @@ verification_instance.save_case_suite_to_json("./schema/new_library_verification
 
 `class Verification`
 
-- `__init__(`_verification: verification object_`)`
+- [x] `__init__(`_verification: verification object_`)`
 
   Class initialization
 
   - **parameters**:
     - **verification**: ANIMATE verification object
 
-- `configure(`_output_path: str_`)`
+- [x] `configure(`_output_path: str_, _plot_option: str_, _fig_size: tuple_, _num_threads: int_, _lib_path:str_`)`
 
-  Configure verification environnement
+  Configure verification environment
 
   - **parameters**:
     - _output_path_: path to the output directory used to store the markdown verification summary file
-    - potential other configuration options
-      - verbose
-      - plot options
-      - multiprocessing (num_threads)
-
-- `run(`_plotting_option: str, fig_size= list_`)`
-
-  Run verification
-
-  - **parameters**:
-    - _plotting_option_: 'all-compact', 'all-expand', 'day-compact', 'day-expand'
+    - _plot_option_: 'all-compact', 'all-expand', 'day-compact', 'day-expand'
     - _fig_size_: list that provides the height and width of the figures
-    - **maybe we can move these options to the configure parameters**
-  - **return**: dict that includes the verification results
+    - _num_threads_: number of thread to use to run verification in parallel
+    - _lib_path_: path the the verification library
+
+- [x] `run()`
+
+  Run verification and generate a markdown report of the results
 
 ### Verification API Examples
-
-### API Examples
 
 ```python
 import animate as an
 
+# create verification items in suite
+cases = [{
+            "no": 1,
+            "run_simulation": True,
+            "simulation_IO": {
+                "idf": "./test_cases/doe_prototype_cases/ASHRAE901_OfficeMedium_STD2019_Atlanta.idf",
+                "idd": "./resources/Energy+V9_0_1.idd",
+                "weather": "./weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "o": {
+                        "subject": "BLDG_OCC_SCH_WO_SB",
+                        "variable": "Schedule Value",
+                        "frequency": "TimeStep"
+                    },
+                    "m_oa": {
+                        "subject": "CORE_BOTTOM VAV BOX COMPONENT",
+                        "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
+                        "frequency": "TimeStep"
+                    },
+                    "m_ea": {
+                        "subject": "CORE_MID VAV BOX COMPONENT",
+                        "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
+                        "frequency": "TimeStep"
+                    },
+                    "eco_onoff": {
+                        "subject": "PACU_VAV_BOT",
+                        "variable": "Air System Outdoor Air Economizer Status",
+                        "frequency": "TimeStep"
+                    }
+                },
+                "parameters": {
+                    "tol_o": 0.03,
+                    "tol_m_ea": 50,
+                    "tol_m_oa": 50,
+                }
+            },
+            "verification_class": "AutomaticOADamperControl"
+        },
+        {
+            "no": 2,
+            "run_simulation": True,
+            "simulation_IO": {
+                "idf": "./test_cases/doe_prototype_cases/ASHRAE901_OfficeMedium_STD2019_Atlanta.idf",
+                "idd": "./resources/Energy+V9_0_1.idd",
+                "weather": "./weather/USA_GA_Atlanta-Hartsfield.Jackson.Intl.AP.722190_TMY3.epw",
+                "output": "eplusout.csv",
+                "ep_path": "C:\\EnergyPlusV9-0-1\\energyplus.exe"
+            },
+            "expected_result": "pass",
+            "datapoints_source": {
+                "idf_output_variables": {
+                    "o": {
+                        "subject": "BLDG_OCC_SCH_WO_SB",
+                        "variable": "Schedule Value",
+                        "frequency": "TimeStep"
+                    },
+                    "m_oa": {
+                        "subject": "CORE_MID VAV BOX COMPONENT",
+                        "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
+                        "frequency": "TimeStep"
+                    },
+                    "m_ea": {
+                        "subject": "CORE_TOP VAV BOX COMPONENT",
+                        "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
+                        "frequency": "TimeStep"
+                    },
+                    "eco_onoff": {
+                        "subject": "PACU_VAV_MID",
+                        "variable": "Air System Outdoor Air Economizer Status",
+                        "frequency": "TimeStep"
+                    }
+                },
+                "parameters": {
+                    "tol_o": 0.03,
+                    "tol_m_ea": 50,
+                    "tol_m_oa": 50,
+                }
+            },
+            "verification_class": "AutomaticOADamperControl"
+        }
+      ]
+
 # Load verfication case
-verif = an.Verification("./verification_case.json")
+VC = an.VerificationCase(cases=cases)
+v = an.Verification(VC)
 
 # Configure verification
-verif.configure()
+v.configure(output_path='./results', lib_items_path='./schema/library.json', plot_option=None, num_threads = 2, fig_size= (10,2.4))
 
 # Run verification
-verif.run()
+v.run()
 ```
 
 ## Reporting API
@@ -561,15 +648,18 @@ verif.run()
   Class initialization
 
   - **parameters**:
-    - **verification_md**: Path to the result markdown files after verifications to be loaded for reporting.
-    - **result_md_path**: Path where the summarized markdown file is saved. the default path is (`./results`)
-    - **report_format**: File format to be output (focus on markdown, later we can consider html, pdf, csv, etc.)
+    - **verification_md**: str or List, Path to the result json files after verifications to be loaded for reporting. The string type is used when one JSON file is used or all the JSON files (e.g., *_md.json) are used. The list type is used when multiple JSON files (e.g., [file1.json, file2.json]) are used.
+    - **result_md_path**: str, Path to the directory where result file will be saved.
+    - **report_format**: str, File format to be output. For now, only `markdown` format is available. More formats (e.g., html, pdf, csv, etc.) will be added in future releases.   
 
-- `report_multiple_cases(case_ids)`
+- [x] `report_multiple_cases(`_item_names: List_`)`
+  
+  Report/summarize multiple verification results.
 
   - **Parameters**
-    - **case_ids**: List, of unique verification case ids. **Note, we need to assign unique verification case ids at case creation and check for verification case id uniqueness in case suite**
-      Report multiple case result by implementing `summarize_md.py`
+    - **case_ids**: List, of unique verification case names.  If the `item_names` argument is empty, all the verification results in the `verification_json` argument are reported.    
+                    **Note, we need to assign unique verification case ids at case creation and check for verification case id uniqueness in case suite**
+
 
 ### Reporting API Examples
 
@@ -577,13 +667,10 @@ verif.run()
 import animate as an
 
 # Initiate the Reporting class
-result_md = an.Reporting("./results/*.md", "./results", "markdown")
-
-# report single case
-result_md.report_single_case()
+result_md = an.Reporting("./results/*_md.json", "./results/testing.md", "markdown")
 
 # report multiple cases
-result_md.report_multiple_cases()
+result_md.report_multiple_cases(["SupplyAirTempReset", "AutomaticShutdown"])
 ```
 
 ## Utilities API

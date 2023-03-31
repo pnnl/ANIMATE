@@ -53,43 +53,82 @@ class TestVerificationLibrary(unittest.TestCase):
                 logobs.output[0],
             )
 
-    def test_get_required_datapoints_by_library_items(self):
+    def test_get_applicable_library_items_by_datapoints(self):
         vl_obj = VerificationLibrary(lib_path)
-
-        req_datapoints_by_lib_items = vl_obj.get_required_datapoints_by_library_items(
-            ["T_sa_set", "oa_threshold"]
+        applicable_lib_items = vl_obj.get_applicable_library_items_by_datapoints(
+            ["T_sa_set", "T_z_coo", "v_oa", "s_ahu", "s_eco", "no_of_occ"]
+        )  # datapoints for `SupplyAirTempReset` and `DemandControlVentilation`
+        self.assertEqual(
+            applicable_lib_items["SupplyAirTempReset"],
+            list(
+                vl_obj.lib_items["SupplyAirTempReset"]["description_datapoints"].keys()
+            ),
         )
-        assert req_datapoints_by_lib_items == {
-            "T_sa_set": {
-                "number_of_items_using_this_datapoint": 1,
-                "library_items_list": ["SupplyAirTempReset"],
-            },
-            "oa_threshold": {
-                "number_of_items_using_this_datapoint": 3,
-                "library_items_list": [
-                    "EconomizerHighLimitA",
-                    "EconomizerHighLimitC",
-                    "EconomizerHighLimitD",
-                ],
-            },
-        }
+        self.assertEqual(
+            applicable_lib_items["DemandControlVentilation"],
+            list(
+                vl_obj.lib_items["DemandControlVentilation"][
+                    "description_datapoints"
+                ].keys()
+            ),
+        )
 
-    def test_get_required_datapoints_by_library_items_invalid(self):
+    def test_get_applicable_library_items_by_datapoints_invalid_datapoints(self):
         vl_obj = VerificationLibrary(lib_path)
 
         with self.assertLogs() as logobs:
-            vl_obj.get_required_datapoints_by_library_items(
-                {"T_sa_set", "oa_threshold"}  # wrong datapoints type
-            )
+            vl_obj.get_applicable_library_items_by_datapoints({"T_sa_set", "T_z_coo"})
             self.assertEqual(
-                f"ERROR:root:The `datapoints` argument type must be List, but {type({'T_sa_set', 'oa_threshold'})} type is provided.",
+                "ERROR:root:datapoints' type must be List. It can't be <class 'set'>.",
                 logobs.output[0],
             )
 
         with self.assertLogs() as logobs:
-            vl_obj.get_required_datapoints_by_library_items([])  # empty datapoints list
+            vl_obj.get_applicable_library_items_by_datapoints([])
             self.assertEqual(
-                f"ERROR:root:`datapoints' is an empty list. Please provide with datapoint names.",
+                "ERROR:root:`datapoints' is an empty list. Please provide with datapoint names.",
+                logobs.output[0],
+            )
+
+        with self.assertLogs() as logobs:
+            vl_obj.get_applicable_library_items_by_datapoints(["T_sa_set", {"T_z_coo"}])
+            self.assertEqual(
+                "ERROR:root:element's type in the datapoints argument must be str. It can't be <class 'set'>.",
+                logobs.output[0],
+            )
+
+    def test_get_library_items(self):
+        vl_obj = VerificationLibrary(lib_path)
+
+        items = vl_obj.get_library_items(
+            ["AutomaticShutdown", "DemandControlVentilation"]
+        )
+        self.assertEqual(items[0]["library_item_name"], "AutomaticShutdown")
+        self.assertTrue(isinstance(items[0]["library_definition"], dict))
+        self.assertEqual(items[0]["library_python_path"].split(".")[-1], "py")
+        self.assertEqual(items[0]["library_json_path"].split(".")[-1], "json")
+
+        self.assertEqual(items[1]["library_item_name"], "DemandControlVentilation")
+        self.assertTrue(isinstance(items[1]["library_definition"], dict))
+        self.assertEqual(items[1]["library_python_path"].split(".")[-1], "py")
+        self.assertEqual(items[1]["library_json_path"].split(".")[-1], "json")
+
+    def test_get_library_items_invalid(self):
+        vl_obj = VerificationLibrary(lib_path)
+
+        # check `items` arg type
+        with self.assertLogs() as logobs:
+            vl_obj.get_library_items({"AutomaticShutdown"})  # wrong items type
+            self.assertEqual(
+                "ERROR:root:items' type must be List. It can't be <class 'set'>.",
+                logobs.output[0],
+            )
+
+        # check when `items` is empty
+        with self.assertLogs() as logobs:
+            vl_obj.get_library_items([])  # wrong items type
+            self.assertEqual(
+                "ERROR:root:items' arg is empty. Please provide with verification item(s).",
                 logobs.output[0],
             )
 

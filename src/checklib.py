@@ -69,7 +69,15 @@ class CheckLibBase(ABC):
     def get_checks(self):
         return self.check_bool(), self.check_detail()
 
-    def add_md(self, md_file_path, img_folder, relative_path_to_img_in_md, item_dict):
+    def add_md(
+        self,
+        md_file_path,
+        img_folder,
+        relative_path_to_img_in_md,
+        item_dict,
+        plot_option=None,
+        fig_size=(6.4, 4.8),
+    ):
         outcome_bool, outcome_dict = self.get_checks
 
         img_folder = f"{img_folder}/VerificationCase{item_dict['no']}"
@@ -80,10 +88,13 @@ class CheckLibBase(ABC):
             os.makedirs(img_folder)
 
         self.results_folder = img_folder
-        self.plot(plot_option="all-compact")
-        self.plot(plot_option="all-expand")
-        self.plot(plot_option="day-compact")
-        self.plot(plot_option="day-expand")
+        if plot_option is None:
+            self.plot(plot_option="all-compact", fig_size=fig_size)
+            self.plot(plot_option="all-expand", fig_size=fig_size)
+            self.plot(plot_option="day-compact", fig_size=fig_size)
+            self.plot(plot_option="day-expand", fig_size=fig_size)
+        else:
+            self.plot(plot_option=plot_option, fig_size=fig_size)
         image_list = glob.glob(f"{img_folder}/*.png")
         image_md_path_list = [
             x.replace(img_folder, relative_path_to_img_in_md) for x in image_list
@@ -126,7 +137,7 @@ class CheckLibBase(ABC):
             "verification_class": item_dict["verification_class"],
         }
 
-    def plot(self, plot_option, plt_pts=None):
+    def plot(self, plot_option, plt_pts=None, fig_size=(6.4, 4.8)):
         """default plot function for showing result"""
         if plt_pts is None:
             plt_pts = self.df.columns.tolist()
@@ -137,21 +148,21 @@ class CheckLibBase(ABC):
         plot_option = plot_option.strip().lower()
         plt.subplots()
         if plot_option == "all-compact":
-            self.all_plot_aio(plt_pts)
+            self.all_plot_aio(plt_pts, fig_size)
         elif plot_option == "all-expand":
-            self.all_plot_obo(plt_pts)
+            self.all_plot_obo(plt_pts, fig_size)
         elif plot_option == "day-compact":
-            self.day_plot_aio(plt_pts)
+            self.day_plot_aio(plt_pts, fig_size)
         elif plot_option == "day-expand":
-            self.day_plot_obo(plt_pts)
+            self.day_plot_obo(plt_pts, fig_size)
         else:
             print("Invalid plot option!")
         plt.close("all")
         return
 
-    def all_plot_aio(self, plt_pts):
+    def all_plot_aio(self, plt_pts, fig_size):
         """All in one plot of all samples"""
-        plt.figure(figsize=(6.4, 4.8))
+        plt.figure(figsize=fig_size)
 
         # flag
         ax1 = plt.subplot(2, 1, 1)
@@ -175,10 +186,10 @@ class CheckLibBase(ABC):
         plt.savefig(f"{self.results_folder}/All_plot_aio.png")
         print()
 
-    def all_plot_obo(self, plt_pts):
+    def all_plot_obo(self, plt_pts, fig_size):
         """One by one plot of all samples"""
         num_plots = len(plt_pts) + 1
-        plt.figure(figsize=(6.4, 2.4 * num_plots))
+        plt.figure(figsize=(fig_size[0], fig_size[1] * num_plots))
 
         # flag
         ax1 = plt.subplot(num_plots, 1, 1)
@@ -248,9 +259,9 @@ class CheckLibBase(ABC):
 
         return plotday, plotdaydf
 
-    def day_plot_aio(self, plt_pts):
+    def day_plot_aio(self, plt_pts, fig_size):
         """ALl in one plot for one day"""
-        plt.figure(figsize=(6.4, 4.8))
+        plt.figure(figsize=fig_size)
 
         plotday, plotdaydf = self.calculate_plot_day()
 
@@ -276,10 +287,10 @@ class CheckLibBase(ABC):
         plt.savefig(f"{self.results_folder}/Day_plot_aio.png")
         print()
 
-    def day_plot_obo(self, plt_pts):
+    def day_plot_obo(self, plt_pts, fig_size):
         """One by one plot of all samples"""
         num_plots = len(plt_pts) + 1
-        plt.figure(figsize=(6.4, 2.4 * num_plots))
+        plt.figure(figsize=(fig_size[0], fig_size[1] * num_plots))
 
         plotday, plotdaydf = self.calculate_plot_day()
 
