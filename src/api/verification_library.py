@@ -4,6 +4,17 @@ from typing import Dict, List, Union
 sys.path.append("..")
 from library import *
 
+library_schema = {
+    "library_item_id": (int, str, float),
+    "description_brief": str,
+    "description_detail": str,
+    "description_index": list,
+    "description_datapoints": dict,
+    "description_assertions": list,
+    "description_verification_type": str,
+    "assertions_type": str,
+}
+
 
 class VerificationLibrary:
     def __init__(self, lib_path: str = None):
@@ -62,9 +73,7 @@ class VerificationLibrary:
             for lib_name, lib_content in v.items():
                 self.lib_items_json_path[lib_name] = k
                 if lib_name in globals().keys():
-                    python_path = inspect.getfile(
-                        globals()["AutomaticShutdown"].__class__
-                    )
+                    python_path = inspect.getfile(globals()[lib_name])
                 else:
                     python_path = "Not Found"
                     logging.warning(
@@ -100,6 +109,77 @@ class VerificationLibrary:
         }
 
         return item_dict
+
+    def validate_library(self, items: List[str] = None) -> Dict:
+        """Check the validity of library items definition. This validity check includes checking the completeness of json specification (against library json schema) and Python verification class definition (against library class interface) and the match between the json and python implementation.
+
+        Args:
+            items: list of str, default []. Library items to validate. `items` must be filled with valid verification item(s). If not, an error occurs.
+
+        Returns:
+            Dict that contains validity information of library items.
+        """
+
+        # check `items` type
+        if not isinstance(items, list):
+            logging.error(f"items needs to be list. It cannot be a {type(items)}.")
+            return None
+
+        # check if `items` is an empty list
+        if not items:
+            logging.error(
+                f"items is an empty list. Please provide with verification item names."
+            )
+            return None
+
+        validity_info = {}
+        for item in items:
+            validity_info[item] = {}
+
+            # verify the library.json file
+            for lib_key in library_schema.keys():
+                # check if lib keys exist. "description_detail" key is optional
+                if lib_key not in ["description_detail"] and not self.lib_items[
+                    item
+                ].get(lib_key):
+                    logging.error(
+                        f"{lib_key} doesn't exist. Please make sure to have {lib_key}."
+                    )
+                    return None
+
+                # check if key is in the correct type
+                try:
+                    if not isinstance(
+                        self.lib_items[item][lib_key], library_schema[lib_key]
+                    ):
+                        logging.error(
+                            f"The type of `{lib_key}` key needs to be {str(library_schema[lib_key])}. It cannot be a {type(self.lib_items[item][lib_key])}."
+                        )
+                        return None
+
+                    else:
+                        validity_info[item][lib_key] = type(
+                            self.lib_items[item][lib_key]
+                        )
+
+                except KeyError:
+                    # if `description_detail` key doesn't exist, output a warning.
+                    validity_info[item][lib_key] = None
+                    logging.warning(f"{lib_key} doesn't exist.")
+
+            # check if datapoints in library file and class are identical
+            if (
+                list(self.lib_items[item]["description_datapoints"].keys())
+                != globals()[item].points
+            ):
+                logging.error(
+                    f"{item}'s points in the library file and class implementation are not identical."
+                )
+                return None
+            else:
+                validity_info[item]["datapoints_match"] = True
+
+        return validity_info
 
     def get_library_items(self, items: List[str] = []) -> Union[List, None]:
         """Get the json definition and meta information of a list of specific library items.

@@ -68,11 +68,11 @@ Generate a dictionary with predefined keys so that a library item
 - `update_existing_library_items()`
 - probably should not allow update / add new library python definition during runtime, this is risky and hard to quality control -->
 
-- `validate_library(`_items=[]_`)`
+- [x] `validate_library(`_items_`)`
   Check the validity of library items definition. This validity check includes checking the completeness of json specification (against library json schema) and Python verification class definition (against library class interface) and the match between the json and python implementation.
 
   - **Parameters**
-    - **items**: list of str, default []. Library items to validate. By default, summarize all library items loaded at instantiation.
+    - **items**: list of str. Library items to validate. `items` must be filled with valid verification item(s). If not, an error occurs.
   - **Returns**: `pandas.DataFrame` that contains validity information of library items.
 
 ---
