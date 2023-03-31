@@ -1,24 +1,24 @@
 
-## Results for Verification Case ID 1
+## Results for Verification Case ID 2
 
 ### Pass/Fail check result
 {'Sample #': 52560, 'Pass #': 16902, 'Fail #': 0, 'Verification Passed?': True}
 
 ### Result visualization
 
-![./tests/api/VerificationCase1\All_plot_aio.png](C:\GitRepos\ANIMATE\tests\api\VerificationCase1\All_plot_aio.png)
+![./tests/api/VerificationCase2\All_plot_aio.png](.//VerificationCase2\All_plot_aio.png)
 
-![./tests/api/VerificationCase1\All_plot_obo.png](C:\GitRepos\ANIMATE\tests\api\VerificationCase1\All_plot_obo.png)
+![./tests/api/VerificationCase2\All_plot_obo.png](.//VerificationCase2\All_plot_obo.png)
 
-![./tests/api/VerificationCase1\Day_plot_aio.png](C:\GitRepos\ANIMATE\tests\api\VerificationCase1\Day_plot_aio.png)
+![./tests/api/VerificationCase2\Day_plot_aio.png](.//VerificationCase2\Day_plot_aio.png)
 
-![./tests/api/VerificationCase1\Day_plot_obo.png](C:\GitRepos\ANIMATE\tests\api\VerificationCase1\Day_plot_obo.png)
+![./tests/api/VerificationCase2\Day_plot_obo.png](.//VerificationCase2\Day_plot_obo.png)
 
 
 ### Verification case definition
 ```
 {
-  "no": 1,
+  "no": 2,
   "run_simulation": false,
   "simulation_IO": {
     "idf": "./tests/api/data/ASHRAE901_OfficeMedium_STD2019_Atlanta.idf",
@@ -36,17 +36,17 @@
         "frequency": "TimeStep"
       },
       "m_oa": {
-        "subject": "CORE_BOTTOM VAV BOX COMPONENT",
-        "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
-        "frequency": "TimeStep"
-      },
-      "m_ea": {
         "subject": "CORE_MID VAV BOX COMPONENT",
         "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
         "frequency": "TimeStep"
       },
+      "m_ea": {
+        "subject": "CORE_TOP VAV BOX COMPONENT",
+        "variable": "Zone Air Terminal Outdoor Air Volume Flow Rate",
+        "frequency": "TimeStep"
+      },
       "eco_onoff": {
-        "subject": "PACU_VAV_BOT",
+        "subject": "PACU_VAV_MID",
         "variable": "Air System Outdoor Air Economizer Status",
         "frequency": "TimeStep"
       }
@@ -58,7 +58,7 @@
     }
   },
   "verification_class": "AutomaticOADamperControl",
-  "case_id_in_suite": "8d6be4dd-cf9d-11ed-b6ca-ac74b154c918",
+  "case_id_in_suite": "bba56b9f-cf9e-11ed-9a1c-ac74b154c918",
   "library_item_id": 17,
   "description_brief": "HVAC system shall be turned on and off everyday",
   "description_index": [

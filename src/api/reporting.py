@@ -11,14 +11,14 @@ sys.path.append("..")
 class Reporting:
     def __init__(
         self,
-        verification_json: Union[str, List] = None,
-        result_md_path: str = None,
+        verification_json: str = None,
+        result_md_name: str = None,
         report_format: str = "markdown",
     ) -> None:
         """
         Args:
-            verification_json (str or List): Path to the result json files after verifications to be loaded for reporting. The string type is used when one JSON file is used or all the JSON files (e.g., *_md.json) are used. The list type is used when multiple JSON files (e.g., [file1.json, file2.json]) are used.
-            result_md_path (str): Path to the report summary markdown to be saved. Detailed markdown reports of verification cases will be created in the same directory.
+            verification_json (str): Path to the result json files after verifications to be loaded for reporting. It can be one JSON file or wildcard for multiple JSON files (e.g., *_md.json).
+            result_md_path (str): Name of the report summary markdown to be saved. All md reports will be created in the same directory as the verification result json files.
             report_format (str): File format to be output. For now, only `markdown` format  is available. More formats (e.g., html, pdf, csv, etc.) will be added in future releases.
         """
 
@@ -26,21 +26,20 @@ class Reporting:
         #  - this class is largely duplicate of summarize_md.py. Need to merge the two (while not losing the other file as we are still using it for large scale runs.
 
         self.verification_json = verification_json
-        self.result_md_path = result_md_path
+        self.result_md_name = result_md_name
         self.report_format = report_format
 
         if not (
             isinstance(self.verification_json, str)
-            or isinstance(self.verification_json, List)
         ):
             logging.error(
-                f"The type of the `verification_json` arg needs to be either str or List. It cannot be {type(self.verification_json)}."
+                f"The type of the `verification_json` arg needs to be a str. It cannot be {type(self.verification_json)}."
             )
             return None
 
-        if not isinstance(self.result_md_path, str):
+        if not isinstance(self.result_md_name, str):
             logging.error(
-                f"The type of the `result_md_path` arg needs to be a str. It cannot be {type(self.result_md_path)}."
+                f"The type of the `result_md_name` arg needs to be a str. It cannot be {type(self.result_md_name)}."
             )
             return None
 
@@ -56,7 +55,8 @@ class Reporting:
             )
             return None
 
-        self.result_md_dir = os.path.dirname(self.result_md_path)
+        self.result_md_dir = os.path.dirname(self.verification_json)
+        self.result_md_path = f"{self.result_md_dir}/{self.result_md_name}"
         self.md_dict_dump = {}
         self.verification_item_case_id_mapping = {}
 
