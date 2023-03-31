@@ -133,3 +133,48 @@ class VerificationLibrary:
             item_list.append(self.get_library_item(item))
 
         return item_list
+
+    def get_applicable_library_items_by_datapoints(
+        self, datapoints: List[str] = []
+    ) -> Dict:
+        """Based on provided datapoints lists, identify potentially applicable library items from all loaded items. Use this function with caution as it 1) requires aligned data points naming across all library items; 2) does not check the topological relationships between datapoints.
+
+        Args:
+            datapoints: list of str datapoints names.
+
+        Returns:
+            Dict with keys being the library item names and values being the required datapoints for the corresponding keys.
+        """
+
+        # check `datapoints` type
+        if not isinstance(datapoints, List):
+            logging.error(
+                f"datapoints' type must be List. It can't be {type(datapoints)}."
+            )
+            return None
+
+        # check if `datapoints` is an empty list
+        if not datapoints:
+            logging.error(
+                f"`datapoints' is an empty list. Please provide with datapoint names."
+            )
+            return None
+
+        # check the type of elements in `datapoints`
+        for datapoint in datapoints:
+            if not isinstance(datapoint, str):
+                logging.error(
+                    f"element's type in the datapoints argument must be str. It can't be {type(datapoint)}."
+                )
+                return None
+
+        # check if applicable lib(s) exists with the datapoints arg
+        applicable_lib_dict = {}
+        for lib_item in self.lib_items.keys():
+            required_lib_datapoints = list(
+                self.lib_items[lib_item]["description_datapoints"].keys()
+            )
+            if set(required_lib_datapoints).issubset(set(datapoints)):
+                applicable_lib_dict[lib_item] = required_lib_datapoints
+
+        return applicable_lib_dict

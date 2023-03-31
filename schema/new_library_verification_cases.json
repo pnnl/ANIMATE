@@ -274,8 +274,8 @@
                 "parameters": {
                     "T_oa_max": 10,
                     "T_oa_min": -6.7,
-                    "T_hw_max_st": 60.0,
-                    "T_hw_min_st": 48.89
+                    "T_hw_max_set": 60.0,
+                    "T_hw_min_set": 48.89
                 }
             },
             "verification_class": "HWReset"
@@ -312,8 +312,8 @@
                 "parameters": {
                     "T_oa_max": 10,
                     "T_oa_min": -6.7,
-                    "T_hw_max_st": 60.0,
-                    "T_hw_min_st": 48.89
+                    "T_hw_max_set": 60.0,
+                    "T_hw_min_set": 48.89
                 }
             },
             "verification_class": "HWReset"
@@ -541,12 +541,12 @@
                         "variable": "Cooling Tower Operating Cells Count",
                         "frequency": "detailed"
                     },
-                    "m": {
+                    "ct_m": {
                         "subject": "TOWERWATERSYS COOLTOWER 2",
                         "variable": "Cooling Tower Mass Flow Rate",
                         "frequency": "detailed"
                     },
-                    "P_fan_ct": {
+                    "ct_P_fan": {
                         "subject": "TOWERWATERSYS COOLTOWER 2",
                         "variable": "Cooling Tower Fan Electric Power",
                         "frequency": "detailed"
@@ -554,7 +554,7 @@
                 },
                 "parameters": {
                     "ct_cells": 4,
-                    "m_des": 0.0375568,
+                    "ct_m_des": 0.0375568,
                     "min_flow_frac_per_cell": 0.05
                 }
             },
@@ -596,14 +596,14 @@
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
-                    "p_fan_setpoint": {
+                    "p_fan_set": {
                         "subject": "sensor",
                         "variable": "static_pressure_setpoint",
                         "frequency": "detailed"
                     }
                 },
                 "parameters": {
-                    "tol": 2.98
+                    "tol_P_fan": 2.98
                 }
             },
             "verification_class": "VAVStaticPressureSensorLocation"
@@ -758,20 +758,20 @@
             "expected_result": "pass",
             "datapoints_source": {
                 "idf_output_variables": {
-                    "P_ct_fan": {
+                    "ct_P_fan": {
                         "subject": "TOWERWATERSYS COOLTOWER 2",
                         "variable": "Cooling Tower Fan Electric Power",
                         "frequency": "Detailed"
                     },
-                    "m_ct_fan_ratio": {
+                    "ct_m_fan_ratio": {
                         "subject": "TOWERWATERSYS COOLTOWER 2",
                         "variable": "Cooling Tower Air Flow Rate Ratio",
                         "frequency": "Detailed"
                     }
                 },
                 "parameters": {
-                    "m_ct_fan_dsgn": 36.47,
-                    "P_ct_fan_dsgn": 13359.2
+                    "ct_m_fan_dsgn": 36.47,
+                    "ct_P_fan_dsgn": 13359.2
                 }
             },
             "verification_class": "HeatRejectionFanVariableFlowControl"
@@ -805,7 +805,7 @@
                     "height_z": 3.05,
                     "v_outdoor_per_zone": 0.000395372,
                     "tol_occ": 0.05,
-                    "tol_m": 0.0003
+                    "tol_oa_flow": 0.0003
                 }
             },
             "verification_class": "GuestRoomControlVent"
