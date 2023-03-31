@@ -96,15 +96,16 @@ class CheckLibBase(ABC):
         else:
             self.plot(plot_option=plot_option, fig_size=fig_size)
         image_list = glob.glob(f"{img_folder}/*.png")
-        image_md_path_list = [
-            x.replace(img_folder, relative_path_to_img_in_md) for x in image_list
-        ]
+        # image_md_path_list = [
+        #     x.replace(img_folder, relative_path_to_img_in_md) for x in image_list
+        # ]
         img_md = ""
         for i in range(len(image_list)):
             img_def_path = image_list[i]
-            img_rel_path = image_md_path_list[i]
+            # img_rel_path = image_md_path_list[i]
+            img_abs_path = os.path.abspath(img_def_path)
             img_md += f"""
-![{img_def_path}]({img_rel_path})
+![{img_def_path}]({img_abs_path})
 """
 
         md_content = f"""

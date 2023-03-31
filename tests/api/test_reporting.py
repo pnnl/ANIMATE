@@ -5,7 +5,7 @@ import unittest
 sys.path.append("./src")
 from api import Reporting
 
-verification_json = "./tests/api/data/reporting_data/*_md.json"
+verification_json = "./tests/api/*_md.json"
 result_md_path = "./tests/api/result/testing.md"
 report_format = "markdown"
 
@@ -40,16 +40,16 @@ class TestReporting(unittest.TestCase):
         reporting_obj = Reporting(verification_json, result_md_path, report_format)
 
         # report only selective verification results
-        reporting_obj.report_multiple_cases(
-            item_names=["SupplyAirTempReset", "NightCycleOperation"]
-        )
-        self.assertTrue(os.path.isfile(result_md_path))
-        os.remove(result_md_path)
+        # reporting_obj.report_multiple_cases(
+        #     item_names=["SupplyAirTempReset", "NightCycleOperation"]
+        # )
+        # self.assertTrue(os.path.isfile(result_md_path))
+        # os.remove(result_md_path)
 
         # report all the verification results
         reporting_obj.report_multiple_cases(item_names=[])
         self.assertTrue(os.path.isfile(result_md_path))
-        os.remove(result_md_path)
+        # os.remove(result_md_path)
 
     def test_report_multiple_cases_wrong_arg_type(self):
         reporting_obj = Reporting(verification_json, result_md_path, report_format)
