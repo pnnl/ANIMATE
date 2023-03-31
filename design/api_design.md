@@ -68,16 +68,16 @@ Generate a dictionary with predefined keys so that a library item
 - `update_existing_library_items()`
 - probably should not allow update / add new library python definition during runtime, this is risky and hard to quality control -->
 
-- `validate_library(`_items=[]_`)`
+- [x] `validate_library(`_items_`)`
   Check the validity of library items definition. This validity check includes checking the completeness of json specification (against library json schema) and Python verification class definition (against library class interface) and the match between the json and python implementation.
 
   - **Parameters**
-    - **items**: list of str, default []. Library items to validate. By default, summarize all library items loaded at instantiation.
+    - **items**: list of str. Library items to validate. `items` must be filled with valid verification item(s). If not, an error occurs.
   - **Returns**: `pandas.DataFrame` that contains validity information of library items.
 
 ---
 
-- `get_applicable_library_items_by_datapoints(`_datapoints_`)`
+- [x] `get_applicable_library_items_by_datapoints(`_datapoints_`)`
   Based on provided datapoints lists, identify potentially applicable library items from all loaded items. Use this function with caution as it 1) requires aligned data points naming across all library items; 2) does not check the topological relationships between datapoints.
 
   - **Parameters**
@@ -86,11 +86,11 @@ Generate a dictionary with predefined keys so that a library item
 
 ---
 
-- `get_required_datapoints_by_library_items(`_items=[]_`)`
+- [x] `get_required_datapoints_by_library_items(`_datapoints=[]_`)`
   Summarize datapoints that need to be used to support specified library items. Use this function with caution as it 1) requires aligned data points naming across all library items; 2) does not check the topological relationships between datapoints.
 
   - **Parameters**
-    - **items**: list of str, default []. Library items to summarize datapoints from. By default, summarize all library items loaded at instantiation.
+    - **datapoints**: list of str, default []. Library items to summarize datapoints from. By default, summarize all library items loaded at instantiation.
   - **Returns**: `Dict` with keys being the datapoint name and values being a sub `Dict` with the following keys:
     - `number_of_items_using_this_datapoint`: int, number of library items that use this datapoint.
     - `library_items_list`: List, of library item names that use this datapoint.
