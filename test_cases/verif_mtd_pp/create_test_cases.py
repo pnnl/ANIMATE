@@ -155,7 +155,6 @@ def hwreset(idf, idf_f, id, cases):
 
 
 def sat_reset(idf, idf_f, id, cases):
-
     # Define design cooling temperature
     # for each system
     applicable_cases = {
@@ -196,7 +195,6 @@ def sat_reset(idf, idf_f, id, cases):
             )
         )
         for airloop_tz_coo in applicable_cases[bldg_type]:
-
             # Get design cooling temp
             airloop = airloop_tz_coo[0]
             tz_coo = airloop_tz_coo[1]
@@ -242,7 +240,6 @@ def zone_temp_ctrl(idf, idf_f, id, cases):
         )
     )
     for zone in idf.idfobjects["ZONE"]:
-
         zone_temp_ctrl = {}
         zone_temp_ctrl["no"] = str(id)
 
@@ -283,7 +280,6 @@ def zone_temp_ctrl_depth_htg(idf, idf_f, id, cases):
         )
     )
     for zone in idf.idfobjects["ZONE"]:
-
         zone_temp_ctrl_depth_htg = {}
         zone_temp_ctrl_depth_htg["no"] = str(id)
 
@@ -319,7 +315,6 @@ def zone_temp_ctrl_depth_clg(idf, idf_f, id, cases):
         )
     )
     for zone in idf.idfobjects["ZONE"]:
-
         zone_temp_ctrl_depth_clg = {}
         zone_temp_ctrl_depth_clg["no"] = str(id)
 
@@ -355,7 +350,6 @@ def zone_temp_ctrl_min(idf, idf_f, id, cases):
         )
     )
     for zone in idf.idfobjects["ZONE"]:
-
         zone_temp_ctrl_min = {}
         zone_temp_ctrl_min["no"] = str(id)
 
@@ -391,7 +385,6 @@ def zone_temp_ctrl_max(idf, idf_f, id, cases):
         )
     )
     for zone in idf.idfobjects["ZONE"]:
-
         zone_temp_ctrl_max = {}
         zone_temp_ctrl_max["no"] = str(id)
 
@@ -421,7 +414,6 @@ def zone_temp_ctrl_max(idf, idf_f, id, cases):
 
 
 def integrated_econ(idf, idf_f, id, cases):
-
     # Define system OA min flow rate
     applicable_cases = {
         "OfficeMedium": {
@@ -487,7 +479,6 @@ def integrated_econ(idf, idf_f, id, cases):
             bldg_type = k
 
     if bldg_type != "":
-
         # Find code version
         code_version = ""
         for y in list(applicable_cases[bldg_type].keys()):
@@ -495,7 +486,6 @@ def integrated_econ(idf, idf_f, id, cases):
                 code_version = y
 
         for airloop_info in applicable_cases[bldg_type][code_version]:
-
             # Get min OA for the system
             airloop_name = airloop_info[0]
             airloop_oa = airloop_info[1]
@@ -558,7 +548,6 @@ def integrated_econ(idf, idf_f, id, cases):
 
 
 def diff_enthalpy_econ(idf, idf_f, id, cases):
-
     # Define system OA min flow rate
     applicable_cases = {
         "OfficeMedium": {
@@ -624,7 +613,6 @@ def diff_enthalpy_econ(idf, idf_f, id, cases):
             bldg_type = k
 
     if bldg_type != "":
-
         # Find code version
         code_version = ""
         for y in list(applicable_cases[bldg_type].keys()):
@@ -632,7 +620,6 @@ def diff_enthalpy_econ(idf, idf_f, id, cases):
                 code_version = y
 
         for airloop_info in applicable_cases[bldg_type][code_version]:
-
             # Get min OA for the system
             airloop_name = airloop_info[0]
             airloop_oa = airloop_info[1]
