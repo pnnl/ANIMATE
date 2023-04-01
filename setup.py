@@ -18,6 +18,7 @@ setup(
     install_requires=[
         "numpy",
         "matplotlib",
-        "pandas"
+        "pandas",
+        "seaborn"
     ],
 )
