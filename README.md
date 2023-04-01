@@ -2,7 +2,7 @@
 
 <!-- # ANIMATE: a dAtadriveN buildIng perforMance verificATion framEwork -->
 
-Unit tests status: [![CircleCI](https://circleci.com/gh/pnnl/ANIMATE/tree/master.svg?style=svg)](https://circleci.com/gh/pnnl/ANIMATE/tree/master)
+Unit tests status: ![Tests](https://github.com/pnnl/ANIMATE/actions/workflows/unit_tests.yml/badge.svg)
 
 # Background and Motivation
 
