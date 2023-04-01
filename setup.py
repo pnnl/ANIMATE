@@ -19,6 +19,11 @@ setup(
         "numpy",
         "matplotlib",
         "pandas",
-        "seaborn"
+        "seaborn",
+        "scipy",
+        "eppy",
+        "fuzzywuzzy",
+        "tqdm",
+        "scikit-learn"
     ],
 )
