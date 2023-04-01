@@ -1,4 +1,4 @@
-# <span style="color:orange">Con</span>trol <span style="color:orange">Strain</span>er (<span style="color:orange">ConStrain</span>): A Data-driven Control Performance Verification Framework (formally known as <span style="color:orange">_ANIMATE_</span>)
+# <span style="color:orange">*Con*</span>trol <span style="color:orange">*Strain*</span>er (<span style="color:orange">*ConStrain*</span>): A Data-driven Control Performance Verification Framework (formally known as <span style="color:orange">_ANIMATE_</span>)
 
 <!-- # ANIMATE: a dAtadriveN buildIng perforMance verificATion framEwork -->
 
