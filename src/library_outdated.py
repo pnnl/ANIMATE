@@ -50,7 +50,6 @@ class SupplyAirTempReset(RuleCheckBase):
     points = ["T_sa_set", "T_z_coo"]
 
     def verify(self):
-
         t_sa_set_max = max(self.df["T_sa_set"])
         t_sa_set_min = min(self.df["T_sa_set"])
 
@@ -80,28 +79,28 @@ class SupplyAirTempReset(RuleCheckBase):
 
 
 class EconomizerHighLimitA(RuleCheckBase):
-    points = ["oa_db", "oa_threshold", "oa_min_flow", "oa_flow"]
+    points = ["T_oa_db", "oa_threshold", "oa_min_flow", "oa_flow"]
 
     def verify(self):
         self.result = ~(
             (self.df["oa_flow"] > self.df["oa_min_flow"])
-            & (self.df["oa_db"] > self.df["oa_threshold"])
+            & (self.df["T_oa_db"] > self.df["oa_threshold"])
         )
 
 
 class EconomizerHighLimitB(RuleCheckBase):
-    points = ["oa_flow", "oa_db", "ret_a_temp", "oa_min_flow"]
+    points = ["oa_flow", "T_oa_db", "ret_a_temp", "oa_min_flow"]
 
     def verify(self):
         self.result = ~(
             (self.df["oa_flow"] > self.df["oa_min_flow"])
-            & (self.df["ret_a_temp"] < self.df["oa_db"])
+            & (self.df["ret_a_temp"] < self.df["T_oa_db"])
         )
 
 
 class EconomizerHighLimitC(RuleCheckBase):
     points = [
-        "oa_db",
+        "T_oa_db",
         "oa_threshold",
         "oa_min_flow",
         "oa_flow",
@@ -113,7 +112,7 @@ class EconomizerHighLimitC(RuleCheckBase):
         self.result = ~(
             (self.df["oa_flow"] > self.df["oa_min_flow"])
             & (
-                (self.df["oa_db"] > self.df["oa_threshold"])
+                (self.df["T_oa_db"] > self.df["oa_threshold"])
                 | (self.df["oa_enth"] > self.df["oa_enth_threshold"])
             )
         )
@@ -121,7 +120,7 @@ class EconomizerHighLimitC(RuleCheckBase):
 
 class EconomizerHighLimitD(RuleCheckBase):
     points = [
-        "oa_db",
+        "T_oa_db",
         "oa_threshold",
         "oa_min_flow",
         "oa_flow",
@@ -134,16 +133,16 @@ class EconomizerHighLimitD(RuleCheckBase):
             (self.df["oa_flow"] > self.df["oa_min_flow"])
             & (
                 (self.df["ret_a_enth"] < self.df["oa_enth"])
-                | (self.df["oa_db"] > self.df["oa_threshold"])
+                | (self.df["T_oa_db"] > self.df["oa_threshold"])
             )
         )
 
 
 class ZoneTempControl(RuleCheckBase):
-    points = ["T_z_set_cool", "T_z_set_heat"]
+    points = ["T_set_cool", "T_set_heat"]
 
     def verify(self):
-        self.result = (self.df["T_z_set_cool"] - self.df["T_z_set_heat"]) > 2.77
+        self.result = (self.df["T_set_cool"] - self.df["T_set_heat"]) > 2.77
 
 
 class HWReset(RuleCheckBase):
@@ -153,8 +152,8 @@ class HWReset(RuleCheckBase):
         "T_oa_min",
         "T_hw",
         "m_hw",
-        "T_hw_max_st",
-        "T_hw_min_st",
+        "T_hw_max_set",
+        "T_hw_min_set",
     ]
 
     def verify(self):
@@ -164,11 +163,11 @@ class HWReset(RuleCheckBase):
             )  # add boundary relaxation in the rules for this one and chwreset
             | (
                 (self.df["T_oa_db"] <= self.df["T_oa_min"])
-                & (self.df["T_hw"] >= self.df["T_hw_max_st"] * 0.99)
+                & (self.df["T_hw"] >= self.df["T_hw_max_set"] * 0.99)
             )
             | (
                 (self.df["T_oa_db"] >= (self.df["T_oa_max"]))
-                & (self.df["T_hw"] <= self.df["T_hw_min_st"] * 1.01)
+                & (self.df["T_hw"] <= self.df["T_hw_min_set"] * 1.01)
             )
             | (
                 (
@@ -176,8 +175,8 @@ class HWReset(RuleCheckBase):
                     & (self.df["T_oa_db"] <= self.df["T_oa_max"])
                 )
                 & (
-                    (self.df["T_hw"] >= self.df["T_hw_min_st"] * 0.99)
-                    & (self.df["T_hw"] <= self.df["T_hw_max_st"] * 1.01)
+                    (self.df["T_hw"] >= self.df["T_hw_min_set"] * 0.99)
+                    & (self.df["T_hw"] <= self.df["T_hw_max_set"] * 1.01)
                 )
             )
         )
@@ -583,16 +582,16 @@ class HeatRejectionFanVariableFlowControlsCells(RuleCheckBase):
     points = [
         "ct_op_cells",
         "ct_cells",
-        "m",
-        "P_fan_ct",
-        "m_des",
+        "ct_m",
+        "ct_P_fan",
+        "ct_m_des",
         "min_flow_frac_per_cell",
     ]
 
     def verify(self):
         self.df["ct_cells_op_theo_intermediate"] = (
-            self.df["m"]
-            / self.df["m_des"]
+            self.df["ct_m"]
+            / self.df["ct_m_des"]
             * self.df["min_flow_frac_per_cell"]
             / self.df["ct_cells"]
         ) + 0.9999
@@ -607,7 +606,7 @@ class HeatRejectionFanVariableFlowControlsCells(RuleCheckBase):
         self.result = ~(
             (self.df["ct_op_cells"] > 0)
             & (self.df["ct_op_cells"] < self.df["ct_cells_op_theo"])
-            & (self.df["P_fan_ct"] > 0)
+            & (self.df["ct_P_fan"] > 0)
         )
 
 
@@ -619,10 +618,10 @@ class ServiceWaterHeatingSystemControl(RuleCheckBase):
 
 
 class VAVStaticPressureSensorLocation(RuleCheckBase):
-    points = ["p_fan_setpoint", "tol"]
+    points = ["p_fan_set", "tol_P_fan"]
 
     def verify(self):
-        self.result = self.df["p_fan_setpoint"] < 298.608 + self.df["tol"]
+        self.result = self.df["p_fan_set"] < 298.608 + self.df["tol_P_fan"]
 
     def calculate_plot_day(self):
         """over write method to select day for day plot"""
@@ -777,12 +776,12 @@ class HeatPumpSupplementalHeatLockout(RuleCheckBase):
 
 
 class HeatRejectionFanVariableFlowControl(RuleCheckBase):
-    points = ["P_ct_fan", "m_ct_fan_ratio", "P_ct_fan_dsgn", "m_ct_fan_dsgn"]
+    points = ["ct_P_fan", "ct_m_fan_ratio", "ct_P_fan_dsgn", "ct_m_fan_dsgn"]
 
     def verify(self):
-        self.df["m_ct_fan"] = self.df["m_ct_fan_ratio"] * self.df["m_ct_fan_dsgn"]
-        self.df["normalized_m_ct_fan"] = self.df["m_ct_fan"] / self.df["m_ct_fan_dsgn"]
-        self.df["normalized_P_ct_fan"] = self.df["P_ct_fan"] / self.df["P_ct_fan_dsgn"]
+        self.df["m_ct_fan"] = self.df["ct_m_fan_ratio"] * self.df["ct_m_fan_dsgn"]
+        self.df["normalized_m_ct_fan"] = self.df["m_ct_fan"] / self.df["ct_m_fan_dsgn"]
+        self.df["normalized_P_ct_fan"] = self.df["ct_P_fan"] / self.df["ct_P_fan_dsgn"]
 
         self.df = self.df.loc[
             self.df["normalized_P_ct_fan"] > 0.0

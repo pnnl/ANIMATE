@@ -74,8 +74,9 @@ class CSVReader(EPReader):
     """Reader for EP simulation output csv file"""
 
     def __init__(self, csv_file):
-        self.csv_file = csv_file
-        self.df = pd.read_csv(csv_file)
+        if not csv_file is None:
+            self.csv_file = csv_file
+            self.df = pd.read_csv(csv_file)
 
     def getseries(self, cols=None):
         """get time series based on column name (string) or column names (list), cols name after processing
@@ -128,11 +129,14 @@ class CSVReader(EPReader):
         if "Date/Time" in pickedcols:
             finalcols = pickedcols
             finalcols_original = pickedcols_original_format
-        else:
+        elif "Date/Time" in self.df.columns:
             finalcols = ["Date/Time"]
             finalcols.extend(pickedcols)
             finalcols_original = ["Date/Time"]
             finalcols_original.extend(pickedcols_original_format)
+        else:
+            finalcols = pickedcols
+            finalcols_original = pickedcols_original_format
 
         pickeddf = self.df[finalcols].copy(deep=True)
 
