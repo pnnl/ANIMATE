@@ -1,3 +1,9 @@
+"""
+verification.py
+====================================
+Verification API
+"""
+
 import sys, logging, multiprocessing, os
 import pandas as pd
 
