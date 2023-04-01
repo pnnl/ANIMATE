@@ -29,7 +29,7 @@ See the Publications section for more information and example of uses of the fra
 ## Get Started
 
 - Demos are located in `demo/`
-- Visit API documentation page to learn about how to use the ConStrain API.
+- Visit [API documentation page](https://pnnl.github.io/ANIMATE/) to learn about how to use the ConStrain API.
 
 <!-- ## Note
 
