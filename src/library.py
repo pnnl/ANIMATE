@@ -518,7 +518,7 @@ class ERVTemperatureControl(CheckLibBase):
 
     def erv_temperature_control(self, data):
         economizer = True if data["OA_FLOW"] > data["MIN_OA_FLOW"] * 1.01 else False
-        hx_running = True if data["T_OA"] != data["T_SO"] else False
+        hx_running = True if abs(data["T_OA"] - data["T_SO"]) > 0.001 else False
         hx_sens_eff_dsn_htg = (
             data["HX_DSN_EFF_HTG_75_PCT"]
             + (data["HX_DSN_EFF_HTG"] - data["HX_DSN_EFF_HTG_75_PCT"])
@@ -534,7 +534,7 @@ class ERVTemperatureControl(CheckLibBase):
         hx_sens_eff = (data["T_SO"] - data["T_OA"]) / (data["T_EI"] - data["T_OA"])
         data["erv_temperature_control"] = 0  # pass by default
         if not economizer and data["OA_FLOW"] > 0:  # non-economizer operation
-            if data["T_SO"] > data["T_SO_SP"] + 0.5:
+            if data["T_SO"] > data["T_SO_SP"] + 0.1:
                 if data["T_OA"] < data["T_EI"] and hx_running:  # deadband
                     data["erv_temperature_control"] = 1
                 elif data["T_OA"] > data["T_EI"] and not (
@@ -544,7 +544,7 @@ class ERVTemperatureControl(CheckLibBase):
                     < hx_sens_eff_dsn_clg * 1.05
                 ):  # cooling
                     data["erv_temperature_control"] = 1
-            elif data["T_SO"] < data["T_SO_SP"] - 0.5:  # heating
+            elif data["T_SO"] < data["T_SO_SP"] - 0.1:  # heating
                 if not (
                     hx_running
                     and hx_sens_eff_dsn_htg * 0.9
