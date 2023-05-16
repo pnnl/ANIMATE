@@ -429,7 +429,7 @@ class DualMaxDamperControl(RuleCheckBase):
         self.result = (
             (self.df["REHEAT_COIL_OUTPUT"] > 0)
             & (self.df["MaxDP"] >= self.df["DAMPER_POS"])
-            & (self.df["DAMPER_POS"] > self.df["MinDP"])
+            & (self.df["DAMPER_POS"] >= self.df["MinDP"])
         ) | (self.df["REHEAT_COIL_OUTPUT"] == 0)
 
 
