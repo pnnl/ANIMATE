@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> This repository has been archived and is no longer maintained.
+> The code is provided for historical reference and may contain unpatched or unknown vulnerabilities.
+> It should not be used in production systems.
+
 # <span style="color:orange">*Con*</span>trol <span style="color:orange">*Strain*</span>er (<span style="color:orange">*ConStrain*</span>): A Data-driven Control Performance Verification Framework (formally known as <span style="color:orange">_ANIMATE_</span>)
 
 <!-- # ANIMATE: a dAtadriveN buildIng perforMance verificATion framEwork -->
