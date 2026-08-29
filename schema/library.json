@@ -532,5 +532,26 @@
         ],
         "description_verification_type": "rule-based",
         "assertions_type": "pass"
+    },
+    "WaterSideEconomizer": {
+        "library_item_id": 30,
+        "description_brief": "Verify that 100% loads below a certain threshold are met solely by a non-mechanical cooling device (water-side economizer)",
+        "description_index": [
+            "Section 6.5.1.5 in 90.1-2016"
+        ],
+        "description_datapoints": {
+            "T_oa": "Outdoor air temperature",
+            "T_oa_wse_op": "Outdoor air temperature threshold below which the water-side economizer should be 100% of the load on the CHW plant",
+            "P_mech_cool": "Sum of the power of all mechanical cooling devices on the CHW plant",
+            "T_chw_s_sp": "CHW plant supply fluid temperature setpoint",
+            "T_chw_s": "CHW plant supply fluid temperature",
+            "T_chw_ret": "CHW plant return fluid temperature",
+            "tol_sp": "CHW supply temperature setpoint tolerance"
+        },
+        "description_assertions": [
+            "Check that below the OA temperature threshold, if there is a load, it is not met by mechanical cooling devices on the CHW plant loop"
+        ],
+        "description_verification_type": "procedure-based",
+        "assertions_type": "pass"
     }
 }

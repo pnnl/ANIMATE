@@ -30,7 +30,7 @@ class TestAutomaticOADamperControl(unittest.TestCase):
         expected_results = [np.nan, True, False, False, False, np.nan, np.nan, np.nan]
 
         # Perform verification
-        for i in range(len(data[0])):
+        for i in range(len(data)):
             self.assertTrue(results[i] is expected_results[i])
 
         # Print out results
